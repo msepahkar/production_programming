@@ -1,0 +1,16 @@
+/db
+*.pyc
+*.csv#
+
+.idea/
+output/
+classes/
+venv/
+venv1/
+db.sqlite
+test3
+*.vpp.bak*
+*.vpp.vbak*
+test.py
+
+

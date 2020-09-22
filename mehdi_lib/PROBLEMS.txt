@@ -1,0 +1,6 @@
+
+why operation_batch_operation with operation id -1 is presented into the database?
+
+save and restoring expand does not work when removing an operation
+
+
