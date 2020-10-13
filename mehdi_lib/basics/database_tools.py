@@ -160,6 +160,12 @@ class Types:
     # ===========================================================================
     @staticmethod
     def format_for_database(value, type_in_class):
+        """
+        formats the value parameter to a suitable format for writing into database
+        :param value: the input parameter
+        :param type_in_class: type of the input parameter in the class
+        :return: converted form of the input value suitable for writing into database
+        """
         if type_in_class == bool:
             if value:
                 return 1
@@ -182,6 +188,13 @@ class Types:
     # ===========================================================================
     @staticmethod
     def format_for_class(value, type_in_class):
+        """
+        the reverse of format_for_database function. converts the input value read from database to proper value to be
+        saved in the class
+        :param value: the input value (read from database)
+        :param type_in_class: type of the input value in the class
+        :return: converted value to be saved in the class
+        """
         new_value = value
 
         if type_in_class is bool:
