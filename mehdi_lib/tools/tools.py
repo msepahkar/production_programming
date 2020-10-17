@@ -262,4 +262,21 @@ class Tools:
     def parent_type(cls):
         return cls.mro()[1]
 
+    # ===========================================================================
+    @staticmethod
+    def add_missing_starting_and_ending_double_quotes(s):
+        if type(s) is not str:
+            return s
+        if not s.startswith('"'): s = '"' + s
+        if not s.endswith('"'): s = s + '"'
+        return s
+
+    # ===========================================================================
+    @staticmethod
+    def remove_starting_and_ending_double_quotes(s):
+        if type(s) is not str:
+            return s
+        if s.startswith('"'): s = s[1:]
+        if s.endswith('"'): s = s[:-1]
+        return s
 

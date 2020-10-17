@@ -40,38 +40,53 @@ class ParameterizedEnumBase:
 
 # ===========================================================================
 class ContainerForParameterizedEnum(ParameterizedEnumBase):
-    # something with attributes, each of which is a parameterized enum
+    """
+    this class represents something with attributes, each of which is a parameterized enum
+    """
     pass
 
     # ===========================================================================
     @staticmethod
     def get_parameterized_enums():
-        # returns list of enums with parameters contained in this container. we can call them sub types.
+        """
+        returns list of enums with parameters contained in this container. we can call them sub types.
+        :return: list of attributes (parameterized enums)
+        """
         return []
 
 
 # ===========================================================================
 class UiTitlesContainer:
-
+    """
+    base class for enums which have ui titles
+    """
     # ===========================================================================
     @staticmethod
     def get_ui_titles():
+        """
+        ui titles of the enum are stored in a dict. for each language, proper ui title should be generated.
+        example: {
+                    english: {enum.item_one: 'ui title 1 in english', enum.item_two: 'ui title 2 in english'},
+                    persian: {enum.item_one: 'ui title 1 in persian', enum.item_two: 'ui title 2 in persian'}
+            }
+        """
         return {}
 
     # ===========================================================================
     def get_instance_ui_title(self, language):
-        return type(self).get_ui_titles()[language]
-
-
-# ===========================================================================
-class UiTitleEnabledEnum(UiTitlesContainer, enum.Enum):
-
-    # ===========================================================================
-    def get_instance_ui_title(self, language):
+        """
+        each enum item that calls this method, will receive its proper ui title base on the input language
+        :param language: retrieves ui title based on this specific language
+        """
         ui_titles = type(self).get_ui_titles()
         if ui_titles:
             return ui_titles[language][self]
         return self.name
+
+
+# ===========================================================================
+class UiTitleEnabledEnum(UiTitlesContainer, enum.Enum):
+    pass
 
 
 # ===========================================================================

@@ -2,6 +2,7 @@
 
 import datetime
 from mehdi_lib.basics import basic_types
+from mehdi_lib.tools import tools
 
 import dateutil.parser
 from PyQt5 import QtSql
@@ -156,6 +157,10 @@ class Database:
 class Types:
 
     enum_None_in_database = -1
+    date_and_datetime_format_string = '{}'
+    time_delta_format_string = '{}:{}:{}'
+    date_strftime_format_string = '%Y/%m/%d'
+    datetime_strftime_format_string = '%Y/%m/%d %H:%M:%S'
 
     # ===========================================================================
     @staticmethod
@@ -171,8 +176,17 @@ class Types:
                 return 1
             else:
                 return 0
-        if type_in_class in [str, datetime.datetime, datetime.date]:
-            return '"{}"'.format(value)
+        if type_in_class is str:
+            new_value = tools.Tools.add_missing_starting_and_ending_double_quotes(value)
+            return new_value
+        if type_in_class is datetime.date:
+            new_value = value.strftime(Types.date_strftime_format_string)
+            new_value = tools.Tools.add_missing_starting_and_ending_double_quotes(new_value)
+            return new_value
+        if type_in_class is datetime.datetime:
+            new_value = value.strftime(Types.datetime_strftime_format_string)
+            new_value = tools.Tools.add_missing_starting_and_ending_double_quotes(new_value)
+            return new_value
         if issubclass(type_in_class, basic_types.UiTitleEnabledEnum):
             if value is None:
                 return Types.enum_None_in_database
@@ -181,7 +195,9 @@ class Types:
             hours = value.seconds // 3600 + value.days * 24
             minutes = (value.seconds // 60) % 60
             seconds = value.seconds % 60
-            return '"{}:{}:{}"'.format(hours, minutes, seconds)
+            new_value = Types.time_delta_format_string.format(hours, minutes, seconds)
+            new_value = tools.Tools.add_missing_starting_and_ending_double_quotes(new_value)
+            return new_value
 
         return value
 
@@ -209,13 +225,16 @@ class Types:
             else:
                 new_value = type_in_class(value)
         if type_in_class is datetime.datetime:
-            new_value = dateutil.parser.parse(value)
+            new_value = tools.Tools.remove_starting_and_ending_double_quotes(value)
+            new_value = dateutil.parser.parse(new_value)
         if type_in_class is datetime.date:
-            new_value = dateutil.parser.parse(value).date()
+            new_value = tools.Tools.remove_starting_and_ending_double_quotes(value)
+            new_value = dateutil.parser.parse(new_value).date()
 
         if type_in_class is datetime.timedelta:
             try:
-                hours, minutes, seconds, *extra = value.split(':')
+                new_value = tools.Tools.remove_starting_and_ending_double_quotes(value)
+                hours, minutes, seconds, *extra = new_value.split(':')
                 hours = int(hours)
                 minutes = int(minutes)
                 seconds = int(seconds)
