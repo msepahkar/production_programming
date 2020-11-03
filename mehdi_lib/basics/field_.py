@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Basic definitions of field
+"""
+Basic definitions of field
 
-The most basic entity in this infrastructure is Field. Every 'Thing' has several fields.
-Every field can automatically represent itself in class, database and in ui.
+The most basic entity in this infrastructure is 'Field'. Every 'Thing' has several Fields.
+Every Field can automatically represent itself in class, database and in ui.
 """
 
 import typing
@@ -15,7 +16,8 @@ from PyQt5 import QtCore
 
 # ===========================================================================
 class InClass:
-    """Enables fields to express themselves in classes
+    """
+    Enables fields to express themselves in classes
 
     When 'Things' are fetched from database, each field should know its type in class in order to be able to convert
     the fetched value to correct format
@@ -67,16 +69,30 @@ class InClass:
 
     # ===========================================================================
     def create_copy(self):
+        """
+        Creates a new copy of this object with values equal to the values of this object
+        :return:
+        """
         return InClass(self.name, self.type, self.initial_value)
 
     # ===========================================================================
     def force_to_match(self, other_in_class):
+        """
+        Makes values of this object equal to the values of the other object
+        :param other_in_class: the object whose values should be copied here.
+        :return:
+        """
         self.name = other_in_class.name
         self._type = other_in_class.type
         self.initial_value = other_in_class.initial_value
 
     # ===========================================================================
     def matches(self, other_in_class):
+        """
+        checks if the values of this object is equal to the values of the object passed to it.
+        :param other_in_class:
+        :return:
+        """
         return self.name == other_in_class.name and \
                self.type == other_in_class.type and \
                self.initial_value == other_in_class.initial_value
@@ -88,7 +104,8 @@ class InClass:
 
 # ===========================================================================
 class InDatabase:
-    """Enables fields to express themselves in database
+    """
+    Enables fields to express themselves in database
 
     For automatically creating tables, each field should be able to express its correct format in database.
     """
@@ -103,10 +120,20 @@ class InDatabase:
 
     # ===========================================================================
     def create_copy(self):
+        """
+        creates a copy of this object with values exactly equal to the values of the current object
+        :return:
+        """
         return InDatabase(self.title, self.type, self.default_value, self.condition)
 
     # ===========================================================================
     def get_creation_command(self) -> str:
+        """
+        Prepares the command required to create this field in the database
+        All these commands for all fields of one table will be combined to create a single command for creating the
+        table.
+        :return:
+        """
         command = '{} {}'.format(self.title, self.type)
         if self.condition:
             command += ' {}'.format(self.condition)
@@ -116,6 +143,11 @@ class InDatabase:
 
     # ===========================================================================
     def matches(self, other_in_database):
+        """
+        checks if the values of this object is equal to the values of the object passed as parameter
+        :param other_in_database:
+        :return:
+        """
         return self.title == other_in_database.title and \
                self.type == other_in_database.type and \
                self.default_value == other_in_database.default_value and \
@@ -124,7 +156,8 @@ class InDatabase:
 
 # ===========================================================================
 class InEditor:
-    """Enables fields to express themselves in ui
+    """
+    Enables fields to express themselves in ui
 
     for automatically creating ui, each field should know its default ui editor and the required parameters for that.
     """
@@ -148,15 +181,29 @@ class InEditor:
 
     # ===========================================================================
     def create_copy(self):
+        """
+        creates a copy of this object with values equal to the values of this object
+        :return:
+        """
         return InEditor(self.editor, self.editor_parameters_list)
 
     # ===========================================================================
     def force_to_match(self, other_in_editor):
+        """
+        Makes values of this object equal to the values of the object passes as the parameter
+        :param other_in_editor:
+        :return:
+        """
         self.editor = other_in_editor.editor
         self.editor_parameters_list = other_in_editor.editor_parameters_list
 
     # ===========================================================================
     def matches(self, other_in_editor):
+        """
+        checks if the values of this object are equal to the values of the object passes as the parameter.
+        :param other_in_editor:
+        :return:
+        """
         if self.editor != other_in_editor.editor:
             return False
 
@@ -176,15 +223,16 @@ class InEditor:
 
 # ===========================================================================
 class Field(basic_types.UiTitlesContainer, QtCore.QObject):
-    """The most basic entity in our framework.
+    """
+    The most basic entity in our framework.
 
     each field should be able to express itself in class, database and ui.
     Field inherits from QObject for using signals.
     Field inherits from UiTitlesContainer for using ui title specially for morphing things.
     """
 
-    ui_titles_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')
-    hiding_status_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')
+    ui_titles_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')   # for morphing things
+    hiding_status_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')   # for morphing things
 
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict,
@@ -200,11 +248,21 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         self.in_class = in_class  # type: typing.Optional[InClass]
         self.in_database = in_database  # type: typing.Optional[InDatabase]
         self.in_editor = in_editor  # type: typing.Optional[InEditor]
+
+        # for morphing things
         self._is_instance_specific = False
+
+        # for morphing things
         self._is_hidden = False
 
     # ===========================================================================
     def create_copy(self):
+        """
+        Creates a new object. The new object will force in_editor, in_class, and in_database to create copies of
+        themselves.
+        :return:
+        """
+
         parameters = self.get_copy_parameters()
 
         if parameters is None:
@@ -220,6 +278,11 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
 
     # ===========================================================================
     def force_to_match(self, other_field):
+        """
+        Makes values of this object equal to the values of the object passes as parameter.
+        :param other_field:
+        :return:
+        """
         if (self.in_database is None and other_field.in_database is not None) or \
             (self.in_database is not None and other_field.in_database is None) or \
                 (self.in_database is not None and other_field.in_database is not None and not self.in_database.matches(other_field.in_database)):
@@ -232,8 +295,14 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
 
     # ===========================================================================
     def get_copy_parameters(self):
+        """
+        Each inherited class will implement this method if the parameters required to be copied are different.
+        These parameters are in fact parameters required in __init__
+        :return:
+        """
 
-        # for field class
+        # for field class itself (not inherited classes). Actually this is only for guide because Field class will
+        # itself will never be used; only its child classes will be used.
         if type(self) == Field:
             return [
                 self.order,
@@ -243,18 +312,22 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
                 self.in_editor.create_copy()
             ]
 
-        # for children classes with no parameters
+        # for inherited classes (they should implement this class themselves if they require any parameters)
         else:
             return []
 
     # ===========================================================================
     def get_instance_ui_titles(self):
+        """
+        instance ui titles are useful only in morphing things.
+        :return:
+        """
         return self._ui_titles
 
     # ===========================================================================
     def get_instance_ui_title(self, language):
         """
-        for retrieving ui title in a specific language
+        for retrieving ui title in a specific language (again only in morphing things)
         :param language:
         :return:
         """
@@ -263,10 +336,19 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     # ===========================================================================
     @classmethod
     def get_ui_titles(cls):
+        """
+        if not morphing thing, this method is required for retrieving _ui_titles dict.
+        :return:
+        """
         return cls._ui_titles
 
     # ===========================================================================
     def has_same_ui_titles(self, other_field_or_other_ui_titles):
+        """
+        checks equality of ui titles between two fields.
+        :param other_field_or_other_ui_titles:
+        :return:
+        """
 
         if isinstance(other_field_or_other_ui_titles, Field):
             other_ui_titles = other_field_or_other_ui_titles.get_instance_ui_titles()
@@ -283,14 +365,27 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
 
     # ===========================================================================
     def is_hidden(self):
+        """
+        used only in morphing things
+        :return:
+        """
         return self._is_hidden
 
     # ===========================================================================
     def is_instance_specific(self):
+        """
+        used only in morphing things
+        :return:
+        """
         return self._is_instance_specific
 
     # ===========================================================================
     def matches(self, other_field):
+        """
+        checks equality of values between two fields
+        :param other_field:
+        :return:
+        """
         return self.order == other_field.order and \
                self.has_same_ui_titles(other_field) and \
                self.in_class.matches(other_field.in_class) and \
@@ -301,16 +396,31 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
 
     # ===========================================================================
     def set_hidden(self, hidden):
+        """
+        only used in morphing things
+        :param hidden:
+        :return:
+        """
         if self._is_hidden != hidden:
             self._is_hidden = hidden
             self.hiding_status_changed_signal.emit(self)
 
     # ===========================================================================
     def set_instance_specific(self, instance_specific):
+        """
+        used only in morphing things
+        :param instance_specific:
+        :return:
+        """
         self._is_instance_specific = instance_specific
 
     # ===========================================================================
     def set_instance_ui_titles(self, new_titles):
+        """
+        used only in morphing things
+        :param new_titles:
+        :return:
+        """
         if not self.has_same_ui_titles(new_titles):
             self._ui_titles = new_titles
             self.ui_titles_changed_signal.emit(self)

@@ -128,7 +128,7 @@ class Welder:
 
 # ===========================================================================
 @enum.unique
-class MachineType(basic_types.SuperParameterizedEnum):
+class MachineType(basic_types.ContainerFor_ContainerForParameterizedEnum):
     # boring = 1
     cutter = 2
     # drill = 3

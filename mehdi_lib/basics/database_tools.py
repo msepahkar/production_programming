@@ -179,6 +179,8 @@ class Types:
         if type_in_class is str:
             new_value = tools.Tools.add_missing_starting_and_ending_double_quotes(value)
             return new_value
+        if type_in_class is basic_types.MultilingualString:
+            return value[basic_types.Language.get_active_language()]
         if type_in_class is datetime.date:
             new_value = value.strftime(Types.date_strftime_format_string)
             new_value = tools.Tools.add_missing_starting_and_ending_double_quotes(new_value)
@@ -242,6 +244,8 @@ class Types:
                 new_value = datetime.timedelta(hours=hours, minutes=minutes, seconds=seconds)
             except ValueError:
                 raise ValueError('problem converting "{}" to timedelta'.format(value))
+        if type_in_class is basic_types.MultilingualString:
+            new_value = basic_types.MultilingualString({basic_types.Language.get_active_language(): value})
 
         return new_value
 

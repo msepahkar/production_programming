@@ -6,9 +6,6 @@ from mehdi_lib.tools import tools
 
 pytest_mark = pytest.mark.database_tools
 
-"""
-    testing 'format_for_database' and 'format_for_class
-"""
 testing_date = datetime.date(1974, 9, 22)
 testing_date_str = testing_date.strftime(database_tools.Types.date_strftime_format_string)
 testing_datetime = datetime.datetime(1974, 9, 22, 12, 10, 5)
@@ -44,6 +41,18 @@ def test_format_for_database(value, type_in_class, expected_value):
     assert database_tools.Types.format_for_database(value, type_in_class) == expected_value
 
 
+def test_format_for_database_for_multilingual_str():
+    dummy_en = 'dummy'
+    dummy_fa = 'بیخودی'
+    multilingual_str = basic_types.MultilingualString({basic_types.Language.AvailableLanguage.en: dummy_en,
+                                                       basic_types.Language.AvailableLanguage.fa: dummy_fa,})
+    basic_types.Language.set_active_language(basic_types.Language.AvailableLanguage.en)
+    assert database_tools.Types.format_for_database(multilingual_str, basic_types.MultilingualString) == dummy_en
+    basic_types.Language.set_active_language(basic_types.Language.AvailableLanguage.fa)
+    assert database_tools.Types.format_for_database(multilingual_str, basic_types.MultilingualString) == dummy_fa
+
+
+
 """
     testing 'format for class'
 """
@@ -61,3 +70,13 @@ def test_format_for_database(value, type_in_class, expected_value):
 def test_format_for_class(value, type_in_class, expected_value):
     assert database_tools.Types.format_for_class(value, type_in_class) == expected_value
 
+
+def test_format_for_class_for_multilingual_str():
+    dummy_en = 'dummy'
+    dummy_fa = 'بیخودی'
+    multilingual_str_en = basic_types.MultilingualString({basic_types.Language.AvailableLanguage.en: dummy_en})
+    multilingual_str_fa = basic_types.MultilingualString({basic_types.Language.AvailableLanguage.en: dummy_fa})
+    basic_types.Language.set_active_language(basic_types.Language.AvailableLanguage.en)
+    assert database_tools.Types.format_for_class(dummy_en, basic_types.MultilingualString)[basic_types.Language.AvailableLanguage.en] == dummy_en
+    basic_types.Language.set_active_language(basic_types.Language.AvailableLanguage.fa)
+    assert database_tools.Types.format_for_class(dummy_fa, basic_types.MultilingualString)[basic_types.Language.AvailableLanguage.fa] == dummy_fa
