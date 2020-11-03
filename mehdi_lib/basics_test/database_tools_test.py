@@ -31,6 +31,8 @@ class TestingEnum(basic_types.UiTitleEnabledEnum):
 @pytest.mark.parametrize("value, type_in_class, expected_value", [
     (True, bool, 1),
     (False, bool, 0),
+    (12, int, 12),
+    (1.2, float, 1.2),
     (TestingEnum.one, TestingEnum, TestingEnum.one.value),
     (None, TestingEnum, database_tools.Types.enum_None_in_database),
     (testing_date, datetime.date, tools.Tools.add_missing_starting_and_ending_double_quotes(testing_date_str)),

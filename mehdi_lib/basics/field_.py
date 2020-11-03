@@ -162,7 +162,7 @@ class InEditor:
     for automatically creating ui, each field should know its default ui editor and the required parameters for that.
     """
     # ===========================================================================
-    def __init__(self, editor: typing.Type['editor_basics.Editor'], editor_parameters_list=None):
+    def __init__(self, editor: typing.Type['editor_.Editor'], editor_parameters_list=None):
         self._editor = editor
         self.editor_parameters_list = editor_parameters_list
 
@@ -228,11 +228,13 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
 
     each field should be able to express itself in class, database and ui.
     Field inherits from QObject for using signals.
-    Field inherits from UiTitlesContainer for using ui title specially for morphing things.
+    Field inherits from UiTitlesContainer for using ui title.
     """
 
-    ui_titles_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')   # for morphing things
-    hiding_status_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')   # for morphing things
+    # for morphing things
+    ui_titles_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')
+    # for morphing things
+    hiding_status_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')
 
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict,
@@ -286,7 +288,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         if (self.in_database is None and other_field.in_database is not None) or \
             (self.in_database is not None and other_field.in_database is None) or \
                 (self.in_database is not None and other_field.in_database is not None and not self.in_database.matches(other_field.in_database)):
-            tools.Tools.fatal_error('cannot force in databases to match')
+            tools.Tools.fatal_error('cannot force in_database to match')
         self.in_class.force_to_match(other_field.in_class)
         self.in_editor.force_to_match(other_field.in_editor)
         self.set_instance_specific(other_field.is_instance_specific())
@@ -301,8 +303,8 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         :return:
         """
 
-        # for field class itself (not inherited classes). Actually this is only for guide because Field class will
-        # itself will never be used; only its child classes will be used.
+        # for field class itself (not inherited classes). Actually this is only for guide and ofcourse for test; because
+        # Field class will itself will never be used; only its child classes will be used.
         if type(self) == Field:
             return [
                 self.order,
@@ -312,7 +314,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
                 self.in_editor.create_copy()
             ]
 
-        # for inherited classes (they should implement this class themselves if they require any parameters)
+        # For inherited classes. (They should implement this class themselves if they require any parameters)
         else:
             return []
 
