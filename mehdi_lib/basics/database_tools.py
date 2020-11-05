@@ -166,7 +166,8 @@ class Types:
     @staticmethod
     def format_for_database(value, type_in_class):
         """
-        formats the value parameter to a suitable format for writing into database
+        formats the value parameter to a suitable format for writing into database.
+
         :param value: the input parameter
         :param type_in_class: type of the input parameter in the class
         :return: converted form of the input value suitable for writing into database

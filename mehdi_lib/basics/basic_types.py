@@ -42,6 +42,7 @@ class ParameterizedEnumBase:
     def get_parameters_titles():
         """
         parameters have ui-titles expressed in different languages.
+
         it should be noted that these ui titles are for parameters not for elements of the enum!
 
         :return: an array containing one dict for every parameter. each dict specifies ui-title of that parameter for
@@ -53,7 +54,8 @@ class ParameterizedEnumBase:
 # ===========================================================================
 class ContainerForParameterizedEnum(ParameterizedEnumBase):
     """
-    this class represents something with attributes, each of which is a parameterized enum
+    this class represents something with attributes, each of which is a parameterized enum.
+
     Consider the chair example again but this time as a container of parameterized enum:
 
     class Chair(ContainerForParameterizedEnum):
@@ -101,6 +103,7 @@ class UiTitlesContainer:
     def get_instance_ui_title(self, language):
         """
         each enum item that calls this method, will receive its proper ui title based on the input language
+
         :param language: retrieves ui title based on this specific language
         """
         ui_titles = type(self).get_ui_titles()
@@ -114,6 +117,7 @@ class UiTitlesContainer:
 class UiTitleEnabledEnum(UiTitlesContainer, enum.Enum):
     """
     This class is created just for making creation of ui enabled enums easier.
+
     (Simply there enums will inherit from one class instead of two!)
     """
     pass
@@ -124,6 +128,7 @@ class UiTitleEnabledEnum(UiTitlesContainer, enum.Enum):
 class ParameterizedEnum(ParameterizedEnumBase, UiTitleEnabledEnum):
     """
     This class is created just for making creation of ui enabled parameterized enums easier.
+
     (Simply there enums will inherit from one class instead of two!)
     """
     pass
@@ -148,6 +153,7 @@ class Language:
         def get_ui_titles():
             """
             ui titles for languages themselves in available languages!
+
             :return: a dict whose keys are available languages. Data for each key is again a dict.
                 keys in the new dict are again available languages and data for each key in the new dict is the name
                 of that language in the language which is the key in the first dict. (a bit complicated!)
@@ -241,6 +247,7 @@ class ContainerFor_ContainerForParameterizedEnum(UiTitleEnabledEnum):
     def get_members_correspondent_classes():
         """
             returns the corresponding classes of parameterized enums containers available in this container
+
         :return: A dict is returned. Keys are members of this class (which are containers for parameterized enums but
             are expressed as enum members).
             values are actual classes representing these containers
@@ -251,6 +258,7 @@ class ContainerFor_ContainerForParameterizedEnum(UiTitleEnabledEnum):
     def get_parameters_titles(self):
         """
         Shortcut for retrieving parameter titles for members of this super container.
+
         Considering the example above (Furniture), if chair calls this method, the corresponding method in Chair class
         will be called.
         :return: the returned dict from the same method in ParameterizedEnumBase class will be returned.
@@ -262,6 +270,7 @@ class ContainerFor_ContainerForParameterizedEnum(UiTitleEnabledEnum):
     def get_parameterized_enums(self):
         """
         Another shortcut for retrieving parameterized enums in the container.
+
         Considering the Furniture example again, this function returns Chair and Table.
         :return: the list returned by the same method in ContainerForParameterizedEnum will be returned.
         """

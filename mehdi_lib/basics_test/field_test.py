@@ -46,14 +46,34 @@ def test_InDatabase():
 
 
 def test_InEditor():
-    in_editor_1 = field_.InEditor(general_editors.FloatEditor)
-    in_editor_2 = field_.InEditor(general_editors.FloatEditor)
-    in_editor_3 = field_.InEditor(general_editors.BoolEditor)
-    in_editor_4 = in_editor_1.create_copy()
+    parameters_list = [thing_.Thing(), field_.Field(0, [], None, None, None), False, None]
+    in_editor_1 = field_.InEditor(general_editors.FloatEditor, parameters_list)
+    in_editor_2 = field_.InEditor(general_editors.FloatEditor, parameters_list)
+    in_editor_3 = field_.InEditor(general_editors.BoolEditor, parameters_list)
+    in_editor_4 = field_.InEditor(general_editors.FloatEditor, [thing_.Thing()] + parameters_list[1:])
+    in_editor_5 = field_.InEditor(general_editors.FloatEditor, parameters_list[0:1] + [field_.Field(0, [], None, None, None)] + parameters_list[2:])
+    in_editor_6 = field_.InEditor(general_editors.FloatEditor, parameters_list[0:2] + [True] + parameters_list[3:])
+    in_editor_7 = field_.InEditor(general_editors.FloatEditor, parameters_list[0:3] + [thing_.Thing()])
+    in_editor_8 = field_.InEditor(general_editors.FloatEditor)
+    in_editor_9 = in_editor_1.create_copy()
     assert in_editor_1.matches(in_editor_2)
     assert not in_editor_1.matches(in_editor_3)
+    assert not in_editor_1.matches(in_editor_4)
+    assert not in_editor_1.matches(in_editor_5)
+    assert not in_editor_1.matches(in_editor_6)
+    assert not in_editor_1.matches(in_editor_7)
+    assert not in_editor_1.matches(in_editor_8)
     in_editor_3.force_to_match(in_editor_1)
+    in_editor_4.force_to_match(in_editor_1)
+    in_editor_5.force_to_match(in_editor_1)
+    in_editor_6.force_to_match(in_editor_1)
+    in_editor_7.force_to_match(in_editor_1)
+    in_editor_8.force_to_match(in_editor_1)
     assert in_editor_1.matches(in_editor_3)
     assert in_editor_1.matches(in_editor_4)
+    assert in_editor_1.matches(in_editor_5)
+    assert in_editor_1.matches(in_editor_6)
+    assert in_editor_1.matches(in_editor_7)
+    assert in_editor_1.matches(in_editor_8)
 
 

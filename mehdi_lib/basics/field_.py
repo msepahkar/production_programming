@@ -70,7 +70,9 @@ class InClass:
     # ===========================================================================
     def create_copy(self):
         """
-        Creates a new copy of this object with values equal to the values of this object
+        Creates a new copy of this object with values equal to the values of this object.
+
+        required for morphing thing
         :return:
         """
         return InClass(self.name, self.type, self.initial_value)
@@ -78,8 +80,10 @@ class InClass:
     # ===========================================================================
     def force_to_match(self, other_in_class):
         """
-        Makes values of this object equal to the values of the other object
-        :param other_in_class: the object whose values should be copied here.
+        Makes values of this object equal to the values of the other object.
+
+         required for morphing thing
+       :param other_in_class: the object whose values should be copied here.
         :return:
         """
         self.name = other_in_class.name
@@ -90,6 +94,8 @@ class InClass:
     def matches(self, other_in_class):
         """
         checks if the values of this object is equal to the values of the object passed to it.
+
+        required for morphing thing
         :param other_in_class:
         :return:
         """
@@ -105,9 +111,11 @@ class InClass:
 # ===========================================================================
 class InDatabase:
     """
-    Enables fields to express themselves in database
+    Enables fields to express themselves in database.
 
     For automatically creating tables, each field should be able to express its correct format in database.
+    It should be noted that unlike InClass and InEditor, this class will not have any method called force_to_match
+    because database tables could not be changed so easily!
     """
     # ===========================================================================
     def __init__(self, title: str, type_: str, default_value, condition: typing.Optional[str]):
@@ -121,15 +129,18 @@ class InDatabase:
     # ===========================================================================
     def create_copy(self):
         """
-        creates a copy of this object with values exactly equal to the values of the current object
-        :return:
+        creates a copy of this object with values exactly equal to the values of the current object.
+
+         required for morphing thing
+       :return:
         """
         return InDatabase(self.title, self.type, self.default_value, self.condition)
 
     # ===========================================================================
     def get_creation_command(self) -> str:
         """
-        Prepares the command required to create this field in the database
+        Prepares the command required to create this field in the database.
+
         All these commands for all fields of one table will be combined to create a single command for creating the
         table.
         :return:
@@ -144,8 +155,10 @@ class InDatabase:
     # ===========================================================================
     def matches(self, other_in_database):
         """
-        checks if the values of this object is equal to the values of the object passed as parameter
-        :param other_in_database:
+        checks if the values of this object is equal to the values of the object passed as parameter.
+
+         required for morphing thing
+       :param other_in_database:
         :return:
         """
         return self.title == other_in_database.title and \
@@ -157,7 +170,7 @@ class InDatabase:
 # ===========================================================================
 class InEditor:
     """
-    Enables fields to express themselves in ui
+    Enables fields to express themselves in UI.
 
     for automatically creating ui, each field should know its default ui editor and the required parameters for that.
     """
@@ -182,16 +195,20 @@ class InEditor:
     # ===========================================================================
     def create_copy(self):
         """
-        creates a copy of this object with values equal to the values of this object
-        :return:
+        creates a copy of this object with values equal to the values of this object.
+
+         required for morphing thing
+       :return:
         """
         return InEditor(self.editor, self.editor_parameters_list)
 
     # ===========================================================================
     def force_to_match(self, other_in_editor):
         """
-        Makes values of this object equal to the values of the object passes as the parameter
-        :param other_in_editor:
+        Makes values of this object equal to the values of the object passes as the parameter.
+
+         required for morphing thing
+       :param other_in_editor:
         :return:
         """
         self.editor = other_in_editor.editor
@@ -201,7 +218,9 @@ class InEditor:
     def matches(self, other_in_editor):
         """
         checks if the values of this object are equal to the values of the object passes as the parameter.
-        :param other_in_editor:
+
+         required for morphing thing
+       :param other_in_editor:
         :return:
         """
         if self.editor != other_in_editor.editor:
@@ -262,7 +281,9 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         """
         Creates a new object. The new object will force in_editor, in_class, and in_database to create copies of
         themselves.
-        :return:
+
+         required for morphing thing
+       :return:
         """
 
         parameters = self.get_copy_parameters()
@@ -282,6 +303,8 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     def force_to_match(self, other_field):
         """
         Makes values of this object equal to the values of the object passes as parameter.
+
+        required for morphing thing
         :param other_field:
         :return:
         """
@@ -299,8 +322,10 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     def get_copy_parameters(self):
         """
         Each inherited class will implement this method if the parameters required to be copied are different.
+
         These parameters are in fact parameters required in __init__
-        :return:
+         required for morphing thing
+       :return:
         """
 
         # for field class itself (not inherited classes). Actually this is only for guide and ofcourse for test; because
@@ -322,15 +347,19 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     def get_instance_ui_titles(self):
         """
         instance ui titles are useful only in morphing things.
-        :return:
+
+         required for morphing thing
+       :return:
         """
         return self._ui_titles
 
     # ===========================================================================
     def get_instance_ui_title(self, language):
         """
-        for retrieving ui title in a specific language (again only in morphing things)
-        :param language:
+        for retrieving ui title in a specific language (again only in morphing things).
+
+          required for morphing thing
+      :param language:
         :return:
         """
         return self._ui_titles[language]
@@ -340,6 +369,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     def get_ui_titles(cls):
         """
         if not morphing thing, this method is required for retrieving _ui_titles dict.
+
         :return:
         """
         return cls._ui_titles
@@ -348,6 +378,8 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     def has_same_ui_titles(self, other_field_or_other_ui_titles):
         """
         checks equality of ui titles between two fields.
+
+        required for morphing thing
         :param other_field_or_other_ui_titles:
         :return:
         """
@@ -368,7 +400,8 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     # ===========================================================================
     def is_hidden(self):
         """
-        used only in morphing things
+        used only in morphing things.
+
         :return:
         """
         return self._is_hidden
@@ -376,7 +409,9 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     # ===========================================================================
     def is_instance_specific(self):
         """
-        used only in morphing things
+        used only in morphing things.
+
+        required for morphing thing
         :return:
         """
         return self._is_instance_specific
@@ -384,8 +419,10 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     # ===========================================================================
     def matches(self, other_field):
         """
-        checks equality of values between two fields
-        :param other_field:
+        checks equality of values between two fields.
+
+         required for morphing thing
+       :param other_field:
         :return:
         """
         return self.order == other_field.order and \
@@ -399,7 +436,8 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     # ===========================================================================
     def set_hidden(self, hidden):
         """
-        only used in morphing things
+        only used in morphing things.
+
         :param hidden:
         :return:
         """
@@ -410,7 +448,9 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     # ===========================================================================
     def set_instance_specific(self, instance_specific):
         """
-        used only in morphing things
+        used only in morphing things.
+
+        required for morphing thing
         :param instance_specific:
         :return:
         """
@@ -419,8 +459,10 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     # ===========================================================================
     def set_instance_ui_titles(self, new_titles):
         """
-        used only in morphing things
-        :param new_titles:
+        used only in morphing things.
+
+         required for morphing thing
+       :param new_titles:
         :return:
         """
         if not self.has_same_ui_titles(new_titles):

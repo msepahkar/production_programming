@@ -17,10 +17,13 @@ from mehdi_lib.initial_values__and__ui_titles import general_ui_titles, general_
 
 # ===========================================================================
 class DependencyParameters:
-    """Information about the list on which a thing field is dependent
+    """
+    Information about the list on which a thing field is dependent
 
     For example a sub-part field of a part should be selected from list of parts.
     So this field is dependent on the list of parts.
+    Whenever the main list (in our example: list of parts) is updated, the dependency list should be automatically
+    updated in all UIs showing this element.
     """
 
     # ===========================================================================
