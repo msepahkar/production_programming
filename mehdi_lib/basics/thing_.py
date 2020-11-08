@@ -11,8 +11,7 @@ from PyQt5 import QtSql, QtCore
 
 from mehdi_lib.tools import tools
 from mehdi_lib.basics import field_, database_tools, basic_types, prototype_, constants_
-from mehdi_lib.generals import general_fields, general_editors_prototypes
-from mehdi_lib.initial_values__and__ui_titles import general_ui_titles, general_initial_values
+from mehdi_lib.generals import general_fields, general_editors_prototypes, general_ui_titles, general_initial_values
 
 
 # ===========================================================================
@@ -30,9 +29,11 @@ class DependencyParameters:
     def __init__(self, dependent_on_list, field_for_retrieving_dependent_on_list_item, forbidden_items_creator):
         """
 
-        :param dependent_on_list: the list on which a field of our thing is dependent on
-        :param field_for_retrieving_dependent_on_list_item: the field in our thing which gives us the dependent field
-        :param forbidden_items_creator: a function which generates a list containing items not allowed as the dependent field value
+        :param dependent_on_list: the list on which a field of our thing is dependent on.
+        :param field_for_retrieving_dependent_on_list_item: the field in our thing which gives us the dependent item.
+        :param forbidden_items_creator: a function which generates a list containing items not allowed as the dependent
+        field value (for example in the part list example, no part can be sub part of itself. So for each part, the part
+        itself should be removed from the list of parts available as the dependent on list).
         """
 
         self.dependent_on_list = dependent_on_list
@@ -42,10 +43,10 @@ class DependencyParameters:
 
 # ===========================================================================
 class ForeignOwnerParameters:
-    """Stores the list field in the foreign owner which contains this thing
+    """Stores the list field in the foreign owner which contains this thing.
 
     For example a part has a list field called sub-parts. every part in the sub-parts list should have a
-    foreign owner parameter which stores the list field of the main part.
+    foreign owner parameter which stores this list field of the main part.
     One part could have multiple foreign owners.
     """
 
@@ -64,14 +65,16 @@ class Thing(field_.Field):
     A 'Thing' can automatically update its table when fields are added to or removed from its definition.
     """
 
-    modified_signal = QtCore.pyqtSignal('PyQt_PyObject')  # will be emitted when a field is modified
+    # will be emitted when a field is modified
+    modified_signal = QtCore.pyqtSignal('PyQt_PyObject')
 
     primary_key = general_fields.PrimaryKeyField()
     order_number = general_fields.OrderNumberField()
     name = general_fields.NameField(initial_value=general_initial_values.name)
 
     # sometimes users want to just complete the information. so there should be a way to specify the inaccuracy of them
-    precision_of_information = general_fields.PercentField(0, general_ui_titles.precision_of_information, 'precision_of_information', 90)
+    precision_of_information = general_fields.PercentField(0, general_ui_titles.precision_of_information,
+                                                           'precision_of_information', 90)
 
     # any information not present in other fields
     comment = general_fields.CommentField()
@@ -79,6 +82,7 @@ class Thing(field_.Field):
     # fields which are removed from the definition of this 'Thing' (for updating the table)
     removed_fields = []  # type: [Field]
 
+    # should be defined in derived classes
     table_name = None  # type: str
 
     # any condition which should be included in CREATE command and could not be added to field conditions
@@ -97,7 +101,8 @@ class Thing(field_.Field):
         :param forbidden_names: these names should not be used for this 'Thing'
         """
 
-        super().__init__(-1, general_ui_titles.dummy, None, None, field_.InEditor(general_editors_prototypes.ThingEditorPrototype, []))
+        super().__init__(-1, general_ui_titles.dummy, None, None,
+                         field_.InEditor(general_editors_prototypes.ThingEditorPrototype, []))
 
         # new thing is modified until it is added to the database or fetched from the database
         self.modified_fields = [type(self).primary_key]
@@ -135,6 +140,11 @@ class Thing(field_.Field):
     # ===========================================================================
     @classmethod
     def all(cls) -> 'ListOfThings':
+        """
+        This array will store all instances of this class read from database or created in memory.
+
+        :return: The array containing all instances of this class
+        """
         if cls._all is None:
             cls._all = ListOfThings(cls)
             if cls.table_exists():
@@ -145,6 +155,12 @@ class Thing(field_.Field):
     # ===========================================================================
     @classmethod
     def create_table(cls, check_existence: bool=False) -> bool:
+        """
+        Creates a proper table for storing instances of this class
+
+        :param check_existence: determines if existence of the table should be checked.
+        :return: True if the table is created successfully and False otherwise.
+        """
 
         if check_existence:
             command = 'CREATE TABLE IF NOT EXISTS {} ('.format(cls.table_name)
@@ -152,9 +168,9 @@ class Thing(field_.Field):
             command = 'CREATE TABLE {} ('.format(cls.table_name)
 
         # add fields
-        for field in cls.sorted_fields_of_class(include_primary_key=True):
-            if field.in_database:
-                command += field.in_database.get_creation_command() + ','
+        for field__ in cls.sorted_fields_of_class(include_primary_key=True):
+            if field__.in_database:
+                command += field__.in_database.get_creation_command() + ','
 
         # extra condition
         if cls.extra_table_condition is not None:
@@ -165,9 +181,9 @@ class Thing(field_.Field):
             command = command[:-1]
 
         # foreign keys (owner, other owner, ...)
-        for field in cls.sorted_foreign_key_fields_of_class():
-            command += ',FOREIGN KEY({}) REFERENCES {}'.format(field.in_database.title,
-                                                               field.foreign_prototype.get_main_type().table_name)
+        for field__ in cls.sorted_foreign_key_fields_of_class():
+            command += ',FOREIGN KEY({}) REFERENCES {}'.format(field__.in_database.title,
+                                                               field__.foreign_prototype.get_main_type().table_name)
 
         command += ')'
 
@@ -185,6 +201,12 @@ class Thing(field_.Field):
     @classmethod
     def fetch_by_foreign_thing(cls: 'typing.Type[Thing]', foreign_thing: 'Thing',
                                check_all_foreign_keys: bool = False) -> '[Thing]':
+        """
+
+        :param foreign_thing:
+        :param check_all_foreign_keys:
+        :return:
+        """
         # NOTE: when check_all_foreign_keys is false, checks only the first foreign key matching foreign thing
 
         foreign_keys = []

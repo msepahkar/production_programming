@@ -30,7 +30,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
     sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
     no_sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
 
-    # when the sub editor is totaly removed or when it is revived this signal will be emitted
+    # when the sub editor is totally removed or when it is revived this signal will be emitted
     no_revival_possible_signal = QtCore.pyqtSignal()
 
     # ===========================================================================
@@ -61,14 +61,17 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
                     for dependent_editor in dependent_editors:
                         dependency_parameters = Editor__Dependency.dependency_parameters(dependent_editor.owner, dependent_editor.class_version_of_the_field)
                         # this item has been used somewhere, we cannot mark it for removal
-                        if dependent_editor.representing_object[dependency_parameters.field_for_retrieving_dependent_on_list_item] == self.representing_object:
+                        if dependent_editor.representing_object[
+                            dependency_parameters.field_for_retrieving_dependent_on_list_item] == \
+                                self.representing_object:
                             found_editors.append(dependent_editor)
                     if found_editors:
                         dialog = widget_basics.Dialog()
                         sub_dialogs = []
                         dialog.add_widget(QtWidgets.QLabel('dependent editors:'))
                         for editor in found_editors:
-                            sub_dialogs.append(EditorDialog(Editor__Basics.proper_editor(editor.owner, editor.field), automatic_unregister=True))
+                            sub_dialogs.append(EditorDialog(Editor__Basics.proper_editor(editor.owner, editor.field),
+                                                            automatic_unregister=True))
                             dialog.add_widget(widget_basics.Button(editor.owner.name, sub_dialogs[-1].exec, dialog))
                         dialog.exec()
                         return False
@@ -265,7 +268,9 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
                         responsible_editor = foreign_owner.get_responsible_editor(list_field)
 
                 # should be found automatically
-                # TODO: only the first list field of the owner will be detected (each thing can have only one list field containing certain thing type), it seems that things should be aware of their container list field
+                # TODO: only the first list field of the owner will be detected (each thing can have only one
+                #  list field containing certain thing type), it seems that things should be aware of their
+                #  container list field
                 elif isinstance(field, general_fields.ForeignKeyField):
                     for list_field in type(foreign_owner).sorted_list_fields_of_class():
                         if isinstance(owner, list_field.in_class.initial_value):
@@ -317,12 +322,15 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
             # names already in the editor are forbidden (they may be absent in the all array because they are new
             forbidden_names = [sub_editor.owner.name for sub_editor in self.sub_editors.values()]
 
-            # orden numbers already in the editor are forbidden (they may be absent in the all array because they are new
-            max_forbidden_number = max(sub_editor.owner.order_number for sub_editor in self.sub_editors.values()) if self.sub_editors else 0
+            # orden numbers already in the editor are forbidden (they may be absent in the all array because they
+            # are new
+            max_forbidden_number = max(sub_editor.owner.order_number
+                                       for sub_editor in self.sub_editors.values()) if self.sub_editors else 0
 
             # list field of a thing
             if self.field:
-                new_thing = self.field.in_class.initial_value(self.owner, max_forbidden_number=max_forbidden_number, forbidden_names=forbidden_names)
+                new_thing = self.field.in_class.initial_value(self.owner, max_forbidden_number=max_forbidden_number,
+                                                              forbidden_names=forbidden_names)
 
             # an independent list
             else:
@@ -330,7 +338,8 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
             # assign the dependent field for dependent editors
             if dependency_parameters:
-                new_thing[dependency_parameters.field_for_retrieving_dependent_on_list_item] = allowed_dependent_on_list_items[0]
+                new_thing[dependency_parameters.field_for_retrieving_dependent_on_list_item] = \
+                    allowed_dependent_on_list_items[0]
                 
         return new_thing
 

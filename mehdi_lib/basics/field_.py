@@ -260,6 +260,14 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
                  in_class: typing.Optional[InClass],
                  in_database: typing.Optional[InDatabase],
                  in_editor: typing.Optional[InEditor]):
+        """
+
+        :param order: the order of this field in the UI
+        :param ui_titles: ui titles in different languages
+        :param in_class:
+        :param in_database:
+        :param in_editor:
+        """
         self._base_params = []
 
         basic_types.UiTitlesContainer.__init__(self)

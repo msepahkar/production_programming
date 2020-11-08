@@ -2,9 +2,8 @@
 
 import datetime
 import typing
-from mehdi_lib.generals import general_editors_prototypes
+from mehdi_lib.generals import general_editors_prototypes, general_ui_titles, general_initial_values
 from mehdi_lib.basics import basic_types, field_, database_tools, prototype_
-from mehdi_lib.initial_values__and__ui_titles import general_ui_titles, general_initial_values
 from mehdi_lib.tools import tools
 
 from PyQt5 import QtCore
@@ -12,6 +11,9 @@ from PyQt5 import QtCore
 
 # ===========================================================================
 class BoolField(field_.Field):
+    """
+    For setting Ture/False values
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: bool):
         in_class = field_.InClass(in_class_name, bool, initial_value)
@@ -37,8 +39,15 @@ class BoolField(field_.Field):
 
 # ===========================================================================
 class CommentField(field_.Field):
+    """
+    For adding comment to a thing.
+    """
     # ===========================================================================
     def __init__(self):
+        """
+        Order parameter is considered as 0 always. Because usually Comment field is the last field in the UI and
+        it is not easy to know the number of the last field beforehand!
+        """
         in_class = field_.InClass('comment', str, general_initial_values.dummy)  # type: InClass
 
         in_database = field_.InDatabase('comment',
@@ -52,6 +61,9 @@ class CommentField(field_.Field):
 
 # ===========================================================================
 class DatetimeField(field_.Field):
+    """
+    For editing datetime
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: datetime.datetime):
         in_class = field_.InClass(in_class_name, datetime.datetime, initial_value)
@@ -77,6 +89,9 @@ class DatetimeField(field_.Field):
 
 # ===========================================================================
 class DateField(field_.Field):
+    """
+    For editing Date
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: datetime.date):
         in_class = field_.InClass(in_class_name, datetime.date, initial_value)

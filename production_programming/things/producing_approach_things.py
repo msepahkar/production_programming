@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mehdi_lib.basics import field_, constants_, thing_
-from mehdi_lib.generals import general_fields, general_editors, general_things
-from mehdi_lib.initial_values__and__ui_titles import general_ui_titles
+from mehdi_lib.generals import general_fields, general_editors, general_ui_titles
 from things import specialty_things, all_things_prototypes, part_things
 from morphing_things_types import machine_types, ui_titles, initial_values
 

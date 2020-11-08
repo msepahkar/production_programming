@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from mehdi_lib.basics import thing_, constants_, basic_types
-from mehdi_lib.generals import general_fields, general_enums
-from mehdi_lib.initial_values__and__ui_titles import general_ui_titles, general_initial_values
+from mehdi_lib.basics import thing_, constants_
+from mehdi_lib.generals import general_fields, general_enums, general_ui_titles, general_initial_values
 
 
 # ===========================================================================
