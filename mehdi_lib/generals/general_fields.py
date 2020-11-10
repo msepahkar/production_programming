@@ -12,7 +12,7 @@ from PyQt5 import QtCore
 # ===========================================================================
 class BoolField(field_.Field):
     """
-    For setting Ture/False values
+    For True/False values
     """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: bool):
@@ -90,7 +90,7 @@ class DatetimeField(field_.Field):
 # ===========================================================================
 class DateField(field_.Field):
     """
-    For editing Date
+    For editing date only (without time)
     """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: datetime.date):
@@ -117,6 +117,9 @@ class DateField(field_.Field):
 
 # ===========================================================================
 class DurationField(field_.Field):
+    """
+    For editing durations (timedelta in python words!)
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: datetime.timedelta):
         in_class = field_.InClass(in_class_name, datetime.timedelta, initial_value)
@@ -142,6 +145,12 @@ class DurationField(field_.Field):
 
 # ===========================================================================
 class EnumField(field_.Field):
+    """
+    For editing enums. Enum itself is passed as the initial value when class is created and then the field will allow
+    the user to set the value of the enum.
+    """
+
+    # will be emitted whenever the enum of the class is changed (not the enum value but the enum itself!)
     enum_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')
 
     # ===========================================================================
@@ -176,6 +185,11 @@ class EnumField(field_.Field):
 
     # ===========================================================================
     def set_enum(self, new_enum):
+        """
+        For changing current enum of the class
+        :param new_enum:
+        :return:
+        """
         if self.in_class.type != new_enum:
             self.in_class.set_type(new_enum)
             self.in_editor.editor_parameters_list = [new_enum]
@@ -184,6 +198,9 @@ class EnumField(field_.Field):
 
 # ===========================================================================
 class FileNameField(field_.Field):
+    """
+    For editing file names.
+    """
     # ===========================================================================
     def __init__(self, initial_value: str):
         in_class = field_.InClass('file_name', str, initial_value)  # type: InClass
@@ -204,6 +221,9 @@ class FileNameField(field_.Field):
 
 # ===========================================================================
 class FilePathField(field_.Field):
+    """
+    For editing file paths
+    """
     # ===========================================================================
     def __init__(self, initial_value: str):
         in_class = field_.InClass('file_path', str, initial_value)  # type: InClass
@@ -224,9 +244,22 @@ class FilePathField(field_.Field):
 
 # ===========================================================================
 class FloatField(field_.Field):
+    """
+    For editing float numbers
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, bottom: float, top: float, decimals: int,
                  initial_value: float):
+        """
+
+        :param order:
+        :param ui_titles:
+        :param in_class_name:
+        :param bottom: minimum allowed number
+        :param top: maximum allowed number
+        :param decimals: number of digits after the floating point
+        :param initial_value:
+        """
         in_class = field_.InClass(in_class_name, float, initial_value)
 
         in_database = field_.InDatabase(in_class_name,
@@ -257,6 +290,9 @@ class FloatField(field_.Field):
 
 # ===========================================================================
 class ForeignKeyField(field_.Field):
+    """
+    For storing foreign keys whenever our 'Thing' is related to another 'Thing'
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str,
                  referencing_prototype: typing.Type['ThingPrototype'],
