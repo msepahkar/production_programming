@@ -33,6 +33,16 @@ class CostPerTimeInterval(Cost):
 
 
 # ===========================================================================
+class DummyThing(thing_.Thing):
+    pass
+
+
+# ===========================================================================
+class Dummy2(thing_.Thing):
+    pass
+
+
+# ===========================================================================
 class ExpertLevel(thing_.Thing):
 
     table_name = None

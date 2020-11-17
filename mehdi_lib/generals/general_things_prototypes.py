@@ -9,6 +9,16 @@ class AttachmentPrototype(prototype_.GeneralThingPrototype):
 
 
 # ===========================================================================
+class DummyPrototype(prototype_.GeneralThingPrototype):
+    pass
+
+
+# ===========================================================================
+class DummyPrototype2(prototype_.GeneralThingPrototype):
+    pass
+
+
+# ===========================================================================
 class MorphingThingCostPrototype(prototype_.GeneralThingPrototype):
     pass
 

@@ -328,6 +328,9 @@ class ForeignKeyField(field_.Field):
 
 # ===========================================================================
 class ForeignThingSelectorField(ForeignKeyField):
+    """
+    something like a combo box for selecting foreign thing related to this thing
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str,
                  referencing_prototype: typing.Type['ThingPrototype'],
@@ -351,6 +354,9 @@ class ForeignThingSelectorField(ForeignKeyField):
 
 # ===========================================================================
 class IntField(field_.Field):
+    """
+    general int field
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, bottom: int, top: int, initial_value: int):
         in_class = field_.InClass(in_class_name, int, initial_value)
@@ -381,6 +387,9 @@ class IntField(field_.Field):
 
 # ===========================================================================
 class ListField(field_.Field):
+    """
+    for storing list of things
+    """
     # ===========================================================================
     def __init__(self, order: int, ui_titles: dict, in_class_name: str, element_type: 'typing.Type[Thing]', in_editor=None):
         if in_editor is None:
@@ -404,6 +413,9 @@ class ListField(field_.Field):
 
 # ===========================================================================
 class NameField(field_.Field):
+    """
+    general name field
+    """
     # ===========================================================================
     def __init__(self, initial_value: str):
         in_class = field_.InClass('name', str, initial_value)  # type: InClass
@@ -424,6 +436,9 @@ class NameField(field_.Field):
 
 # ===========================================================================
 class OrderNumberField(field_.Field):
+    """
+    general order number field
+    """
     # ===========================================================================
     def __init__(self):
         in_class = field_.InClass('order_number', int, 0)
@@ -438,6 +453,9 @@ class OrderNumberField(field_.Field):
 
 # ===========================================================================
 class PercentField(IntField):
+    """
+    general percent field
+    """
     # ===========================================================================
     def __init__(self, order, ui_titles, in_class_name, initial_value):
         super().__init__(order, ui_titles, in_class_name, 0, 100, initial_value)
@@ -454,6 +472,9 @@ class PercentField(IntField):
 
 # ===========================================================================
 class PrimaryKeyField(field_.Field):
+    """
+    general primary key field
+    """
     # ===========================================================================
     def __init__(self):
         in_class = field_.InClass('id', int, None)
