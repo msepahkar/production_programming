@@ -12,13 +12,25 @@ from PyQt5 import QtCore
 
 
 # ===========================================================================
-class OrderedDict(QtCore.QObject):
+class IndexAddedDict(QtCore.QObject):
+    """
+    A new dict which internally has three lists:
+    1) keys
+    2) values
+    3) indexes
+    All three lists are correspondent. for example element number three in 'keys' array has its value in the third
+    position in 'values' array and th insertion index specified by user at the time of insertion in 'indexes' array.
+    User can set any desired insertion index when inserting element. Insertion indexes will be inserted in 'indexes'
+    array ordered from smallest to largest. If the specified index is already available the new index will be inserted
+    right next to it.
+    """
 
     # ===========================================================================
     def __init__(self):
         super().__init__()
         self._ordered_keys = []
         self._ordered_values = []
+        self._ordered_indexes = []
 
     # ===========================================================================
     def keys(self):
@@ -29,44 +41,93 @@ class OrderedDict(QtCore.QObject):
         return self._ordered_values
 
     # ===========================================================================
-    def insert(self, index, key, value):
-        self._ordered_keys.insert(index, key)
-        self._ordered_values.insert(index, value)
+    def insert(self, insertion_index, key, value):
+        """
+        key will be inserted to its own array in the proper position
+        value will be inserted to its own array in the proper position
+        insertion index will be inserted to its own array in the proper position
+        :param insertion_index:
+        :param key:
+        :param value:
+        :return:
+        """
+
+        # find the first place proper for inserting the new insertion index
+        actual_insertion_index = 0
+        if len(self._ordered_indexes) > 0:
+            while actual_insertion_index < len(self._ordered_indexes) and \
+                    self._ordered_indexes[actual_insertion_index] <= insertion_index:
+                actual_insertion_index += 1
+
+        self._ordered_keys.insert(actual_insertion_index, key)
+        self._ordered_values.insert(actual_insertion_index, value)
+        self._ordered_indexes.insert(actual_insertion_index, insertion_index)
 
     # ===========================================================================
-    def reorder(self, key, new_index):
-        current_index = self._ordered_keys.index(key)
-        if current_index != new_index:
-            value = self._ordered_values[current_index]
-            del self._ordered_keys[current_index]
-            del self._ordered_values[current_index]
-            self._ordered_keys.insert(new_index, key)
-            self._ordered_values.insert(new_index, value)
+    def reorder(self, key, new_insertion_index):
+        """
+        changes the index of a key in the key array and index of its correspondent value in the value array, and at the
+        end the index of its correspondent index in the index array.
+        :param key:
+        :param new_insertion_index:
+        :return:
+        """
+        current_actual_index = self._ordered_keys.index(key)
+        current_insertion_index = self._ordered_indexes[current_actual_index]
+
+        # if the new index is different, remove everything and insert them again
+        if current_insertion_index != new_insertion_index:
+            value = self._ordered_values[current_actual_index]
+            del self._ordered_keys[current_actual_index]
+            del self._ordered_values[current_actual_index]
+            del self._ordered_indexes[current_actual_index]
+            self.insert(new_insertion_index, key, value)
 
     # ===========================================================================
     def clear(self):
+        """
+        removes all keys and values
+        :return:
+        """
         self._ordered_keys.clear()
         self._ordered_values.clear()
+        self._ordered_indexes.clear()
 
     # ===========================================================================
     def __len__(self):
         return len(self._ordered_keys)
 
     # ===========================================================================
-    def __contains__(self, item):
-        return item in self._ordered_keys
+    def __contains__(self, key):
+        """
+        checks if the key is available
+        :param key:
+        :return:
+        """
+        return key in self._ordered_keys
 
     # ===========================================================================
-    def __getitem__(self, item):
-        index = self._ordered_keys.index(item)
+    def __getitem__(self, key):
+        """
+        returns the value related to key
+        :param key:
+        :return:
+        """
+        index = self._ordered_keys.index(key)
         return self._ordered_values[index]
 
     # ===========================================================================
     def __delitem__(self, key):
+        """
+        removes key from the key array and value from the value array
+        :param key:
+        :return:
+        """
         index = self._ordered_keys.index(key)
 
         del self._ordered_keys[index]
         del self._ordered_values[index]
+        del self._ordered_indexes[index]
 
 
 # ===========================================================================
@@ -93,8 +154,16 @@ class Tools:
 
     # ===========================================================================
     @staticmethod
-    # returns the first available name for a file by adding counter when the file exists
     def find_available_name(path: str, base_name: str, extension: str, greatest_number: bool = False) -> str:
+        """
+            returns the first available name for a file by adding counter when the file exists
+
+        :param path:
+        :param base_name:
+        :param extension:
+        :param greatest_number:
+        :return:
+        """
         # prepare base full name
         base_full_name = os.path.join(path, base_name)
         # check for dot
@@ -110,13 +179,13 @@ class Tools:
         # should it go to the end?
         if greatest_number:
             # find all existing files
-            existing_names = glob.glob(base_full_name + '*')
+            existing_names = os.listdir(path)
             # prepare for extracting existing numbers
             existing_numbers = []
             # iterate through existing names
             for name in existing_names:
                 # please remove the name and the extension, only the number is needed
-                name = name.replace(base_full_name, '').replace(extension, '')
+                name = name.replace(base_name + '_', '').replace(extension, '')
                 # pure number is left?
                 if name.isdigit():
                     # ok then, we need it
@@ -129,23 +198,44 @@ class Tools:
         else:
             # iterate from the beginning
             while os.path.exists(base_full_name + str(counter) + extension):
-                # oh! this is also available, go further please
+                # oh! this is also occupied, go further please
                 counter += 1
         # Ah! ended at last. return the name
         return base_full_name + str(counter) + extension
 
     # ===========================================================================
     @staticmethod
-    # converts a string of the form (hh:mm:ss) to a timedelta duration
     def parse_time_delta(s: str) -> datetime.timedelta:
+        """
+            converts a string of the form (dd:hh:mm:ss) to a timedelta duration
 
-        t = datetime.timedelta()
+        :param s:
+        :return:
+        """
+
+        seconds = 0
+        minutes = 0
+        hours = 0
+        days = 0
 
         try:
-            hours, minutes, seconds, *extra = s.split(':')
-            t += datetime.timedelta(hours=int(hours))
-            t += datetime.timedelta(minutes=int(minutes))
-            t += datetime.timedelta(seconds=int(seconds))
+            elements = s.split(':')
+            if len(elements) == 1:
+                seconds = int(elements[0])
+            if len(elements) == 2:
+                minutes = int(elements[0])
+                seconds = int(elements[1])
+            if len(elements) == 3:
+                hours = int(elements[0])
+                minutes = int(elements[1])
+                seconds = int(elements[2])
+            if len(elements) == 4:
+                days = int(elements[0])
+                hours = int(elements[1])
+                minutes = int(elements[2])
+                seconds = int(elements[3])
+
+            t = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
 
         except ValueError:
             Tools.warning('cannot parse the time delta:', s)
@@ -154,57 +244,32 @@ class Tools:
 
     # ===========================================================================
     @staticmethod
-    # returns values of all static fields (non functions) of a class
-    def class_field_values(class_):
-        return [getattr(class_, attr) for attr in dir(class_) if
-                not callable(getattr(class_, attr)) and not attr.startswith("__")]
-
-    # ===========================================================================
-    @staticmethod
-    # extracts the value of all fields in Titles call of obj and assigns it to the obj[title] after converting its type
-    def extract_fields_from_query(query, obj):
-        for title in Tools.class_field_values(obj.Titles):
-            val = query.value(query.record().indexOf(obj.database_titles[title]))
-            if isinstance(obj.field_types[title], enum.EnumMeta):
-                obj[title] = obj.field_types[title](val)
-            elif obj.field_types[title] == datetime.datetime:
-                obj[title] = parser.parse(val)
-            elif obj.field_types[title] == datetime.date:
-                obj[title] = parser.parse(val).date()
-            else:
-                obj[title] = val
-
-    # ===========================================================================
-    @staticmethod
-    def enum_members(enum_):
-        names = []
-        for item_name, item_value in enum_.__members__.items():
-            names.append(item_name)
-        return names
-
-    # ===========================================================================
-    @staticmethod
-    def find_bases_of_class(cls, bases=None):
-        if bases is None:
-            bases = []
-        if cls.__bases__:
-            for c in cls.__bases__:
-                if c not in bases:
-                    bases.append(c)
-                    bases.append(Tools.find_bases_of_class(c, bases))
-        return bases
-
-    # ===========================================================================
-    @staticmethod
     def remove_element_from_list_if_exists(list_, element):
+        """
+        removes the element from the list_ if it exists in the list.
+        it is supposed that the element is not repeated in the list.
+        :param list_:
+        :param element:
+        :return:
+        """
         if element in list_:
             index = list_.index(element)
             del list_[index]
 
     # ===========================================================================
     @staticmethod
-    def force_order_in_list_elements(list_, *elements_in_required_order, first_element=None, one_before_last_element=None, last_element=None):
-        # TODO: does not check existence of elements in the list_
+    def force_order_in_list_elements(list_, *elements_in_required_order, first_element=None,
+                                     one_before_last_element=None, last_element=None):
+        """
+        Changes the order of specified elements in the list
+        :param list_: the list which should be reordered
+        :param elements_in_required_order: the order of these elements will be changed if they are in the list but not
+        in the specified order
+        :param first_element: this element will become the first element of the list (if it is already in the list)
+        :param one_before_last_element: this element will be the one before last element (if already in the list)
+        :param last_element: this element will be the last element of the list (if already in the list)
+        :return:
+        """
         for i in range(len(elements_in_required_order)):
             if i < len(elements_in_required_order) - 1:
                 a = elements_in_required_order[i]
@@ -217,19 +282,19 @@ class Tools:
                             if index_a > index_b:
                                 list_[index_a], list_[index_b] = list_[index_b], list_[index_a]
 
-        if first_element is not None:
+        if first_element is not None and first_element in list_:
             index = list_.index(first_element)
             if index != 0:
                 del list_[index]
                 list_.insert(0, first_element)
 
-        if last_element is not None:
+        if last_element is not None and last_element in list_:
             index = list_.index(last_element)
             if index != len(list_) - 1:
                 del list_[index]
                 list_.append(last_element)
 
-        if one_before_last_element is not None and len(list_) > 1:
+        if one_before_last_element is not None and len(list_) > 1 and one_before_last_element in list_:
             index = list_.index(one_before_last_element)
             if index != len(list_) - 2:
                 del list_[index]
@@ -237,34 +302,27 @@ class Tools:
 
     # ===========================================================================
     @staticmethod
-    def get_class(class_name):
-
-        # first modules
-        modules = []
-        for module in sys.modules:
-            modules.append(module)
-
-        # now the class
-        for module in modules:
-            imported_module = importlib.import_module(module)
-            if class_name in dir(sys.modules[module]):
-                return getattr(imported_module, class_name)
-
+    def parent_type(cls):
+        """
+        Finds the immediate paret type of a class
+        If the class has no parent the return type will be object
+        If object is sent as the parameter it will return None
+        :param cls:
+        :return:
+        """
+        parents = cls.mro()
+        if len(parents) > 1:
+            return cls.mro()[1]
         return None
 
     # ===========================================================================
     @staticmethod
-    def get_current_module(module_name):
-        return sys.modules[module_name]
-
-    # ===========================================================================
-    @staticmethod
-    def parent_type(cls):
-        return cls.mro()[1]
-
-    # ===========================================================================
-    @staticmethod
     def add_missing_starting_and_ending_double_quotes(s):
+        """
+        Double quotes will be added to the beginning and end of the string (if not present).
+        :param s:
+        :return:
+        """
         if type(s) is not str:
             return s
         if not s.startswith('"'): s = '"' + s
@@ -274,6 +332,11 @@ class Tools:
     # ===========================================================================
     @staticmethod
     def remove_starting_and_ending_double_quotes(s):
+        """
+        Double quotes at the beginning and the end of string will be removed.
+        :param s:
+        :return:
+        """
         if type(s) is not str:
             return s
         if s.startswith('"'): s = s[1:]

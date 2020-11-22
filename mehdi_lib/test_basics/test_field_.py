@@ -4,7 +4,7 @@ from mehdi_lib.generals import general_editors
 from mehdi_lib.tools import tools
 
 
-pytest_mark = pytest.mark.field_
+pytestmark = pytest.mark.basics
 
 
 def test_InClass():

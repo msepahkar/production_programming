@@ -4,7 +4,7 @@ import datetime
 from mehdi_lib.tools import tools
 
 
-pytest_mark = pytest.mark.database_tools
+pytestmark = pytest.mark.basics
 
 testing_date = datetime.date(1974, 9, 22)
 testing_date_str = testing_date.strftime(database_tools.Types.date_strftime_format_string)

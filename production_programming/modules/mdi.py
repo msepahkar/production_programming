@@ -86,7 +86,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def revive_item(self):
         editor = self.mdi.activeSubWindow().editor
         if editor:
-            editor.revive_the_last_sub_editor_marked_for_removal()
+            editor.revive_the_latest_sub_editor_marked_for_removal()
 
     # ===========================================================================
     def create_actions(self):

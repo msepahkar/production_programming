@@ -73,6 +73,12 @@ name = {
 }
 
 # ===========================================================================
+version_number = {
+    basic_types.Language.AvailableLanguage.en: 'version number',
+    basic_types.Language.AvailableLanguage.fa: 'نسخه',
+}
+
+# ===========================================================================
 not_used = {
     basic_types.Language.AvailableLanguage.en: 'not used',
     basic_types.Language.AvailableLanguage.fa: 'بلا استفاده',

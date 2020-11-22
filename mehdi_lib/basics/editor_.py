@@ -8,9 +8,19 @@ from mehdi_lib.basics import widget_basics, basic_types, thing_
 from mehdi_lib.tools import tools
 from mehdi_lib.generals import widgets_for_editors, general_fields, general_editors_prototypes
 
+"""
+For improving readability, Editor class is divided into several classes each of which containing several methods 
+required for some part of Editor jobs. Each class will be derived from the previous class until the final Editor class
+is created as could be seen from the following code.
+"""
 
 # ===========================================================================
 class EditorTypes(enum.Enum):
+    """
+    There are three types of editors. The simplest and most general form is editor for field. It edits only one single
+    field. The second general form is the editor for "Thing" (the heart of this infrastructure). The third and the last
+    type is editor for editing list of things. This last one will add or remove "Things" to or from the list.
+    """
     field_of_thing = 1
     thing = 2
     list_of_things = 3
@@ -18,6 +28,14 @@ class EditorTypes(enum.Enum):
 
 # ===========================================================================
 class EditorValue:
+    """
+    The final values of fields are different from their value in editors until the user presses the "OK" button in the
+    UI. After confirmation by the user, the editor will update the value of the field in memory.
+    For field editors and thing editors there is no problem keeping track of changes in editor while still keeping the
+    original value. But for list of things there are difficulties when items are added to the list of removed from it.
+    So instead of really removing items from the list they will be marked for removal until the user presses "OK".
+    Same for added items to the list they will be stored in a list called new_items until the user presses "OK".
+    """
     # ===========================================================================
     def __init__(self, value, new_items=None, items_marked_for_removal=None):
         self.value = value
@@ -27,6 +45,15 @@ class EditorValue:
 
 # ===========================================================================
 class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
+    """
+    This class is specially designed for list of things (although its methods will be used in thing editors too but even
+    those usages are for things which are in lists of things). Adding items to the list and removing items from it had
+    difficulties because the memory version of the list should be untouched until the user presses "OK" button in the
+    UI. All methods for keeping track of removed items in the UI and new items in the UI are included in this class.
+    """
+
+    # these two signals make the UI able to enable or disable the revive button (the button which revives the removed
+    # item).
     sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
     no_sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
 
@@ -37,10 +64,14 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
+        # for "Thing" which is marked for removal
         self._is_marked_for_removal = False
+        # for "Thing" which is created in the editor for list of things
         self._is_new = False
+        # list of sub editors which are marked for removal
         self.sub_editors_marked_for_removal = []
-        self.sub_editors = tools.OrderedDict()
+        # thing editor will have sub editors for editing its fields
+        self.sub_editors = tools.IndexAddedDict()
         self.keys_for_immediate_sub_editors_marked_for_removal_by_me = []
         self.keys_for_immediate_sub_editors_created_by_me = []
 
@@ -233,7 +264,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
             self.no_sub_editor_marked_for_removal_exists_signal.emit()
 
     # ===========================================================================
-    def revive_the_last_sub_editor_marked_for_removal(self):
+    def revive_the_latest_sub_editor_marked_for_removal(self):
 
         # any sub editor available for revival?
         if len(self.sub_editors_marked_for_removal) > 0:
@@ -823,7 +854,7 @@ class Editor(Editor__Dependency):
 
         super().__init__(owner=owner, field=field, parent=parent_editor)
 
-        self.last_values_made_by_non_responsible_editors = tools.OrderedDict()
+        self.last_values_made_by_non_responsible_editors = tools.IndexAddedDict()
 
         self.setting_value = False
 
@@ -1321,40 +1352,92 @@ class Editor(Editor__Dependency):
 
 # ===========================================================================
 class EditorDialog(widget_basics.DialogWithOkCancel):
+    """
+    Creates a dialog for the specified editor. The title of the window will be the name of the owner of the specified
+    editor. If the specified editor has parent, the name of the parent will be added to the beginning of the title.
+    If the parent of the specified editor also has parent, the name of the great parent will be added to the beginning
+    of the title too. And so on ... .
+    When the specified editor is actually a list of things editor, four buttons are needed which will be shown at the
+    top of the dialog:
+
+    edit button: If a thing is the list is selected, this button will be enabled to let the user press it. A new dialog
+        will be shown for editing the selected item.
+    new button: When this button is pressed, a new thing will be added to the list. It should be noted however that if
+        an element is selected in the dialog, and that element is list of things itself, a new thing will be added to
+        that list of things instead of the main list of things for which this dialog has been shown. (a bit ambiguous
+        maybe!)
+    del button: For removing the selected item from the list.
+    revive button: For reviving the latest removed item.
+
+    It may be useful to remind that sub-editors of list of things editors are thing editors and sub-editors of thing
+     editors are field editors.
+    """
     # ===========================================================================
     def __init__(self, editor: Editor, automatic_unregister, parent=None):
+        """
+
+        :param editor: The editor for which dialog will be created
+        :param automatic_unregister: Should the editor be automatically unregistered when the dialog is closed?
+        :param parent: Parent of the dialog
+        """
         super().__init__(parent=parent)
 
         self.editor = editor
         self.automatic_unregister = automatic_unregister
+
+        # certainly unregister will be done when the dialog will be closed (if automatic_unregister is enabled)
         self.unregister_done = False
 
+        # editors for 'things' and 'fields' do not need these buttons
+        # also some list of things editors may not need these buttons
+        # that's why show_button is set to False by default and should be enabled for list of things editors which want
+        #  these buttons to be shown
         if self.editor.show_buttons:
 
+            # edit button should launch edit method of the editor when clicked. this method will automatically find the
+            #  selected sub-editor and will launch the proper dialog for editing the selected 'thing'
             self.edit_button = widget_basics.Button('edit', self.editor.edit)
+
+            # edit button should be disabled by default and enabled only when some 'thing' in the list is selected
             self.edit_button.setEnabled(False)
+
+            # enable edit button whenever a sub editor is selected
             self.editor.sub_editor_selected_signal.connect(lambda: self.edit_button.setEnabled(True))
+
+            # disable edit button when no sub editor is selected
             self.editor.no_sub_editor_selected_signal.connect(lambda: self.edit_button.setEnabled(False))
 
             new_button = widget_basics.Button('new', lambda: self.editor.append_new_item(is_top_editor=True))
-            del_button = widget_basics.Button('del', lambda checked: self.editor.mark_selected_sub_editor_for_removal(is_top_editor=True))
+            del_button = widget_basics.Button('del', lambda: self.editor.mark_selected_sub_editor_for_removal(is_top_editor=True))
 
-            self.revive_button = widget_basics.Button('revive', self.editor.revive_the_last_sub_editor_marked_for_removal)
+            self.revive_button = widget_basics.Button('revive', self.editor.revive_the_latest_sub_editor_marked_for_removal)
+
+            # revive button is disabled by difault and will be enabled only if some 'thing' is deleted
             self.revive_button.setEnabled(False)
+
+            # revive button should be disable when no removed 'thing' is available for reviving
             self.editor.no_sub_editor_marked_for_removal_exists_signal.connect(lambda: self.revive_button.setEnabled(False))
+            # revive button should be enabled when some removed 'thing' is available for reviving
             self.editor.sub_editor_marked_for_removal_exists_signal.connect(lambda: self.revive_button.setEnabled(True))
 
+            # these four buttongs should be added to the header layout of the dialog
             self.header_layout.add_widgets(
                 self.edit_button, new_button, widget_basics.Dialog.stretch, del_button, self.revive_button)
 
+        # now time to add the main widget of the dialog which is the editor widget
         self.add_widget(self.editor.widget)
+
+        # time to create the name which should be displayed as the title of the dialog
+        # first name of the editor owner
         name = self.editor.owner.name
         editor = self.editor
+        # then name of all parents of the editor
         while editor.parent_editor:
             editor = editor.parent_editor
             if hasattr(editor.owner, 'name'):
                 name = '{}-{}'.format(editor.owner.name, name)
 
+        # if we are working on a field editor add the field name too
         if self.editor.field:
             self.setWindowTitle('{}: {}'.format(name, self.editor.field.get_instance_ui_title(basic_types.Language.get_active_language())))
         else:
@@ -1388,5 +1471,4 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
     def __del__(self):
         if self.automatic_unregister and not self.unregister_done:
             self.editor.unregister()
-
 

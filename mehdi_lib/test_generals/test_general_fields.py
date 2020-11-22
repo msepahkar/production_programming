@@ -5,7 +5,7 @@ from mehdi_lib.tools import tools
 import datetime
 import pytest
 
-pytest_mark = pytest.mark.general_fields
+pytestmark = pytest.mark.generals
 
 
 # ===========================================================================

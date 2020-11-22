@@ -20,8 +20,9 @@ class Prototype:
         if cls.module_name is not None:
             return getattr(importlib.import_module(cls.module_name), name_of_main_type)
 
-        for module in sys.modules:
-            if name_of_main_type in dir(sys.modules[module]):
+        modules = sys.modules.copy()
+        for module in modules:
+            if name_of_main_type in dir(modules[module]):
                 module_of_main_type = importlib.import_module(module)
                 return getattr(module_of_main_type, name_of_main_type)
 
