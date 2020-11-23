@@ -66,10 +66,10 @@ class TestEditorDialog:
         thing = SampleThing()
         editor = general_editors.NameEditor(thing, SampleThing.name)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
-        assert dialog.windowTitle() == 'name 1: name'
+        assert dialog.windowTitle() == 'نام 1: نام'
         editor = general_editors.TableOfThingsEditor(thing, SampleThing.sub_things)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
-        assert dialog.windowTitle() == 'name 1: ' + sample_things_ui_titles[basic_types.Language.get_active_language()]
+        assert dialog.windowTitle() == 'نام 1: ' + sample_things_ui_titles[basic_types.Language.get_active_language()]
         widgets = (dialog.header_layout.itemAt(i).widget() for i in range(dialog.header_layout.count()))
         assert dialog.edit_button in widgets
         assert dialog.revive_button in widgets
