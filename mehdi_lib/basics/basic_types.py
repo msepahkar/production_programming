@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import typing
 import enum
-from mehdi_lib.basics import field_
 from mehdi_lib.tools import tools
 
 """
@@ -19,20 +17,21 @@ But parameters could be for example 'chair height', 'chair weight', ...
 
 # ===========================================================================
 class ParameterizedEnumBase:
-    """base class for a new enum type which has adjustable parameters with ui titles"""
+    """
+    base class for a new enum type which has adjustable parameters with ui titles
+    """
 
     # ===========================================================================
     @staticmethod
-    def can_satisfy(satisfying_parameterized_enum: 'ParameterizedEnum', satisfied_parameterized_enum: 'ParameterizedEnum') -> bool:
-        """checks if one enum has at least the abilities of the other enum
+    def can_satisfy(satisfying_parameterized_enum, satisfied_parameterized_enum):
+        """
+        checks if one enum has at least the abilities of the other enum
 
         suppose each enum expresses a tool. this method returns true if the first tool can do the job of the second tool
 
-        :param satisfying_parameterized_enum: 'ParameterizedEnum'
-            the one which should have the minimum capabilities
-        :param satisfied_parameterized_enum: 'ParameterizedEnum'
-            the one which specifies the minimum capabilities
-        :return: bool
+        :param satisfying_parameterized_enum: the one which should have the minimum capabilities
+        :param satisfied_parameterized_enum: the one which specifies the minimum capabilities
+        :return:
         """
 
         # should be implemented in each defined enum
@@ -40,22 +39,22 @@ class ParameterizedEnumBase:
 
     # ===========================================================================
     @staticmethod
-    def get_parameters_titles() -> typing.Dict[field_.Field, typing.Dict['Language.AvailableLanguage', str]]:
-        """gets ui-titles which expressed in different languages.
-
-        it should be noted that these ui titles are for parameters (fields of the enum) not for elements of the enum!
-
-        :return: typing.Dict[field_.Field, typing.Dict['Language.AvailableLanguage', str]]
-            a dict containing one dict for every parameter. each dict specifies ui-title of that parameter for
-            different supported languages
+    def get_parameters_titles():
         """
+        parameters have ui-titles expressed in different languages.
 
-        return {}
+        it should be noted that these ui titles are for parameters not for elements of the enum!
+
+        :return: an array containing one dict for every parameter. each dict specifies ui-title of that parameter for
+        different supported languages
+        """
+        return []
 
 
 # ===========================================================================
 class ContainerForParameterizedEnum(ParameterizedEnumBase):
-    """this class represents something with attributes, each of which is a parameterized enum.
+    """
+    this class represents something with attributes, each of which is a parameterized enum.
 
     Consider the chair example again but this time as a container of parameterized enum:
 
@@ -71,18 +70,15 @@ class ContainerForParameterizedEnum(ParameterizedEnumBase):
     chair type parameters could be 'height', 'weight', ... and chair material parameters could be 'quality of maeterial'
     , 'price of material', ...
     """
-
     pass
 
     # ===========================================================================
     @staticmethod
-    def get_parameterized_enums() -> list:
-        """returns list of enums with parameters contained in this container. we can call them sub types.
-
-        :return: list
-            list of attributes (parameterized enums)
+    def get_parameterized_enums():
         """
-
+        returns list of enums with parameters contained in this container. we can call them sub types.
+        :return: list of attributes (parameterized enums)
+        """
         return []
 
 

@@ -31,8 +31,6 @@ import enum
 
     # ===========================================================================
     # def get_parameters_titles(self):
-        # TODO: seems this method should be static and a dict of dicts should be returned in which parameters are
-        #   the main key
         # if self == MachineType.boring:
         #     return ['boring parameter 1', 'boring parameter 2', 'boring parameter 3']
         # if self == MachineType.drill:

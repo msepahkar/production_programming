@@ -43,8 +43,6 @@ class Cutter(basic_types.ContainerForParameterizedEnum):
 
         # ===========================================================================
         def get_parameters_titles(self):
-            # TODO: seems this method should be static and a dict of dicts should be returned in which parameters are
-            #   the main key
             return [
                 {
                     basic_types.Language.AvailableLanguage.en: 'max width',
@@ -72,9 +70,6 @@ class Cutter(basic_types.ContainerForParameterizedEnum):
 
         # ===========================================================================
         def get_parameters_titles(self):
-            # TODO: seems this method should be static and a dict of dicts should be returned in which parameters are
-            #   the main key
-
             return [
                 {
                     basic_types.Language.AvailableLanguage.en: 'feeding rate',
