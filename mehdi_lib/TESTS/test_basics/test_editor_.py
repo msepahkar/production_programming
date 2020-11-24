@@ -13,6 +13,10 @@ faulthandler.enable()
 
 pytestmark = pytest.mark.basics
 
+"""
+Parameters required for testing EditorDialog
+"""
+
 sample_things_ui_title_en = 'sample things'
 sample_things_ui_title_fa = 'چیزهای نمونه'
 
@@ -39,34 +43,31 @@ class SampleSubThing(thing_.Thing):
 
 # ===========================================================================
 class TestEditorDialog:
-    """
-
-    """
+    """Prepares required methods for testing EditorDialog"""
 
     # ===========================================================================
     @staticmethod
     def test_init(qtbot):
-        # app = qt_api.QApplication.instance()
+        """Checks correct operation of all the things done in __init__ method"""
+
+        # create the application
         assert qt_api.QApplication.instance() is not None
-        # widget = qt_api.QWidget()
-        # qtbot.addWidget(widget)
-        # widget.setWindowTitle("W1")
-        # widget.show()
-        #
-        # assert widget.isVisible()
-        # assert widget.windowTitle() == "W1"
-        #
-        # widget = qt_api.QWidget()
-        # qtbot.addWidget(widget)
-        # pytestqt.qtbot.QtBot.mouseClick(widget.about_box., QtCore.Qt.LeftButton)
-        # qtbot.waitUntil(widget.about_box.isVisible)
-        # assert widget.about_box.text() == 'This is a GUI App'
-        #
-        # app = QtWidgets.QApplication(sys.argv)
+
+        # first check the field editor
         thing = SampleThing()
         editor = general_editors.NameEditor(thing, SampleThing.name)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
-        assert dialog.windowTitle() == 'نام 1: نام'
+
+        # check the name
+        name = editor.owner.name
+        while editor.parent_editor:
+            editor = editor.parent_editor
+            if hasattr(editor.owner, 'name'):
+                name = '{}-{}'.format(editor.owner.name, name)
+        if editor.field:
+            name = '{}: {}'.format(name, editor.field.get_instance_ui_title(basic_types.Language.get_active_language()))
+        assert dialog.windowTitle() == name
+
         editor = general_editors.TableOfThingsEditor(thing, SampleThing.sub_things)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
         assert dialog.windowTitle() == 'نام 1: ' + sample_things_ui_titles[basic_types.Language.get_active_language()]
@@ -75,17 +76,4 @@ class TestEditorDialog:
         assert dialog.revive_button in widgets
         dialog.exec()
 
-    # @staticmethod
-    # def hello(qtbot):
-    #     widget = qt_api.HelloWidget()
-    #     qtbot.addWidget(widget)
-    #
-    #     click in the Greet button and make sure it updates the appropriate label
-        # qtbot.mouseClick(widget.button_greet, QtCore.Qt.LeftButton)
-        #
-        # assert widget.greet_label.text() == "Hello!"
-
-
-
-# TestEditorDialog.test_init()
 
