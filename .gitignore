@@ -1,3 +1,9 @@
 .*
 !.gitignore
+TODO.txt
+*.sqlite
+mehdi_lib/assets
+mehdi_lib/report.html
+*.db
+test.py
 
