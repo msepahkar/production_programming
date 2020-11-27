@@ -340,7 +340,21 @@ class Tools:
         """
         if type(s) is not str:
             return s
-        if s.startswith('"'): s = s[1:]
-        if s.endswith('"'): s = s[:-1]
+        if s.startswith('"'):
+            s = s[1:]
+        if s.endswith('"'):
+            s = s[:-1]
         return s
 
+    # ===========================================================================
+    @staticmethod
+    def inheritors(class_):
+        subclasses = set()
+        work = [class_]
+        while work:
+            parent = work.pop()
+            for child in parent.__subclasses__():
+                if child not in subclasses:
+                    subclasses.add(child)
+                    work.append(child)
+        return subclasses

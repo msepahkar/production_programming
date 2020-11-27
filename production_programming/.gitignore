@@ -11,6 +11,6 @@ db.sqlite
 test3
 *.vpp.bak*
 *.vpp.vbak*
-test.py
+../test.py
 
 

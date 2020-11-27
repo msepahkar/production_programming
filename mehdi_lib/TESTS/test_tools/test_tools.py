@@ -149,3 +149,21 @@ class TestTools:
         assert tools.Tools.remove_starting_and_ending_double_quotes('"hi') == 'hi'
         assert tools.Tools.remove_starting_and_ending_double_quotes('hi"') == 'hi'
 
+    # ===========================================================================
+    @staticmethod
+    def test_inheritors():
+        class B:
+            pass
+        class C1(B):
+            pass
+        class C2(B):
+            pass
+        class D1(C1):
+            pass
+        class D2(C2):
+            pass
+        inheritors = tools.Tools.inheritors(B)
+        assert C1 in inheritors
+        assert C2 in inheritors
+        assert D1 in inheritors
+        assert D2 in inheritors
