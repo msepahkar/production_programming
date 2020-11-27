@@ -20,12 +20,12 @@ sample_things_ui_titles = {
 
 
 # ===========================================================================
-class SampleThingPrototype(prototype_.Prototype):
+class SampleThingPrototype(prototype_.ThingPrototype):
     pass
 
 
 # ===========================================================================
-class SampleSubThingPrototype(prototype_.Prototype):
+class SampleSubThingPrototype(prototype_.ThingPrototype):
     pass
 
 

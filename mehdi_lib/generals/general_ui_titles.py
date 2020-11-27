@@ -28,7 +28,10 @@ currency = {
 }
 
 # ===========================================================================
-dummy = {}
+dummy = {
+    basic_types.Language.AvailableLanguage.en: 'dummy',
+    basic_types.Language.AvailableLanguage.fa: 'پوچ',
+}
 
 # ===========================================================================
 duration = {
