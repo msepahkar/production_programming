@@ -154,12 +154,16 @@ class TestTools:
     def test_inheritors():
         class B:
             pass
+
         class C1(B):
             pass
+
         class C2(B):
             pass
+
         class D1(C1):
             pass
+
         class D2(C2):
             pass
         inheritors = tools.Tools.inheritors(B)
