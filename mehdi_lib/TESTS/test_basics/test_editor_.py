@@ -1,5 +1,5 @@
 from mehdi_lib.generals import general_fields, general_ui_titles, general_editors, general_initial_values, general_enums
-from mehdi_lib.basics import editor_, thing_, constants_, basic_types, prototype_
+from mehdi_lib.basics import editor_, thing_, constants_, basic_types, prototype_, widget_basics
 import pytest
 from pytestqt.qt_compat import qt_api
 
@@ -77,9 +77,15 @@ class TestEditorDialog:
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
         assert dialog.windowTitle() == 'نام 1: ' + sample_things_ui_titles[basic_types.Language.get_active_language()]
 
-        # check edit button and revive button (should be added to dialog)
-        widgets = (dialog.header_layout.itemAt(i).widget() for i in range(dialog.header_layout.count()))
+        # check edit button and revive button (should be present in the dialog)
+        widgets = list(dialog.header_layout.itemAt(i).widget() for i in range(dialog.header_layout.count()))
         assert dialog.edit_button in widgets
         assert dialog.revive_button in widgets
+
+        # check new button and del button (should be present in the dialog)
+        names = list(widgets[i].text() if isinstance(widgets[i], widget_basics.Button) else None for i in range(len(widgets)))
+        assert 'new' in names
+        assert 'del' in names
+
 
 
