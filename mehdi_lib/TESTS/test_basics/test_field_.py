@@ -1,13 +1,14 @@
 import pytest
 from mehdi_lib.basics import field_, database_tools, thing_
 from mehdi_lib.generals import general_editors
-from mehdi_lib.tools import tools
 
 
 pytestmark = pytest.mark.basics
 
 
+# ===========================================================================
 def test_InClass():
+    """Testing the InClass class"""
     in_class_1 = field_.InClass('test', str, 'initial')
     in_class_2 = field_.InClass('test', str, 'initial')
     in_class_3 = field_.InClass('test1', str, 'initial')
@@ -28,7 +29,9 @@ def test_InClass():
     assert in_class_1.matches(in_class_5)
 
 
+# ===========================================================================
 def test_InDatabase():
+    """Testing the InDatabase class"""
     in_database_1 = field_.InDatabase('test', database_tools.Database.types[str], '0', 'unique')
     in_database_2 = field_.InDatabase('test', database_tools.Database.types[str], '0', 'unique')
     in_database_3 = field_.InDatabase('test1', database_tools.Database.types[str], '0', 'unique')
@@ -45,7 +48,9 @@ def test_InDatabase():
     assert in_database_1.get_creation_command() == "test {} unique DEFAULT 0".format(database_tools.Database.types[str])
 
 
+# ===========================================================================
 def test_InEditor():
+    """Testing the InEditor class"""
     parameters_list = [thing_.Thing(), field_.Field(0, [], None, None, None), False, None]
     in_editor_1 = field_.InEditor(general_editors.FloatEditor, parameters_list)
     in_editor_2 = field_.InEditor(general_editors.FloatEditor, parameters_list)

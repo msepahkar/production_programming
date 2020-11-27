@@ -1,14 +1,7 @@
 from mehdi_lib.generals import general_fields, general_ui_titles, general_editors, general_initial_values, general_enums
-from mehdi_lib.basics import database_tools, editor_, thing_, constants_, basic_types, prototype_
-from mehdi_lib.tools import tools
-from PyQt5 import QtWidgets, QtCore
-import sys
+from mehdi_lib.basics import editor_, thing_, constants_, basic_types, prototype_
 import pytest
-import pytestqt
 from pytestqt.qt_compat import qt_api
-# from pytestqt import qtbot
-import faulthandler
-faulthandler.enable()
 
 
 pytestmark = pytest.mark.basics
@@ -26,10 +19,17 @@ sample_things_ui_titles = {
 }
 
 
+# ===========================================================================
+class SampleThingPrototype(prototype_.Prototype):
+    pass
+
+
+# ===========================================================================
 class SampleSubThingPrototype(prototype_.Prototype):
     pass
 
 
+# ===========================================================================
 class SampleThing(thing_.Thing):
     name = general_fields.NameField(initial_value=general_initial_values.name)
     version_number = general_fields.IntField(1, general_ui_titles.version_number, 'version_number', 1, constants_.Constants.MAX_INT, 1)
@@ -37,8 +37,12 @@ class SampleThing(thing_.Thing):
     sub_things = general_fields.ListField(11, sample_things_ui_titles, 'sub_things', SampleSubThingPrototype)
 
 
+# ===========================================================================
 class SampleSubThing(thing_.Thing):
     name = general_fields.NameField(initial_value='sub-thing')
+    sub_thing_parent = general_fields.ForeignKeyField(1, general_ui_titles.dummy, 'sub_thing_parent',
+                                                      SampleSubThingPrototype,
+                                                      SampleThingPrototype)
 
 
 # ===========================================================================

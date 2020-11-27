@@ -59,20 +59,25 @@ class TestTools:
         extension = 'ext'
         f = d / (base_name + '.' + extension)
         assert tools.Tools.find_available_name(str(d), base_name, extension) == str(f)
+
         f.write_text('h')
         f1 = d / (base_name + '_1.' + extension)
         assert tools.Tools.find_available_name(str(d), base_name, extension) == str(f1)
+
         f1.write_text('hi')
         f2 = d / (base_name + '_2.' + extension)
         assert tools.Tools.find_available_name(str(d), base_name, extension) == str(f2)
+
         f2.write_text('hii')
         f1.unlink()
         assert tools.Tools.find_available_name(str(d), base_name, extension) == str(f1)
+
         f1.write_text('hi')
         f1.unlink()
         f3 = d / (base_name + '_3.' + extension)
         assert tools.Tools.find_available_name(str(d), base_name, extension, greatest_number=True) == str(f3)
-        f3.write_text('hiii')
+
+        f3.write_text('hiii')  # for potential later tests which might be added!
 
     # ===========================================================================
     @staticmethod
@@ -143,3 +148,4 @@ class TestTools:
         assert tools.Tools.remove_starting_and_ending_double_quotes('"hi"') == 'hi'
         assert tools.Tools.remove_starting_and_ending_double_quotes('"hi') == 'hi'
         assert tools.Tools.remove_starting_and_ending_double_quotes('hi"') == 'hi'
+

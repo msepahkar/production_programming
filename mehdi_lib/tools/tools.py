@@ -8,6 +8,7 @@ import enum
 import sys
 import importlib
 
+import bcolors as bcolors
 from PyQt5 import QtCore
 
 
@@ -141,7 +142,7 @@ class Tools:
         whole_message = ""
         for message in messages:
             whole_message += message + sep
-        print("FATAL ERROR: " + whole_message)
+        print(f"{bcolors.FAIL}FATAL ERROR: " + whole_message)
         exit(-1)
 
     # ===========================================================================
@@ -150,7 +151,7 @@ class Tools:
         whole_message = ""
         for message in messages:
             whole_message += message + sep
-        print('WARNING: ' + whole_message)
+        print(f'{bcolors.WARN}WARNING: ' + whole_message)
 
     # ===========================================================================
     @staticmethod

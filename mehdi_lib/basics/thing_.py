@@ -239,7 +239,10 @@ class Thing(field_.Field):
 
         # this foreign thing is in fact the owner of the new thing for which a name is being created
         if foreign_thing:
-            foreign_key = cls.sorted_foreign_key_fields_of_class(type(foreign_thing))[0]
+            foreign_keys = cls.sorted_foreign_key_fields_of_class(type(foreign_thing))
+            if not foreign_keys:
+                tools.Tools.fatal_error('you may have forgotten to add foreign thing field into the sub-thing!')
+            foreign_key = foreign_keys[0]
         else:
             foreign_key = None
 

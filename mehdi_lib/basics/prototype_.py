@@ -8,6 +8,10 @@ from mehdi_lib.tools import tools
 
 # ===========================================================================
 class Prototype:
+    """Base class for prototype classes.
+
+    Since python does not support prototype classes, this base class simulates it.
+    """
     prototype_suffix = 'Prototype'
     module_name = None
 
