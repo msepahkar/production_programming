@@ -72,12 +72,14 @@ class TestEditorDialog:
             name = '{}: {}'.format(name, editor.field.get_instance_ui_title(basic_types.Language.get_active_language()))
         assert dialog.windowTitle() == name
 
+        # check name for list editor
         editor = general_editors.TableOfThingsEditor(thing, SampleThing.sub_things)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
         assert dialog.windowTitle() == 'نام 1: ' + sample_things_ui_titles[basic_types.Language.get_active_language()]
+
+        # check edit button and revive button (should be added to dialog)
         widgets = (dialog.header_layout.itemAt(i).widget() for i in range(dialog.header_layout.count()))
         assert dialog.edit_button in widgets
         assert dialog.revive_button in widgets
-        dialog.exec()
 
 

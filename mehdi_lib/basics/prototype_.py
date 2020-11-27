@@ -80,7 +80,7 @@ class ListOfThingsPrototype(Prototype):
 # ===========================================================================
 class ThingPrototype(Prototype):
 
-    # foreign thing should store the prototype of the thing
+    # foreign thing should store the prototype of the thing it refers to
     _referencing_prototypes = None  # type: [ThingPrototype]
 
     # ===========================================================================

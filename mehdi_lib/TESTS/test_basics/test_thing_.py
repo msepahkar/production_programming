@@ -7,3 +7,4 @@ db.setDatabaseName('./test_db.sqlite')
 if not db.open():
     tools.Tools.fatal_error('cannot open test database.')
 
+# TODO: testing thing.referencing_prototypes in prototype_ module should be done here.

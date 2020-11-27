@@ -34,6 +34,12 @@ dummy = {
 }
 
 # ===========================================================================
+dummy_foreign_key = {
+    basic_types.Language.AvailableLanguage.en: 'dummy foreign key',
+    basic_types.Language.AvailableLanguage.fa: 'کلید خارجی پوچ',
+}
+
+# ===========================================================================
 duration = {
     basic_types.Language.AvailableLanguage.en: 'duration',
     basic_types.Language.AvailableLanguage.fa: 'مدت',

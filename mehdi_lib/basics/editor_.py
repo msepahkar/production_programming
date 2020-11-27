@@ -1412,7 +1412,7 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
 
             self.revive_button = widget_basics.Button('revive', self.editor.revive_the_latest_sub_editor_marked_for_removal)
 
-            # revive button is disabled by difault and will be enabled only if some 'thing' is deleted
+            # revive button is disabled by default and will be enabled only if some 'thing' is deleted
             self.revive_button.setEnabled(False)
 
             # revive button should be disable when no removed 'thing' is available for reviving
@@ -1420,7 +1420,7 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
             # revive button should be enabled when some removed 'thing' is available for reviving
             self.editor.sub_editor_marked_for_removal_exists_signal.connect(lambda: self.revive_button.setEnabled(True))
 
-            # these four buttongs should be added to the header layout of the dialog
+            # these four buttons should be added to the header layout of the dialog
             self.header_layout.add_widgets(
                 self.edit_button, new_button, widget_basics.Dialog.stretch, del_button, self.revive_button)
 
