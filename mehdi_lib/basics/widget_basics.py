@@ -2,6 +2,9 @@
 
 from PyQt5 import QtWidgets, QtCore
 
+from mehdi_lib.basics import basic_types
+from mehdi_lib.generals import general_multi_lingual_texts
+
 
 # ===========================================================================
 class SpinBox(QtWidgets.QSpinBox):
@@ -150,15 +153,16 @@ class DialogWithOkCancel(Dialog):
         super().__init__(parent)
 
         # buttons
-        self.accept_button = Button('OK', self.accept)
-        self.reject_button = Button('Cancel', self.reject)
+        self.accept_button = Button(general_multi_lingual_texts.ml_text_ok, self.accept)
+        self.reject_button = Button(general_multi_lingual_texts.ml_text_cancel, self.reject)
         self.footer_layout.add_widgets(Dialog.stretch, self.accept_button, self.reject_button)
 
 
 # ===========================================================================
 class Button(QtWidgets.QPushButton):
     # ===========================================================================
-    def __init__(self, text, action, parent=None):
+    def __init__(self, multi_lingual_text: basic_types.MultilingualString, action, parent=None):
+        text = multi_lingual_text[basic_types.Language.get_active_language()]
         super().__init__(text, parent)
         # noinspection PyUnresolvedReferences
         self.clicked.connect(action)

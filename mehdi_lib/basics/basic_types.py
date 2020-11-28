@@ -197,19 +197,19 @@ class MultilingualString:
     """
 
     # ===========================================================================
-    def __init__(self, values):
+    def __init__(self, values: typing.Dict[Language.AvailableLanguage, str]):
         self._values = dict()
         for language in values.keys():
             self[language] = values[language]
 
     # ===========================================================================
-    def __getitem__(self, language):
+    def __getitem__(self, language: Language.AvailableLanguage) -> str:
         if language not in self._values.keys():
             tools.Tools.warning('value for this language: "{}" is not set'.format(language))
         return self._values[language]
 
     # ===========================================================================
-    def __setitem__(self, language, value):
+    def __setitem__(self, language: Language.AvailableLanguage, value: str):
         if language not in Language.AvailableLanguage:
             tools.Tools.warning('not a valid language: {}'.format(language))
         self._values[language] = value
