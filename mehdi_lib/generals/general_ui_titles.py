@@ -16,6 +16,12 @@ amount_unit = {
 }
 
 # ===========================================================================
+cancel = basic_types.MultilingualString({
+    basic_types.Language.AvailableLanguage.en: 'Cancel',
+    basic_types.Language.AvailableLanguage.fa: 'بیخیال',
+})
+
+# ===========================================================================
 comment = {
     basic_types.Language.AvailableLanguage.en: 'comment',
     basic_types.Language.AvailableLanguage.fa: 'توضیح',
@@ -26,6 +32,12 @@ currency = {
     basic_types.Language.AvailableLanguage.en: 'currency',
     basic_types.Language.AvailableLanguage.fa: 'نوع پول',
 }
+
+# ===========================================================================
+delete = basic_types.MultilingualString({
+    basic_types.Language.AvailableLanguage.en: 'Delete',
+    basic_types.Language.AvailableLanguage.fa: 'حذف',
+})
 
 # ===========================================================================
 dummy = {
@@ -52,6 +64,12 @@ duration_of_usefulness = {
 }
 
 # ===========================================================================
+edit = basic_types.MultilingualString({
+    basic_types.Language.AvailableLanguage.en: 'Edit',
+    basic_types.Language.AvailableLanguage.fa: 'ویرایش',
+})
+
+# ===========================================================================
 file_name = {
     basic_types.Language.AvailableLanguage.en: 'file name',
     basic_types.Language.AvailableLanguage.fa: 'نام فایل',
@@ -62,6 +80,79 @@ file_path = {
     basic_types.Language.AvailableLanguage.en: 'file path',
     basic_types.Language.AvailableLanguage.fa: 'مسیر فایل',
 }
+
+# ===========================================================================
+float_field_1 = {
+    basic_types.Language.AvailableLanguage.en: 'float parameter 1',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر اعشاری ۱',
+}
+
+# ===========================================================================
+float_field_2 = {
+    basic_types.Language.AvailableLanguage.en: 'float parameter 2',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر اعشاری ۲',
+}
+
+# ===========================================================================
+float_field_3 = {
+    basic_types.Language.AvailableLanguage.en: 'float parameter 3',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر اعشاری ۳',
+}
+
+# ===========================================================================
+int_field_1 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 1',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۱',
+}
+
+# ===========================================================================
+int_field_2 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 2',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۲',
+}
+
+# ===========================================================================
+int_field_3 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 3',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۳',
+}
+
+# ===========================================================================
+int_field_4 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 4',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۴',
+}
+
+# ===========================================================================
+int_field_5 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 5',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۵',
+}
+
+# ===========================================================================
+int_field_6 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 6',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۶',
+}
+
+# ===========================================================================
+int_field_7 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 7',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۷',
+}
+
+# ===========================================================================
+int_field_8 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 8',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۸',
+}
+
+# ===========================================================================
+int_field_9 = {
+    basic_types.Language.AvailableLanguage.en: 'int parameter 9',
+    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۹',
+}
+
 
 # ===========================================================================
 level = {
@@ -82,10 +173,10 @@ name = {
 }
 
 # ===========================================================================
-version_number = {
-    basic_types.Language.AvailableLanguage.en: 'version number',
-    basic_types.Language.AvailableLanguage.fa: 'نسخه',
-}
+new = basic_types.MultilingualString({
+    basic_types.Language.AvailableLanguage.en: 'New',
+    basic_types.Language.AvailableLanguage.fa: 'جدید',
+})
 
 # ===========================================================================
 not_used = {
@@ -94,81 +185,15 @@ not_used = {
 }
 
 # ===========================================================================
+ok = basic_types.MultilingualString({
+    basic_types.Language.AvailableLanguage.en: 'OK',
+    basic_types.Language.AvailableLanguage.fa: 'باشه'},
+)
+
+# ===========================================================================
 order_number = {
     basic_types.Language.AvailableLanguage.en: 'order number',
     basic_types.Language.AvailableLanguage.fa: 'شماره ترتیب',
-}
-
-# ===========================================================================
-float_field_1 = {
-    basic_types.Language.AvailableLanguage.en: 'float parameter 1',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر اعشاری ۱'
-}
-
-# ===========================================================================
-float_field_2 = {
-    basic_types.Language.AvailableLanguage.en: 'float parameter 2',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر اعشاری ۲'
-}
-
-# ===========================================================================
-float_field_3 = {
-    basic_types.Language.AvailableLanguage.en: 'float parameter 3',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر اعشاری ۳'
-}
-
-# ===========================================================================
-int_field_1 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 1',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۱'
-}
-
-# ===========================================================================
-int_field_2 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 2',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۲'
-}
-
-# ===========================================================================
-int_field_3 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 3',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۳'
-}
-
-# ===========================================================================
-int_field_4 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 4',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۴'
-}
-
-# ===========================================================================
-int_field_5 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 5',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۵'
-}
-
-# ===========================================================================
-int_field_6 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 6',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۶'
-}
-
-# ===========================================================================
-int_field_7 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 7',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۷'
-}
-
-# ===========================================================================
-int_field_8 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 8',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۸'
-}
-
-# ===========================================================================
-int_field_9 = {
-    basic_types.Language.AvailableLanguage.en: 'int parameter 9',
-    basic_types.Language.AvailableLanguage.fa: 'پارامتر صحیح ۹'
 }
 
 # ===========================================================================
@@ -176,6 +201,18 @@ precision_of_information = {
     basic_types.Language.AvailableLanguage.en: 'precision of information',
     basic_types.Language.AvailableLanguage.fa: 'دقت اطلاعات',
 }
+
+# ===========================================================================
+revive = basic_types.MultilingualString({
+    basic_types.Language.AvailableLanguage.en: 'Revive',
+    basic_types.Language.AvailableLanguage.fa: 'بازگرداندن',
+})
+
+# ===========================================================================
+select = basic_types.MultilingualString({
+    basic_types.Language.AvailableLanguage.en: 'Select',
+    basic_types.Language.AvailableLanguage.fa: 'انتخاب',
+})
 
 # ===========================================================================
 sub_type_1 = {
@@ -190,7 +227,7 @@ sub_type_2 = {
 }
 
 # ===========================================================================
-type = {
+type_ = {
     basic_types.Language.AvailableLanguage.en: 'type',
     basic_types.Language.AvailableLanguage.fa: 'نوع',
 }
@@ -224,4 +261,11 @@ value = {
     basic_types.Language.AvailableLanguage.en: 'value',
     basic_types.Language.AvailableLanguage.fa: 'ارزش',
 }
+
+# ===========================================================================
+version_number = {
+    basic_types.Language.AvailableLanguage.en: 'version number',
+    basic_types.Language.AvailableLanguage.fa: 'نسخه',
+}
+
 

@@ -57,6 +57,6 @@ class Price(Cost):
     name = general_fields.NameField(initial_value='price')
     amount = general_fields.FloatField(1, general_ui_titles.amount, 'amount', 0, float('inf'), 3, 0)
     amount_unit = general_fields.EnumField(2, general_ui_titles.amount_unit, 'amount_unit', general_enums.AmountUnit, general_enums.AmountUnit.number)
-    type = general_fields.EnumField(3, general_ui_titles.type, 'type', general_enums.PriceType, general_enums.PriceType.normal)
+    type = general_fields.EnumField(3, general_ui_titles.type_, 'type', general_enums.PriceType, general_enums.PriceType.normal)
 
 

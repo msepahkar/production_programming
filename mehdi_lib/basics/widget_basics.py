@@ -3,7 +3,7 @@
 from PyQt5 import QtWidgets, QtCore
 
 from mehdi_lib.basics import basic_types
-from mehdi_lib.generals import general_multi_lingual_texts
+from mehdi_lib.generals import general_ui_titles
 
 
 # ===========================================================================
@@ -153,8 +153,8 @@ class DialogWithOkCancel(Dialog):
         super().__init__(parent)
 
         # buttons
-        self.accept_button = Button(general_multi_lingual_texts.ml_text_ok, self.accept)
-        self.reject_button = Button(general_multi_lingual_texts.ml_text_cancel, self.reject)
+        self.accept_button = Button(general_ui_titles.ok, self.accept)
+        self.reject_button = Button(general_ui_titles.cancel, self.reject)
         self.footer_layout.add_widgets(Dialog.stretch, self.accept_button, self.reject_button)
 
 

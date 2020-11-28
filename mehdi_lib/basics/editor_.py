@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets, QtCore
 
 from mehdi_lib.basics import widget_basics, basic_types, thing_
 from mehdi_lib.tools import tools
-from mehdi_lib.generals import widgets_for_editors, general_fields, general_editors_prototypes, general_multi_lingual_texts
+from mehdi_lib.generals import widgets_for_editors, general_fields, general_editors_prototypes, general_ui_titles
 
 """
 For improving readability, Editor class is divided into several classes each of which containing several methods 
@@ -1397,7 +1397,7 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
 
             # edit button should launch edit method of the editor when clicked. this method will automatically find the
             #  selected sub-editor and will launch the proper dialog for editing the selected 'thing'
-            self.edit_button = widget_basics.Button(general_multi_lingual_texts.ml_text_edit, self.editor.edit)
+            self.edit_button = widget_basics.Button(general_ui_titles.edit, self.editor.edit)
 
             # edit button should be disabled by default and enabled only when some 'thing' in the list is selected
             self.edit_button.setEnabled(False)
@@ -1408,10 +1408,10 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
             # disable edit button when no sub editor is selected
             self.editor.no_sub_editor_selected_signal.connect(lambda: self.edit_button.setEnabled(False))
 
-            new_button = widget_basics.Button(general_multi_lingual_texts.ml_text_new, lambda: self.editor.append_new_item(is_top_editor=True))
-            del_button = widget_basics.Button(general_multi_lingual_texts.ml_text_del, lambda: self.editor.mark_selected_sub_editor_for_removal(is_top_editor=True))
+            new_button = widget_basics.Button(general_ui_titles.new, lambda: self.editor.append_new_item(is_top_editor=True))
+            del_button = widget_basics.Button(general_ui_titles.delete, lambda: self.editor.mark_selected_sub_editor_for_removal(is_top_editor=True))
 
-            self.revive_button = widget_basics.Button(general_multi_lingual_texts.ml_text_revive, self.editor.revive_the_latest_sub_editor_marked_for_removal)
+            self.revive_button = widget_basics.Button(general_ui_titles.revive, self.editor.revive_the_latest_sub_editor_marked_for_removal)
 
             # revive button is disabled by default and will be enabled only if some 'thing' is deleted
             self.revive_button.setEnabled(False)

@@ -7,6 +7,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 from mehdi_lib.basics import widget_basics, basic_types, thing_
 from mehdi_lib.tools import date, tools
+from mehdi_lib.generals import general_ui_titles
 
 
 # ===========================================================================
@@ -322,11 +323,31 @@ class LineEdit_for_DateEditor(LineEdit_for_LineEditor):
         def __init__(self, parent=None):
             super().__init__(parent)
 
+            previous_month = basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'previous month',
+                basic_types.Language.AvailableLanguage.fa: 'ماه قبل',
+            })
+
+            next_month = basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'next month',
+                basic_types.Language.AvailableLanguage.fa: 'ماه بعد',
+            })
+
+            today = basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'today',
+                basic_types.Language.AvailableLanguage.fa: 'امروز',
+            })
+
+            select_date = basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'select date',
+                basic_types.Language.AvailableLanguage.fa: 'انتخاب تاریخ',
+            })
+
             self.setWindowTitle('انتخاب تاریخ')
-            button_previous = widget_basics.Button('ماه قبل', self.previous_month)
-            button_next = widget_basics.Button('ماه بعد', self.next_month)
-            button_go = widget_basics.Button('انتخاب', self.date_selected)
-            button_today = widget_basics.Button('امروز', self.set_today)
+            button_previous = widget_basics.Button(previous_month, self.previous_month)
+            button_next = widget_basics.Button(next_month, self.next_month)
+            button_go = widget_basics.Button(general_ui_titles.select, self.date_selected)
+            button_today = widget_basics.Button(today, self.set_today)
             self.spin_year = widget_basics.SpinBox(1, 9999, self.update_year)
             self.month_combo = ComboBox_for_Editor(date.Shamsi.month_names, self.update_month)
 
