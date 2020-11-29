@@ -1120,7 +1120,7 @@ class MorphingThing(Thing):
         # update ui titles
         for parameter_field in new_ui_titles:
             updated_parameter_field = parameter_field.create_copy()
-            updated_parameter_field.set_instance_ui_titles(new_ui_titles[parameter_field])
+            updated_parameter_field.set_instance_ui_title(new_ui_titles[parameter_field])
             updated_parameter_field.set_hidden(False)
 
             updated_parameter_fields[parameter_field] = updated_parameter_field

@@ -11,12 +11,18 @@ class AmountUnit(basic_types.UiTitleEnabledEnum):
     kilo = 2
 
     # ===========================================================================
-    @staticmethod
-    def get_ui_titles():
-        return {
-            basic_types.Language.AvailableLanguage.en: {AmountUnit.number: 'number', AmountUnit.kilo: 'kilo'},
-            basic_types.Language.AvailableLanguage.fa: {AmountUnit.number: 'عددی', AmountUnit.kilo: 'کیلویی'},
-        }
+    def get_ui_title(self):
+        if self == self.number:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Number',
+                basic_types.Language.AvailableLanguage.fa: 'عددی',
+            })
+        if self == self.kilo:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Kilo',
+                basic_types.Language.AvailableLanguage.fa: 'کیلو',
+            })
+        return self.name
 
 
 # ===========================================================================
@@ -37,12 +43,29 @@ class Currency(basic_types.UiTitleEnabledEnum):
     euro = 4
 
     # ===========================================================================
-    @staticmethod
-    def get_ui_titles():
-        return {
-            basic_types.Language.AvailableLanguage.en: {Currency.rial: 'rial', Currency.toman: 'toman', Currency.usd: 'usd', Currency.euro: 'euro'},
-            basic_types.Language.AvailableLanguage.fa: {Currency.rial: 'ریال', Currency.toman: 'تومان', Currency.usd: 'دلار', Currency.euro: 'یورو'},
-        }
+    def get_ui_title(self):
+        if self == self.rial:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Rial',
+                basic_types.Language.AvailableLanguage.fa: 'ریال',
+            })
+        if self == self.toman:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Toman',
+                basic_types.Language.AvailableLanguage.fa: 'تومن',
+            })
+        if self == self.usd:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'USD',
+                basic_types.Language.AvailableLanguage.fa: 'دلار آمریکا',
+            })
+        if self == self.euro:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Euro',
+                basic_types.Language.AvailableLanguage.fa: 'یورو',
+            })
+        return self.name
+
 
 # ===========================================================================
 @enum.unique
@@ -85,12 +108,23 @@ class PriceType(basic_types.UiTitleEnabledEnum):
     actual = 3
 
     # ===========================================================================
-    @staticmethod
-    def get_ui_titles():
-        return {
-            basic_types.Language.AvailableLanguage.en: {PriceType.normal: 'normal', PriceType.competitive: 'competitive', PriceType.actual: 'actual'},
-            basic_types.Language.AvailableLanguage.fa: {PriceType.normal: 'معمولی', PriceType.competitive: 'رقابتی', PriceType.actual: 'واقعی'},
-        }
+    def get_ui_title(self):
+        if self == self.normal:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Normal',
+                basic_types.Language.AvailableLanguage.fa: 'معمولی',
+            })
+        if self == self.competitive:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Competitive',
+                basic_types.Language.AvailableLanguage.fa: 'رقابتی',
+            })
+        if self == self.actual:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Actual',
+                basic_types.Language.AvailableLanguage.fa: 'واقعی',
+            })
+        return self.name
 
 
 # ===========================================================================
@@ -105,12 +139,43 @@ class TimeSpanUnit(basic_types.UiTitleEnabledEnum):
     year = 7
 
     # ===========================================================================
-    @staticmethod
-    def get_ui_titles():
-        return {
-            basic_types.Language.AvailableLanguage.en: {TimeSpanUnit.second: 'second', TimeSpanUnit.minute: 'minute', TimeSpanUnit.hour: 'hour', TimeSpanUnit.day: 'day', TimeSpanUnit.week: 'week', TimeSpanUnit.month: 'month', TimeSpanUnit.year: 'year'},
-            basic_types.Language.AvailableLanguage.fa: {TimeSpanUnit.second: 'ثانیه', TimeSpanUnit.minute: 'دقیقه', TimeSpanUnit.hour: 'ساعت', TimeSpanUnit.day: 'روز', TimeSpanUnit.week: 'هفته', TimeSpanUnit.month: 'ماه', TimeSpanUnit.year: 'سال'},
-        }
+    def get_ui_title(self):
+        if self == self.second:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Second',
+                basic_types.Language.AvailableLanguage.fa: 'ثانیه',
+            })
+        if self == self.minute:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Minute',
+                basic_types.Language.AvailableLanguage.fa: 'دقیقه',
+            })
+        if self == self.hour:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Hour',
+                basic_types.Language.AvailableLanguage.fa: 'ساعت',
+            })
+        if self == self.day:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Day',
+                basic_types.Language.AvailableLanguage.fa: 'روز',
+            })
+        if self == self.week:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Week',
+                basic_types.Language.AvailableLanguage.fa: 'هفته',
+            })
+        if self == self.month:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Month',
+                basic_types.Language.AvailableLanguage.fa: 'ماه',
+            })
+        if self == self.year:
+            return basic_types.MultilingualString({
+                basic_types.Language.AvailableLanguage.en: 'Year',
+                basic_types.Language.AvailableLanguage.fa: 'سال',
+            })
+        return self.name
 
     # ===========================================================================
     @staticmethod

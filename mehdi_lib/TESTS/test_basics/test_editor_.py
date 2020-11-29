@@ -69,7 +69,7 @@ class TestEditorDialog:
             if hasattr(editor.owner, 'name'):
                 name = '{}-{}'.format(editor.owner.name, name)
         if editor.field:
-            name = '{}: {}'.format(name, editor.field.get_instance_ui_title(basic_types.Language.get_active_language()))
+            name = '{}: {}'.format(name, editor.field.get_ui_title()[basic_types.Language.get_active_language()])
         assert dialog.windowTitle() == name
 
         # check name for list editor

@@ -1440,7 +1440,7 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
 
         # if we are working on a field editor add the field name too
         if self.editor.field:
-            self.setWindowTitle('{}: {}'.format(name, self.editor.field.get_instance_ui_title(basic_types.Language.get_active_language())))
+            self.setWindowTitle('{}: {}'.format(name, self.editor.field.get_ui_title()ebasic_types.Language.get_active_language()]))
         else:
             self.setWindowTitle(name)
 

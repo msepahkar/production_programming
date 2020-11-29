@@ -562,7 +562,7 @@ class ComboBox_for_EnumItemSelectorEditor(QtWidgets.QComboBox, Widget_for_Editor
         self.enum = enum_
         if self.enum is not None:
             for item in self.enum:
-                self.addItem(item.get_instance_ui_title(basic_types.Language.get_active_language()), item)
+                self.addItem(item.get_ui_title()[basic_types.Language.get_active_language()], item)
 
     # ===========================================================================
     def get_value(self):
@@ -582,7 +582,7 @@ class ComboBox_for_EnumItemSelectorEditor(QtWidgets.QComboBox, Widget_for_Editor
         self.clear()
         self.enum = new_enum
         for item in new_enum:
-            self.addItem(item.get_instance_ui_title(basic_types.Language.get_active_language()), item)
+            self.addItem(item.get_ui_title()[basic_types.Language.get_active_language()], item)
         self.blockSignals(False)
         self.setCurrentIndex(-1)
 
@@ -731,7 +731,7 @@ class Widget_for_ThingEditor(QtWidgets.QWidget, Widget_for_Editor):
     # ===========================================================================
     def insert_widget_with_label(self, index, field, sub_editor):
         # added labels should be saved for future updates
-        self.labels[field] = self.layout().insert_widget_with_label(index, field.get_instance_ui_title(basic_types.Language.get_active_language()), sub_editor.widget)
+        self.labels[field] = self.layout().insert_widget_with_label(index, field.get_ui_title()[basic_types.Language.get_active_language()], sub_editor.widget)
         self.widgets[field] = sub_editor.widget
         if field.is_hidden():
             self.labels[field].hide()
@@ -748,7 +748,7 @@ class Widget_for_ThingEditor(QtWidgets.QWidget, Widget_for_Editor):
 
     # ===========================================================================
     def change_label_text(self, field):
-        self.labels[field].setText(field.get_instance_ui_title(basic_types.Language.get_active_language()))
+        self.labels[field].setText(field.get_ui_title()[basic_types.Language.get_active_language()])
 
 
 # ===========================================================================
@@ -827,19 +827,19 @@ class TreeWidgetItem_for_TreeNodeThingEditor(QtWidgets.QWidget, Widget_for_Edito
         # convert the value to text for the node
         if isinstance(value, thing_.ListOfThings):
             if self.field:
-                self.set_name(self.field.get_instance_ui_title(basic_types.Language.get_active_language()))
+                self.set_name(self.field.get_ui_title()[basic_types.Language.get_active_language()])
             else:
                 self.set_name('{}s'.format(value.type))
         elif isinstance(value, thing_.Thing):
             # field of thing but the value is also thing
             if self.field:
-                self.set_name('{}: {}'.format(self.field.get_instance_ui_title(basic_types.Language.get_active_language()), value.name))
+                self.set_name('{}: {}'.format(self.field.get_ui_title()[basic_types.Language.get_active_language()], value.name))
             # thing editor
             else:
                 self.set_name(value.name)
         # field editor
         else:
-            self.set_name('{}: {}'.format(self.field.get_instance_ui_title(basic_types.Language.get_active_language()), value))
+            self.set_name('{}: {}'.format(self.field.get_ui_title()[basic_types.Language.get_active_language()], value))
 
     # ===========================================================================
     def replace_field_name(self, new_name):

@@ -22,7 +22,7 @@ class BoolEditor(editor_.Editor):
     # ===========================================================================
     def create_widget_and_tie_signals__create_sub_editors_and_sub_dialogs(self):
 
-        self.widget = widgets_for_editors.CheckBox_for_BoolEditor(self.field.get_instance_ui_title(basic_types.Language.get_active_language()))
+        self.widget = widgets_for_editors.CheckBox_for_BoolEditor(self.field.get_ui_title()[basic_types.Language.get_active_language()])
         self.widget.stateChanged.connect(self.value_changed_by_me_signal)
 
 
@@ -247,7 +247,7 @@ class ThingEditor(editor_.Editor):
     def add_button(self, index, field, responsible):
         self.n_sub_dialogs += 1
         self.widget.layout().insert_widget(index, widget_basics.ButtonWithActionParameters(
-            field.get_instance_ui_title(basic_types.Language.get_active_language()), editor_.Editor__Basics.create_editor_and_open_dialog, [self.owner, field, responsible, self], self.widget))
+            field.get_ui_title()[basic_types.Language.get_active_language()], editor_.Editor__Basics.create_editor_and_open_dialog, [self.owner, field, responsible, self], self.widget))
 
     # ===========================================================================
     def create_widget_and_tie_signals__create_sub_editors_and_sub_dialogs(self):
@@ -343,7 +343,7 @@ class TableOfThingsEditor(editor_.Editor):
         # ===========================================================================
         def add_button(self, field, responsible):
             self.n_sub_dialogs += 1
-            button = widget_basics.ButtonWithActionParameters(field.get_instance_ui_title(basic_types.Language.get_active_language()), editor_.Editor__Basics.create_editor_and_open_dialog, [self.owner, field, responsible, self], self.parent_editor.widget)
+            button = widget_basics.ButtonWithActionParameters(field.get_ui_title()[basic_types.Language.get_active_language()], editor_.Editor__Basics.create_editor_and_open_dialog, [self.owner, field, responsible, self], self.parent_editor.widget)
             button.installEventFilter(self)
             self.parent_editor.widget.setCellWidget(self.row, len(self.sub_editors) + self.n_sub_dialogs - 1, button)
 
@@ -374,7 +374,7 @@ class TableOfThingsEditor(editor_.Editor):
                 owner_of_foreign_key_skipped = True
                 continue
             active_language = basic_types.Language.get_active_language()
-            headers.append(field.get_instance_ui_title(active_language))
+            headers.append(field.get_ui_title()[active_language])
 
         self.widget = widgets_for_editors.TableWidget_for_TableOfThingsEditor(headers)
 

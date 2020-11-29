@@ -56,7 +56,7 @@ class Cutter(basic_types.ContainerForParameterizedEnum):
 
         # ===========================================================================
         @staticmethod
-        def get_ui_titles():
+        def get_ui_title():
             return {
                 basic_types.Language.AvailableLanguage.en: {Cutter.CutterType.disk: 'disk', Cutter.CutterType.lame: 'lame', Cutter.CutterType.band: 'band'},
                 basic_types.Language.AvailableLanguage.fa: {Cutter.CutterType.disk: 'دیسکی', Cutter.CutterType.lame: 'لنگ', Cutter.CutterType.band: 'نواری'},
@@ -79,7 +79,7 @@ class Cutter(basic_types.ContainerForParameterizedEnum):
 
         # ===========================================================================
         @staticmethod
-        def get_ui_titles():
+        def get_ui_title():
             return {
                 basic_types.Language.AvailableLanguage.en: {Cutter.FeedingType.manual_feed: 'manual feed', Cutter.FeedingType.auto_feed: 'auto fieed'},
                 basic_types.Language.AvailableLanguage.fa: {Cutter.FeedingType.manual_feed: 'تغذیه دستی', Cutter.FeedingType.auto_feed: 'تغذیه خودکار'},
@@ -149,7 +149,7 @@ class MachineType(basic_types.ContainerFor_ContainerForParameterizedEnum):
 
     # ===========================================================================
     @staticmethod
-    def get_ui_titles():
+    def get_ui_title():
         return {
             basic_types.Language.AvailableLanguage.en: {MachineType.cutter: 'cutter'},#{MachineType.boring: 'boring', MachineType.cutter: 'cutter'},
             basic_types.Language.AvailableLanguage.fa: {MachineType.cutter: 'اره'},#{MachineType.boring: 'بورینگ', MachineType.cutter: 'اره'},

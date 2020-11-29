@@ -252,7 +252,7 @@ class InEditor:
 
 
 # ===========================================================================
-class Field(basic_types.UiTitlesContainer, QtCore.QObject):
+class Field(QtCore.QObject):
     """The most basic entity in our framework.
 
     each field should be able to express itself in class, database and ui.
@@ -266,7 +266,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
     hiding_status_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')
 
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict,
+    def __init__(self, order: int, ui_title: dict,
                  in_class: typing.Optional[InClass],
                  in_database: typing.Optional[InDatabase],
                  in_editor: typing.Optional[InEditor]):
@@ -274,7 +274,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
 
         :param order: int
             the order of this field in the UI
-        :param ui_titles: dict
+        :param ui_title: dict
             ui titles in different languages
         :param in_class: Optional[InClass]
         :param in_database: Optional[InDatabase]
@@ -282,9 +282,8 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         """
         self._base_params = []
 
-        basic_types.UiTitlesContainer.__init__(self)
         QtCore.QObject.__init__(self)
-        self._ui_titles = ui_titles
+        self._ui_title = ui_title
         self.order = order
         self.in_class = in_class
         self.in_database = in_database
@@ -316,7 +315,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
 
         copy_field.set_instance_specific(self._is_instance_specific)
         copy_field.set_hidden(self._is_hidden)
-        copy_field.set_instance_ui_titles(self.get_instance_ui_titles())
+        copy_field.set_instance_ui_title(self.get_ui_title())
 
         return copy_field
 
@@ -340,7 +339,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         self.in_editor.force_to_match(other_field.in_editor)
         self.set_instance_specific(other_field.is_instance_specific())
         self.set_hidden(other_field.is_hidden())
-        self.set_instance_ui_titles(other_field.get_instance_ui_titles())
+        self.set_instance_ui_title(other_field.get_ui_title())
 
     # ===========================================================================
     def get_copy_parameters(self) -> list:
@@ -356,7 +355,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         if type(self) == Field:
             return [
                 self.order,
-                self.get_instance_ui_titles(),
+                self.get_ui_title(),
                 self.in_class.create_copy(),
                 self.in_database.create_copy(),
                 self.in_editor.create_copy()
@@ -367,56 +366,35 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
             return []
 
     # ===========================================================================
-    def get_instance_ui_titles(self) -> typing.Dict[basic_types.Language.AvailableLanguage, str]:
+    def get_ui_title(self) -> typing.Dict[basic_types.Language.AvailableLanguage, str]:
         """instance ui titles are useful only in morphing things.
 
          required for morphing thing
 
         :return: dict
         """
-        return self._ui_titles
+        return self._ui_title
 
     # ===========================================================================
-    def get_instance_ui_title(self, language: basic_types.Language.AvailableLanguage) -> str:
-        """for retrieving ui title of this field in a specific language (again only in morphing things).
-
-          required for morphing thing
-
-        :param language: basic_types.Language.AvailableLanguage
-
-        :return: str
-        """
-        return self._ui_titles[language]
-
-    # ===========================================================================
-    @classmethod
-    def get_ui_titles(cls) -> typing.Dict[basic_types.Language.AvailableLanguage, typing.Dict['Field', str]]:
-        """if not morphing thing, this method is required for retrieving _ui_titles dict.
-
-        :return: typing.Dict[basic_types.Language.AvailableLanguage, typing.Dict['Field', str]]
-        """
-        return cls._ui_titles
-
-    # ===========================================================================
-    def has_same_ui_titles(self, other_field_or_other_ui_titles: ['Field', typing.Dict[basic_types.Language.AvailableLanguage, str]]) -> bool:
+    def has_same_ui_titles(self, other_field_or_other_ui_title: ['Field', typing.Dict[basic_types.Language.AvailableLanguage, str]]) -> bool:
         """checks equality of ui titles between two fields.
 
         required for morphing thing
 
-        :param other_field_or_other_ui_titles: ['Field', typing.Dict[basic_types.Language.AvailableLanguage], str]
+        :param other_field_or_other_ui_title: ['Field', typing.Dict[basic_types.Language.AvailableLanguage], str]
 
         :return: bool
         """
 
-        if isinstance(other_field_or_other_ui_titles, Field):
-            other_ui_titles = other_field_or_other_ui_titles.get_instance_ui_titles()
+        if isinstance(other_field_or_other_ui_title, Field):
+            other_ui_title = other_field_or_other_ui_title.get_ui_title()
         else:
-            other_ui_titles = other_field_or_other_ui_titles
+            other_ui_title = other_field_or_other_ui_title
 
-        for language in self._ui_titles.keys():
-            if language not in other_ui_titles:
+        for language in self._ui_title:
+            if language not in other_ui_title:
                 return False
-            if self._ui_titles[language] != other_ui_titles[language]:
+            if self._ui_title[language] != other_ui_title[language]:
                 return False
 
         return True
@@ -489,7 +467,7 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         self._is_instance_specific = instance_specific
 
     # ===========================================================================
-    def set_instance_ui_titles(self, new_titles: typing.Dict[basic_types.Language.AvailableLanguage, str]):
+    def set_instance_ui_title(self, new_titles: typing.Dict[basic_types.Language.AvailableLanguage, str]):
         """ Updates ui titles of instance specific ui_titles
 
         used only in morphing things.
@@ -499,5 +477,5 @@ class Field(basic_types.UiTitlesContainer, QtCore.QObject):
         :return:
         """
         if not self.has_same_ui_titles(new_titles):
-            self._ui_titles = new_titles
+            self._ui_title = new_titles
             self.ui_titles_changed_signal.emit(self)

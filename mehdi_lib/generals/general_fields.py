@@ -15,7 +15,7 @@ class BoolField(field_.Field):
     For True/False values
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: bool):
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, initial_value: bool):
         in_class = field_.InClass(in_class_name, bool, initial_value)
 
         in_database = field_.InDatabase(in_class_name,
@@ -25,13 +25,13 @@ class BoolField(field_.Field):
 
         in_editor = field_.InEditor(general_editors_prototypes.BoolEditorPrototype, None)
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.in_class.initial_value,
         ]
@@ -65,7 +65,7 @@ class DatetimeField(field_.Field):
     For editing datetime
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: datetime.datetime):
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, initial_value: datetime.datetime):
         in_class = field_.InClass(in_class_name, datetime.datetime, initial_value)
 
         in_database = field_.InDatabase(in_class_name,
@@ -75,13 +75,13 @@ class DatetimeField(field_.Field):
 
         in_editor = field_.InEditor(general_editors_prototypes.DatetimeEditorPrototype, None)
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.in_class.initial_value,
         ]
@@ -93,7 +93,7 @@ class DateField(field_.Field):
     For editing date only (without time)
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: datetime.date):
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, initial_value: datetime.date):
         in_class = field_.InClass(in_class_name, datetime.date, initial_value)
 
         in_database = field_.InDatabase(in_class_name,
@@ -103,13 +103,13 @@ class DateField(field_.Field):
 
         in_editor = field_.InEditor(general_editors_prototypes.DateEditorPrototype, None)
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.in_class.initial_value,
         ]
@@ -121,7 +121,7 @@ class DurationField(field_.Field):
     For editing durations (timedelta in python words!)
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, initial_value: datetime.timedelta):
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, initial_value: datetime.timedelta):
         in_class = field_.InClass(in_class_name, datetime.timedelta, initial_value)
 
         in_database = field_.InDatabase(in_class_name,
@@ -131,13 +131,13 @@ class DurationField(field_.Field):
 
         in_editor = field_.InEditor(general_editors_prototypes.DurationEditorPrototype, None)
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.in_class.initial_value,
         ]
@@ -154,7 +154,7 @@ class EnumField(field_.Field):
     enum_changed_signal = QtCore.pyqtSignal('PyQt_PyObject')
 
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, enum_: typing.Type[basic_types.UiTitleEnabledEnum], initial_value):
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, enum_: typing.Type[basic_types.UiTitleEnabledEnum], initial_value):
         in_class = field_.InClass(in_class_name, enum_, initial_value)
 
         in_database = field_.InDatabase(in_class_name,
@@ -164,13 +164,13 @@ class EnumField(field_.Field):
 
         in_editor = field_.InEditor(general_editors_prototypes.EnumItemSelectorEditorPrototype, [enum_])
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.in_class.type,
             self.in_class.initial_value,
@@ -248,12 +248,12 @@ class FloatField(field_.Field):
     For editing float numbers
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, bottom: float, top: float, decimals: int,
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, bottom: float, top: float, decimals: int,
                  initial_value: float):
         """
 
         :param order:
-        :param ui_titles:
+        :param ui_title:
         :param in_class_name:
         :param bottom: minimum allowed number
         :param top: maximum allowed number
@@ -273,13 +273,13 @@ class FloatField(field_.Field):
         self.top = top
         self.decimals = decimals
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.bottom,
             self.top,
@@ -294,7 +294,7 @@ class ForeignKeyField(field_.Field):
     For storing foreign keys whenever our 'Thing' is related to another 'Thing'
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str,
+    def __init__(self, order: int, ui_title: dict, in_class_name: str,
                  referencing_prototype: typing.Type['ThingPrototype'],
                  foreign_prototype: typing.Type['ThingPrototype'],
                  in_editor=None):
@@ -306,7 +306,7 @@ class ForeignKeyField(field_.Field):
                                         # TODO: do we need the condition of not null for foreign key field?
                                         database_tools.Conditions.not_null)  # type: InDatabase
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
         self.referencing_prototype = referencing_prototype
         if referencing_prototype not in foreign_prototype.referencing_prototypes():
@@ -318,7 +318,7 @@ class ForeignKeyField(field_.Field):
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.referencing_prototype,
             self.foreign_prototype,
@@ -332,12 +332,12 @@ class ForeignThingSelectorField(ForeignKeyField):
     something like a combo box for selecting foreign thing related to this thing
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str,
+    def __init__(self, order: int, ui_title: dict, in_class_name: str,
                  referencing_prototype: typing.Type['ThingPrototype'],
                  thing_prototype: typing.Type['ThingPrototype'],
                  # TODO: why forbidden item creator is not used????
                  forbidden_items_creator: callable = None):
-        super().__init__(order, ui_titles, in_class_name, referencing_prototype, thing_prototype)
+        super().__init__(order, ui_title, in_class_name, referencing_prototype, thing_prototype)
 
         self.in_editor = field_.InEditor(general_editors_prototypes.SingleItemSelectorEditorPrototype)
 
@@ -345,7 +345,7 @@ class ForeignThingSelectorField(ForeignKeyField):
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.referencing_prototype,
             self.foreign_prototype,
@@ -358,7 +358,7 @@ class IntField(field_.Field):
     general int field
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, bottom: int, top: int, initial_value: int):
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, bottom: int, top: int, initial_value: int):
         in_class = field_.InClass(in_class_name, int, initial_value)
 
         in_database = field_.InDatabase(in_class_name,
@@ -371,13 +371,13 @@ class IntField(field_.Field):
         self.bottom = bottom
         self.top = top
 
-        super().__init__(order, ui_titles, in_class, in_database, in_editor)
+        super().__init__(order, ui_title, in_class, in_database, in_editor)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.bottom,
             self.top,
@@ -391,11 +391,11 @@ class ListField(field_.Field):
     for storing list of things
     """
     # ===========================================================================
-    def __init__(self, order: int, ui_titles: dict, in_class_name: str, element_type: 'typing.Type[Thing]', in_editor=None):
+    def __init__(self, order: int, ui_title: dict, in_class_name: str, element_type: 'typing.Type[Thing]', in_editor=None):
         if in_editor is None:
             in_editor = field_.InEditor(general_editors_prototypes.TableOfThingsEditorPrototype, [])
 
-        super().__init__(order, ui_titles,
+        super().__init__(order, ui_title,
                          field_.InClass(in_class_name, prototype_.ListOfThingsPrototype, element_type),
                          None,
                          in_editor)
@@ -404,7 +404,7 @@ class ListField(field_.Field):
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.in_class.initial_value,
             self.in_editor.create_copy(),
@@ -457,14 +457,14 @@ class PercentField(IntField):
     general percent field
     """
     # ===========================================================================
-    def __init__(self, order, ui_titles, in_class_name, initial_value):
-        super().__init__(order, ui_titles, in_class_name, 0, 100, initial_value)
+    def __init__(self, order, ui_title, in_class_name, initial_value):
+        super().__init__(order, ui_title, in_class_name, 0, 100, initial_value)
 
     # ===========================================================================
     def get_copy_parameters(self):
         return [
             self.order,
-            self.get_instance_ui_titles(),
+            self.get_ui_title(),
             self.in_class.name,
             self.in_class.initial_value,
         ]

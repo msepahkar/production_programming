@@ -38,7 +38,7 @@ def test_bool_field():
     assert bool_field.in_editor.editor_parameters_list is None
 
     # copy_parameters
-    assert bool_field.get_copy_parameters() == [order, bool_field.get_instance_ui_titles(), in_class_name,
+    assert bool_field.get_copy_parameters() == [order, bool_field.get_ui_title(), in_class_name,
                                                 initial_value]
 
 
@@ -76,7 +76,7 @@ def test_datetime_field():
 
     # general parameters
     assert datetime_field.order == order
-    assert datetime_field.get_instance_ui_titles() == ui_titles
+    assert datetime_field.get_ui_title() == ui_titles
 
     # in_class
     assert datetime_field.in_class.name == in_class_name
@@ -109,7 +109,7 @@ def test_date_field():
 
     # general parameters
     assert date_field.order == order
-    assert date_field.get_instance_ui_titles() == ui_titles
+    assert date_field.get_ui_title() == ui_titles
 
     # in_class
     assert date_field.in_class.name == in_class_name
@@ -141,7 +141,7 @@ def test_duration_field():
 
     # general parameters
     assert duration_field.order == order
-    assert duration_field.get_instance_ui_titles() == ui_titles
+    assert duration_field.get_ui_title() == ui_titles
 
     # in_class 
     assert duration_field.in_class.name == in_class_name
@@ -188,7 +188,7 @@ def test_enum_field():
 
     # general parameters
     assert enum_field.order == order
-    assert enum_field.get_instance_ui_titles() == ui_titles
+    assert enum_field.get_ui_title() == ui_titles
 
     # in_class 
     assert enum_field.in_class.name == in_class_name
@@ -235,7 +235,7 @@ def test_file_name_field():
 
     # general parameters
     assert file_name_field.order == 0
-    assert file_name_field.get_instance_ui_titles() == general_ui_titles.file_name
+    assert file_name_field.get_ui_title() == general_ui_titles.file_name
 
     # in_class
     assert file_name_field.in_class.name == 'file_name'
@@ -267,7 +267,7 @@ def test_file_path_field():
 
     # general parameters
     assert file_path_field.order == 0
-    assert file_path_field.get_instance_ui_titles() == general_ui_titles.file_path
+    assert file_path_field.get_ui_title() == general_ui_titles.file_path
 
     # in_class
     assert file_path_field.in_class.name == 'file_path'
@@ -305,7 +305,7 @@ def test_float_field():
 
     # general parameters
     assert float_field.order == order
-    assert float_field.get_instance_ui_titles() == ui_titles
+    assert float_field.get_ui_title() == ui_titles
 
     # in_class
     assert float_field.in_class.name == in_class_name
@@ -343,7 +343,7 @@ def test_foreign_key_field():
 
     # general parameters
     assert foreign_key_field.order == order
-    assert foreign_key_field.get_instance_ui_titles() == ui_titles
+    assert foreign_key_field.get_ui_title() == ui_titles
     assert foreign_key_field.referencing_prototype == referencing_prototype
     assert referencing_prototype in foreign_prototype.referencing_prototypes()
 
@@ -385,7 +385,7 @@ def test_foreign_thing_selector_field():
 
     # general parameters
     assert foreign_thing_selector_field.order == order
-    assert foreign_thing_selector_field.get_instance_ui_titles() == ui_titles
+    assert foreign_thing_selector_field.get_ui_title() == ui_titles
     assert foreign_thing_selector_field.referencing_prototype == referencing_prototype
 
     # in_class
@@ -424,7 +424,7 @@ def test_int_field():
 
     # general parameters
     assert int_field.order == order
-    assert int_field.get_instance_ui_titles() == ui_titles
+    assert int_field.get_ui_title() == ui_titles
 
     # in_class
     assert int_field.in_class.name == in_class_name
@@ -460,7 +460,7 @@ def test_list_field():
 
     # general parameters
     assert list_field.order == order
-    assert list_field.get_instance_ui_titles() == ui_titles
+    assert list_field.get_ui_title() == ui_titles
 
     # in_class
     assert list_field.in_class.name == in_class_name
@@ -493,7 +493,7 @@ def test_name_field():
 
     # general parameters
     assert name_field.order == 0
-    assert name_field.get_instance_ui_titles() == ui_titles
+    assert name_field.get_ui_title() == ui_titles
 
     # in_class
     assert name_field.in_class.name == in_class_name
@@ -519,7 +519,7 @@ def test_order_number_field():
 
     # general parameters
     assert order_number_field.order == 0
-    assert order_number_field.get_instance_ui_titles() == general_ui_titles.order_number
+    assert order_number_field.get_ui_title() == general_ui_titles.order_number
 
     # in_class
     assert order_number_field.in_class.name == 'order_number'
@@ -551,7 +551,7 @@ def test_percent_field():
 
     # general parameters
     assert percent_field.order == order
-    assert percent_field.get_instance_ui_titles() == ui_titles
+    assert percent_field.get_ui_title() == ui_titles
 
     # in_class
     assert percent_field.in_class.name == in_class_name
@@ -580,7 +580,7 @@ def test_primary_key_field():
 
     # general parameters
     assert primary_key_field.order == 0
-    assert primary_key_field.get_instance_ui_titles() == general_ui_titles.dummy
+    assert primary_key_field.get_ui_title() == general_ui_titles.dummy
 
     # in_class
     assert primary_key_field.in_class.name == 'id'
