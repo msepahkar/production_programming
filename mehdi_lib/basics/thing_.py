@@ -671,9 +671,9 @@ class Thing(field_.Field):
     def init_fields(self):
 
         # find instance specific fields
-        for field_list in self.affected_fields.values():
-            for field in field_list:
-                field.set_instance_specific(True)
+        # for field_list in self.affected_fields.values():
+        #     for field in field_list:
+        #         field.set_instance_specific(True)
 
         # create instance specific fields
         for field in type(self).sorted_fields_of_class(include_primary_key=True):
@@ -681,14 +681,14 @@ class Thing(field_.Field):
                 self.instance_specific_fields[field] = field.create_copy()
 
         # substitute class fields with instance fields in affected_fields dict
-        for field_list in self.affected_fields.keys():  # keys
-            for i, field in enumerate(field_list):
-                if field.is_instance_specific():
-                    field_list[i] = self.instance_specific_fields[field]
-        for field_list in self.affected_fields.values():  # values
-            for i, field in enumerate(field_list):
-                if field.is_instance_specific():
-                    field_list[i] = self.instance_specific_fields[field]
+        # for field_list in self.affected_fields.keys():  # keys
+        #     for i, field in enumerate(field_list):
+        #         if field.is_instance_specific():
+        #             field_list[i] = self.instance_specific_fields[field]
+        # for field_list in self.affected_fields.values():  # values
+        #     for i, field in enumerate(field_list):
+        #         if field.is_instance_specific():
+        #             field_list[i] = self.instance_specific_fields[field]
 
         # set editors and responsible editors
         for field in self.get_sorted_fields_of_instance(include_primary_key=True):
