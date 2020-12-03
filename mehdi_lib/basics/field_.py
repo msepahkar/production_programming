@@ -290,7 +290,7 @@ class Field(QtCore.QObject):
         self.in_editor = in_editor
 
         # for morphing things
-        self._is_instance_specific = False
+        # self._is_instance_specific = False
 
         # for morphing things
         self._is_hidden = False
@@ -313,7 +313,7 @@ class Field(QtCore.QObject):
         else:
             copy_field = type(self)(*parameters)
 
-        copy_field.set_instance_specific(self._is_instance_specific)
+        # copy_field.set_instance_specific(self._is_instance_specific)
         copy_field.set_hidden(self._is_hidden)
         copy_field.set_instance_ui_title(self.get_ui_title())
 
@@ -337,7 +337,7 @@ class Field(QtCore.QObject):
             tools.Tools.fatal_error('cannot force in_database to match')
         self.in_class.force_to_match(other_field.in_class)
         self.in_editor.force_to_match(other_field.in_editor)
-        self.set_instance_specific(other_field.is_instance_specific())
+        # self.set_instance_specific(other_field.is_instance_specific())
         self.set_hidden(other_field.is_hidden())
         self.set_instance_ui_title(other_field.get_ui_title())
 
@@ -409,15 +409,15 @@ class Field(QtCore.QObject):
         return self._is_hidden
 
     # ===========================================================================
-    def is_instance_specific(self) -> bool:
-        """used only in morphing things.
+    # def is_instance_specific(self) -> bool:
+    #     """used only in morphing things.
+    #
+    #     required for morphing thing
+    #
+    #     :return: bool
+    #     """
 
-        required for morphing thing
-
-        :return: bool
-        """
-
-        return self._is_instance_specific
+        # return self._is_instance_specific
 
     # ===========================================================================
     def matches(self, other_field: 'Field') -> bool:
@@ -435,8 +435,8 @@ class Field(QtCore.QObject):
                self.in_class.matches(other_field.in_class) and \
                self.in_editor.matches(other_field.in_editor) and \
                self.in_database.matches(other_field.in_database) and \
-               self.is_instance_specific() == other_field.is_instance_specific() and \
                self.is_hidden() == other_field.is_hidden()
+               # self.is_instance_specific() == other_field.is_instance_specific() and \
 
     # ===========================================================================
     def set_hidden(self, hidden: bool):
@@ -452,19 +452,19 @@ class Field(QtCore.QObject):
             self.hiding_status_changed_signal.emit(self)
 
     # ===========================================================================
-    def set_instance_specific(self, instance_specific: bool):
-        """Marks this field as an instance specific field (changes in each instance) or removes this tag from the field.
-
-        used only in morphing things.
-
-        required for morphing thing
-
-        :param instance_specific: bool
-
-        :return:
-        """
-
-        self._is_instance_specific = instance_specific
+    # def set_instance_specific(self, instance_specific: bool):
+    #     """Marks this field as an instance specific field (changes in each instance) or removes this tag from the field.
+    #
+    #     used only in morphing things.
+    #
+    #     required for morphing thing
+    #
+    #     :param instance_specific: bool
+    #
+    #     :return:
+    #     """
+    #
+    #     self._is_instance_specific = False #instance_specific
 
     # ===========================================================================
     def set_instance_ui_title(self, new_titles: typing.Dict[basic_types.Language.AvailableLanguage, str]):

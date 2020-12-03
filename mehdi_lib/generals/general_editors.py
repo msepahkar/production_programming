@@ -264,9 +264,9 @@ class ThingEditor(editor_.Editor):
             if sub_editor.type == editor_.EditorTypes.field_of_thing:
                 responsible_editor = self.owner.get_responsible_editor(field)
                 self.widget.insert_widget_with_label(index, responsible_editor.editor_version_of_the_field, sub_editor)
-                if field.is_instance_specific():
-                    responsible_editor.editor_version_of_the_field.ui_titles_changed_signal.connect(self.widget.change_label_text)
-                    responsible_editor.editor_version_of_the_field.hiding_status_changed_signal.connect(self.widget.change_hiding_status)
+                # if field.is_instance_specific():
+                #     responsible_editor.editor_version_of_the_field.ui_titles_changed_signal.connect(self.widget.change_label_text)
+                #     responsible_editor.editor_version_of_the_field.hiding_status_changed_signal.connect(self.widget.change_hiding_status)
 
                 # only simple field editors will be added to the sub_editor list
                 self.sub_editors.insert(index, field, sub_editor)
@@ -279,12 +279,12 @@ class ThingEditor(editor_.Editor):
             self.hidden_values[self.owner.get_correspondent_class_field(field)] = self.owner[field]
 
     # ===========================================================================
-    def unregister(self):
-        super().unregister()
+    # def unregister(self):
+    #     super().unregister()
 
-        for field in self.sub_editors.keys():
-            if self.sub_editors[field].type == editor_.EditorTypes.field_of_thing and field.is_instance_specific():
-                self.owner.get_responsible_editor(field).editor_version_of_the_field.ui_titles_changed_signal.disconnect(self.widget.change_label_text)
+        # for field in self.sub_editors.keys():
+        #     if self.sub_editors[field].type == editor_.EditorTypes.field_of_thing and field.is_instance_specific():
+        #         self.owner.get_responsible_editor(field).editor_version_of_the_field.ui_titles_changed_signal.disconnect(self.widget.change_label_text)
 
 
 # ===========================================================================

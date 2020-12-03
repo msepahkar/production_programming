@@ -115,7 +115,7 @@ class Thing(field_.Field):
         self._field_responsible_editors = dict()  # keys are fields, values are responsible editors
         self.dependency_parameters = dict()
         self.foreign_owner_parameters = dict()
-        self.instance_specific_fields = dict()
+        # self.instance_specific_fields = dict()
         self.lists_of_things = []
 
         self.init_fields()
@@ -623,15 +623,15 @@ class Thing(field_.Field):
 
     # ===========================================================================
     def get_correspondent_class_field(self, field):
-        if not field.is_instance_specific():
+        # if not field.is_instance_specific():
             return field
-        return next(class_field for class_field, instance_field in self.instance_specific_fields.items() if instance_field == field)
+        # return next(class_field for class_field, instance_field in self.instance_specific_fields.items() if instance_field == field)
 
     # ===========================================================================
     def get_correspondent_instance_field(self, field):
-        if field in self.instance_specific_fields:
-            return self.instance_specific_fields[field]
-        else:
+        # if field in self.instance_specific_fields:
+        #     return self.instance_specific_fields[field]
+        # else:
             return field
 
     # ===========================================================================
@@ -662,9 +662,9 @@ class Thing(field_.Field):
     # ===========================================================================
     def get_sorted_fields_of_instance(self, include_primary_key):
         fields = type(self).sorted_fields_of_class(include_primary_key)
-        for i, field in enumerate(fields):
-            if field.is_instance_specific():
-                fields[i] = self.instance_specific_fields[field]
+        # for i, field in enumerate(fields):
+        #     if field.is_instance_specific():
+        #         fields[i] = self.instance_specific_fields[field]
         return fields
 
     # ===========================================================================
@@ -676,9 +676,9 @@ class Thing(field_.Field):
         #         field.set_instance_specific(True)
 
         # create instance specific fields
-        for field in type(self).sorted_fields_of_class(include_primary_key=True):
-            if field.is_instance_specific():
-                self.instance_specific_fields[field] = field.create_copy()
+        # for field in type(self).sorted_fields_of_class(include_primary_key=True):
+        #     if field.is_instance_specific():
+        #         self.instance_specific_fields[field] = field.create_copy()
 
         # substitute class fields with instance fields in affected_fields dict
         # for field_list in self.affected_fields.keys():  # keys
@@ -1070,10 +1070,10 @@ class MorphingThing(Thing):
         affecting_fields = []
         class_affecting_fields = [MorphingThing.main_type] + MorphingThing.sub_type_fields
         for class_field in class_affecting_fields:
-            if class_field.is_instance_specific():
-                affecting_fields.append(self.instance_specific_fields[class_field])
-            else:
-                affecting_fields.append(class_field)
+            # if class_field.is_instance_specific():
+            #     affecting_fields.append(self.instance_specific_fields[class_field])
+            # else:
+            affecting_fields.append(class_field)
         return affecting_fields
 
     # ===========================================================================
@@ -1169,10 +1169,10 @@ MorphingThing.parameter_fields = [
     MorphingThing.int_field_9
 ]
 
-for field in MorphingThing.sub_type_fields:
-    field.set_instance_specific(True)
-for field in MorphingThing.parameter_fields:
-    field.set_instance_specific(True)
+# for field in MorphingThing.sub_type_fields:
+#     field.set_instance_specific(True)
+# for field in MorphingThing.parameter_fields:
+#     field.set_instance_specific(True)
 
 MorphingThing.float_field_2.set_hidden(True)
 MorphingThing.float_field_3.set_hidden(True)

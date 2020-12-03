@@ -1029,19 +1029,19 @@ class Editor(Editor__Dependency):
             value = type(self.owner)()
 
             # set correct in class type for instance specific fields
-            for field in type(value).sorted_fields_of_class(include_primary_key=True):
-                if field.is_instance_specific():
-                    value.instance_specific_fields[field].force_to_match(self.owner.instance_specific_fields[field])
+            # for field in type(value).sorted_fields_of_class(include_primary_key=True):
+            #     if field.is_instance_specific():
+            #         value.instance_specific_fields[field].force_to_match(self.owner.instance_specific_fields[field])
 
             # now set the values for fields
             for field in self.owner.get_sorted_fields_of_instance(include_primary_key=True):
                 if not isinstance(field, general_fields.ListField):
-                    if field.is_instance_specific():
-                        class_field = self.owner.get_correspondent_class_field(field)
-                        value_field = value.get_correspondent_instance_field(class_field)
-                        value_field.force_to_match(self.sub_editors[field].editor_version_of_the_field)
-                    else:
-                        value_field = field
+                    # if field.is_instance_specific():
+                    #     class_field = self.owner.get_correspondent_class_field(field)
+                    #     value_field = value.get_correspondent_instance_field(class_field)
+                    #     value_field.force_to_match(self.sub_editors[field].editor_version_of_the_field)
+                    # else:
+                    value_field = field
                     # get value should return a complete value for the thing
                     if field in self.sub_editors.keys():
                         value[value_field] = self.sub_editors[field].get_value().value
@@ -1372,6 +1372,27 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
     It may be useful to remind that sub-editors of list of things editors are thing editors and sub-editors of thing
      editors are field editors.
     """
+
+    # ===========================================================================
+    @staticmethod
+    def create_full_name_for_editor_title(editor):
+
+        # first name of the main editor
+        main_editor = editor
+        name = main_editor.owner.name
+
+        # then name of all parents of the editor
+        while editor.parent_editor:
+            editor = editor.parent_editor
+            if hasattr(editor.owner, 'name'):
+                name = '{}-{}'.format(editor.owner.name, name)
+
+        # if we are working on a field editor add the field name too
+        if main_editor.field:
+            return '{}: {}'.format(name, main_editor.field.get_ui_title()[basic_types.Language.get_active_language()])
+        else:
+            return name
+
     # ===========================================================================
     def __init__(self, editor: Editor, automatic_unregister, parent=None):
         """
@@ -1429,20 +1450,7 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
         self.add_widget(self.editor.widget)
 
         # time to create the name which should be displayed as the title of the dialog
-        # first name of the editor owner
-        name = self.editor.owner.name
-        editor = self.editor
-        # then name of all parents of the editor
-        while editor.parent_editor:
-            editor = editor.parent_editor
-            if hasattr(editor.owner, 'name'):
-                name = '{}-{}'.format(editor.owner.name, name)
-
-        # if we are working on a field editor add the field name too
-        if self.editor.field:
-            self.setWindowTitle('{}: {}'.format(name, self.editor.field.get_ui_title()[basic_types.Language.get_active_language()]))
-        else:
-            self.setWindowTitle(name)
+        self.setWindowTitle(EditorDialog.create_full_name_for_editor_title(self.editor))
 
     # ===========================================================================
     def accept(self):
