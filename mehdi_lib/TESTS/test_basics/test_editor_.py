@@ -62,30 +62,25 @@ class TestEditorDialog:
         editor = general_editors.NameEditor(thing, SampleThing.name)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
 
-        # check the name
-        name = editor.owner.name
-        while editor.parent_editor:
-            editor = editor.parent_editor
-            if hasattr(editor.owner, 'name'):
-                name = '{}-{}'.format(editor.owner.name, name)
-        if editor.field:
-            name = '{}: {}'.format(name, editor.field.get_ui_title()[basic_types.Language.get_active_language()])
-        assert dialog.windowTitle() == name
+        # check the title
+        assert dialog.windowTitle() == editor_.EditorDialog.create_full_name_for_editor_title(editor)
 
         # check name for list editor
         editor = general_editors.TableOfThingsEditor(thing, SampleThing.sub_things)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
         assert dialog.windowTitle() == 'نام 1: ' + sample_things_ui_titles[basic_types.Language.get_active_language()]
 
-        # check edit button and revive button (should be present in the dialog)
+        # check edit button and revive button (should be present in the dialog and should be disabled)
         widgets = list(dialog.header_layout.itemAt(i).widget() for i in range(dialog.header_layout.count()))
         assert dialog.edit_button in widgets
+        assert not dialog.edit_button.isEnabled()
         assert dialog.revive_button in widgets
+        assert not dialog.revive_button.isEnabled()
 
         # check new button and del button (should be present in the dialog)
         names = list(widgets[i].text() if isinstance(widgets[i], widget_basics.Button) else None for i in range(len(widgets)))
-        # assert 'new' in names
-        # assert 'del' in names
+        assert general_ui_titles.new[basic_types.Language.get_active_language()] in names
+        assert general_ui_titles.delete[basic_types.Language.get_active_language()] in names
 
-
+    # TODO: create tests for accept, reject, and __del__ methods.
 
