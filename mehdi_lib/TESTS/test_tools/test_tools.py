@@ -10,7 +10,7 @@ pytestmark = pytest.mark.tools
 # ===========================================================================
 def test_ordered_dict():
 
-    ordered_dict = tools.IndexAddedDict()
+    ordered_dict = tools.IndexEnabledDict()
     key1 = 1
     value1 = 'one'
     key2 = 2

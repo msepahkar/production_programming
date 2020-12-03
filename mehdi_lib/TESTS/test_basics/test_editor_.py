@@ -46,6 +46,13 @@ class SampleSubThing(thing_.Thing):
 
 
 # ===========================================================================
+class TestEditor:
+    # ===========================================================================
+    @staticmethod
+    def test_init():
+
+
+# ===========================================================================
 class TestEditorDialog:
     """Prepares required methods for testing EditorDialog"""
 

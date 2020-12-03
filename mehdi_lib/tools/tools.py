@@ -13,7 +13,7 @@ from PyQt5 import QtCore
 
 
 # ===========================================================================
-class IndexAddedDict(QtCore.QObject):
+class IndexEnabledDict(QtCore.QObject):
     """
     A new dict which internally has three lists:
     1) keys

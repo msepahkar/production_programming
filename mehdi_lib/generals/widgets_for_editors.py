@@ -666,7 +666,7 @@ class CheckBoxGroup_for_MultipleItemSelectorEditor(QtWidgets.QWidget, Widget_for
         # self.dependent_list_item_type = dependent_list_item_type
         self.field_for_retrieving_dependent_on_list_item = field_for_retrieving_dependent_on_list_item
         self.setLayout(QtWidgets.QVBoxLayout())
-        self.items = tools.IndexAddedDict()
+        self.items = tools.IndexEnabledDict()
 
     # ===========================================================================
     def update_items(self, items):

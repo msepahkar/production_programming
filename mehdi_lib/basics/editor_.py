@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import enum
+import typing
 
 from PyQt5 import QtWidgets, QtCore
 
@@ -16,11 +17,15 @@ is created as could be seen from the following code.
 
 # ===========================================================================
 class EditorTypes(enum.Enum):
+    """Three types available for editors
+
+    1- The simplest and most general form is editor for field. It edits only one single
+     field.
+    2- The second general form is the editor for "Thing" (the heart of this infrastructure).
+    3- The third and the last type is editor for editing list of things. This last one will add or remove "Things" to
+     or from the list.
     """
-    There are three types of editors. The simplest and most general form is editor for field. It edits only one single
-    field. The second general form is the editor for "Thing" (the heart of this infrastructure). The third and the last
-    type is editor for editing list of things. This last one will add or remove "Things" to or from the list.
-    """
+
     field_of_thing = 1
     thing = 2
     list_of_things = 3
@@ -28,16 +33,20 @@ class EditorTypes(enum.Enum):
 
 # ===========================================================================
 class EditorValue:
-    """
+    """Current value in editor
+
     The final values of fields are different from their value in editors until the user presses the "OK" button in the
     UI. After confirmation by the user, the editor will update the value of the field in memory.
     For field editors and thing editors there is no problem keeping track of changes in editor while still keeping the
-    original value. But for list of things there are difficulties when items are added to the list of removed from it.
+    original value. But for list of things there are difficulties when items are added to the list or removed from it.
     So instead of really removing items from the list they will be marked for removal until the user presses "OK".
-    Same for added items to the list they will be stored in a list called new_items until the user presses "OK".
+    Similar approach is used for added items to the list they will be stored in a list called new_items until the user
+    presses "OK".
     """
+
     # ===========================================================================
-    def __init__(self, value, new_items=None, items_marked_for_removal=None):
+    def __init__(self, value, new_items: typing.Optional[list] = None,
+                 items_marked_for_removal: typing.Optional[list] = None):
         self.value = value
         self.new_items = new_items
         self.items_marked_for_removal = items_marked_for_removal
@@ -45,15 +54,16 @@ class EditorValue:
 
 # ===========================================================================
 class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
-    """
+    """Required methods for adding and removing
+
     This class is specially designed for list of things (although its methods will be used in thing editors too but even
-    those usages are for things which are in lists of things). Adding items to the list and removing items from it had
+    those usages are for things which are in lists of things). Adding items to the list and removing items from it have
     difficulties because the memory version of the list should be untouched until the user presses "OK" button in the
     UI. All methods for keeping track of removed items in the UI and new items in the UI are included in this class.
     """
 
-    # these two signals make the UI able to enable or disable the revive button (the button which revives the removed
-    # item).
+    # these two signals make the UI able to enable or disable the revive button (the button which revives the last
+    #  removed item).
     sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
     no_sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
 
@@ -66,12 +76,16 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
         # for "Thing" which is marked for removal
         self._is_marked_for_removal = False
+
         # for "Thing" which is created in the editor for list of things
         self._is_new = False
+
         # list of sub editors which are marked for removal
         self.sub_editors_marked_for_removal = []
+
         # thing editor will have sub editors for editing its fields
-        self.sub_editors = tools.IndexAddedDict()
+        self.sub_editors = tools.IndexEnabledDict()
+
         self.keys_for_immediate_sub_editors_marked_for_removal_by_me = []
         self.keys_for_immediate_sub_editors_created_by_me = []
 
@@ -854,7 +868,7 @@ class Editor(Editor__Dependency):
 
         super().__init__(owner=owner, field=field, parent=parent_editor)
 
-        self.last_values_made_by_non_responsible_editors = tools.IndexAddedDict()
+        self.last_values_made_by_non_responsible_editors = tools.IndexEnabledDict()
 
         self.setting_value = False
 
@@ -862,6 +876,7 @@ class Editor(Editor__Dependency):
 
         self.create_widget_and_tie_signals__create_sub_editors_and_sub_dialogs()
 
+        # TODO: add comment for this command ???
         self.widget.installEventFilter(self)
 
         dependency_parameters = Editor__Dependency.dependency_parameters(self.owner, self.class_version_of_the_field)
