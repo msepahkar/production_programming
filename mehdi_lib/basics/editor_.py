@@ -290,11 +290,11 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
                 # become aware when no revival is possible
                 marked_sub_editor.no_revival_possible_signal.connect(self.sub_editor_revived_or_removed)
 
-                # tell the revival button that we have removed items which can be revived
-                self.sub_editor_marked_for_removal_exists_signal.emit()
-
                 # parent editor should tell other editors about the change
                 marked_sub_editor.parent_editor.value_changed_by_me_signal.emit()
+
+            # tell the revival button that we have removed items which can be revived
+            self.sub_editor_marked_for_removal_exists_signal.emit()
 
             # select the sibling editor
             marked_sub_editors[-1].select_the_first_sibling_not_marked_for_removal_or_parent()

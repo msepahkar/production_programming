@@ -196,13 +196,20 @@ class Test__Editor__Removing_Reviving_AddingNew:
             super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
 
             # select an element inside the list
-            super_things_tree_editor.sub_editors[super_thing].set_selected(True)
+            sub_editor = super_things_tree_editor.sub_editors[super_thing]
+            sub_editor.set_selected(True)
 
-            # mark it for removal
-            super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+            # mark it for removal and check the signal emissions
+            with qtbot.wait_signal(super_things_tree_editor.sub_editor_marked_for_removal_exists_signal, raising=True), \
+                 qtbot.wait_signal(sub_editor.parent_editor.value_changed_by_me_signal, raising=True):
+                super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
 
-            # check
-            assert super_things_tree_editor.sub_editors[super_thing].is_marked_for_removal()
+            # check marked for removal
+            assert sub_editor.is_marked_for_removal()
+            # check presence of sub-editor in marked-for-removal list
+            assert sub_editor in super_things_tree_editor.sub_editors_marked_for_removal
+            # check connected signal
+            sub_editor.no_revival_possible_signal.disconnect(super_things_tree_editor.sub_editor_revived_or_removed)
 
         # ===========================================================================
         def one_thing_with_two_sub_editors():
@@ -219,17 +226,63 @@ class Test__Editor__Removing_Reviving_AddingNew:
             # select an element inside the list
             previous_state = editor_.Editor__Selection.multiple_selection
             editor_.Editor__Selection.multiple_selection = True
-            super_things_tree_editor.sub_editors[super_thing_1].set_selected(True)
-            super_things_tree_editor.sub_editors[super_thing_2].set_selected(True)
+            sub_editor_1 = super_things_tree_editor.sub_editors[super_thing_1]
+            sub_editor_2 = super_things_tree_editor.sub_editors[super_thing_2]
+            sub_editor_1.set_selected(True)
+            sub_editor_2.set_selected(True)
 
-            # mark it for removal
-            super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+            # mark it for removal and check the signal emissions
+            with qtbot.wait_signal(super_things_tree_editor.sub_editor_marked_for_removal_exists_signal, raising=True), \
+                 qtbot.wait_signal(sub_editor_1.parent_editor.value_changed_by_me_signal, raising=True), \
+                 qtbot.wait_signal(sub_editor_2.parent_editor.value_changed_by_me_signal, raising=True):
+                super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
 
-            # check
-            assert super_things_tree_editor.sub_editors[super_thing_1].is_marked_for_removal()
-            assert super_things_tree_editor.sub_editors[super_thing_2].is_marked_for_removal()
+            # check marked for removal
+            assert sub_editor_1.is_marked_for_removal()
+            assert sub_editor_2.is_marked_for_removal()
+
+            # check presence of sub-editor in marked-for-removal list
+            assert sub_editor_1 in super_things_tree_editor.sub_editors_marked_for_removal
+            assert sub_editor_2 in super_things_tree_editor.sub_editors_marked_for_removal
+
+            # check connected signal
+            sub_editor_1.no_revival_possible_signal.disconnect(super_things_tree_editor.sub_editor_revived_or_removed)
+            sub_editor_2.no_revival_possible_signal.disconnect(super_things_tree_editor.sub_editor_revived_or_removed)
 
             editor_.Editor__Selection.multiple_selection = previous_state
+
+        # ===========================================================================
+        def one_thing_with_one_sub_editor_and_one_sub_sub_editor():
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+            thing = Thing()
+            super_thing[SuperThing.things].append(thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            sub_editor = super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing]
+            sub_editor.set_selected(True)
+
+            # mark it for removal and check the signal emissions
+            with qtbot.wait_signal(super_things_tree_editor.sub_editor_marked_for_removal_exists_signal, raising=True), \
+                 qtbot.wait_signal(sub_editor.parent_editor.value_changed_by_me_signal, raising=True):
+                 super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+
+            # check marked for removal
+            assert sub_editor.is_marked_for_removal()
+
+            # check presence of sub-editor in marked-for-removal list
+            assert sub_editor in super_things_tree_editor.sub_editors_marked_for_removal
+
+            # check connected signal
+            sub_editor.no_revival_possible_signal.disconnect(super_things_tree_editor.sub_editor_revived_or_removed)
+
+            # check selection of the sibling or parent
+            assert super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].is_selected(go_deep=False)
 
         # create the application
         assert qt_api.QApplication.instance() is not None
@@ -241,6 +294,10 @@ class Test__Editor__Removing_Reviving_AddingNew:
         # **************************************************************
         # 2-select two sub-editors for removal
         one_thing_with_two_sub_editors()
+
+        # **************************************************************
+        # 3-select sub-sub-editor for removal
+        one_thing_with_one_sub_editor_and_one_sub_sub_editor()
 
 
 # ===========================================================================
