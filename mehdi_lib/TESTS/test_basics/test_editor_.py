@@ -227,29 +227,61 @@ class Test__Editor__Removing_Reviving_AddingNew:
     # ===========================================================================
     @staticmethod
     def test_mark_selected_sub_editor_for_removal(qtbot):
+        # ===========================================================================
+        def one_thing_with_one_sub_editor():
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            super_things_tree_editor.sub_editors[super_thing].set_selected(True)
+
+            # mark it for removal
+            super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+
+            # check
+            assert super_things_tree_editor.sub_editors[super_thing].is_marked_for_removal()
+
+        # ===========================================================================
+        def one_thing_with_two_sub_editors():
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing_1 = SuperThing()
+            super_thing_2 = SuperThing()
+            super_things.append(super_thing_1)
+            super_things.append(super_thing_2)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            previous_state = editor_.Editor__Selection.multiple_selection
+            editor_.Editor__Selection.multiple_selection = True
+            super_things_tree_editor.sub_editors[super_thing_1].set_selected(True)
+            super_things_tree_editor.sub_editors[super_thing_2].set_selected(True)
+
+            # mark it for removal
+            super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+
+            # check
+            assert super_things_tree_editor.sub_editors[super_thing_1].is_marked_for_removal()
+            assert super_things_tree_editor.sub_editors[super_thing_2].is_marked_for_removal()
+
+            editor_.Editor__Selection.multiple_selection = previous_state
 
         # create the application
         assert qt_api.QApplication.instance() is not None
 
-        # **************************************************************
-        # 1-simplest state. one thing with one sub-editor
+        # 1-simplest state. one thing with one selected sub-editor
+        one_thing_with_one_sub_editor()
 
-        # create the things
-        super_thing1 = SuperThing()
-        thing1 = Thing()
-        super_thing1[SuperThing.things].append(thing1)
+        # 2-select two sub-editors for removal
+        one_thing_with_two_sub_editors()
 
-        # create a list of things editor
-        things_tree_editor = general_editors.TreeOfThingsEditor(super_thing1[SuperThing.things], None)
-
-        # select an element inside the list
-        things_tree_editor.sub_editors[thing1].set_selected(True)
-
-        # mark it for removal
-        things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
-
-        # check
-        assert things_tree_editor.sub_editors[thing1].is_marked_for_removal()
 
 
 # ===========================================================================
