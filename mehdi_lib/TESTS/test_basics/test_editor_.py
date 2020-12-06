@@ -72,157 +72,115 @@ class Test__Editor__Removing_Reviving_AddingNew:
     # ===========================================================================
     @staticmethod
     def test_append_new_item(qtbot):
+        # ===========================================================================
+        def add_to_top_editor(is_top_editor: bool):
+            # list of super-things
+            super_things = thing_.ListOfThings(SuperThing)
+
+            # tree editor for list of super-things
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # check adding a new item to the list of super-things (nothing is selected yet)
+            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_tree_editor.sub_editors) == (1 if is_top_editor else 0)
+
+        # ===========================================================================
+        def add_to_non_top_editor(is_top_editor: bool):
+
+            # list of super-things
+            super_things = thing_.ListOfThings(SuperThing)
+            # adding one element to the list
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # tree editor for list of super-things
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select the added super-thing to the list of super-things and call append_new_item again.
+            #  this time we expect that a new Thing be added to the super-thing[things] field.
+            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].set_selected(True)
+            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_tree_editor.sub_editors) == 1
+            assert len(super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 1
+
+        # ===========================================================================
+        def add_while_non_list_field_is_selected(is_top_editor: bool):
+
+            # list of super-things
+            super_things = thing_.ListOfThings(SuperThing)
+            # adding one element to the list
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # tree editor for list of super-things
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select a non list of things field of the added super-thing to the list of super-things and call
+            #  append_new_item. This time we expect that a new Thing be added to super_thing5
+            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.name].set_selected(True)
+            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_tree_editor.sub_editors) == 2
+
+        # ===========================================================================
+        def add_while_non_list_field_in_sub_thing_is_selected(is_top_editor: bool):
+            # list of super-things
+            super_things = thing_.ListOfThings(SuperThing)
+            # adding one element to the list
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+            # create a thing
+            thing = Thing()
+            # add the thing to super-thing
+            super_thing[SuperThing.things].append(thing)
+
+            # tree editor for list of super-things
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select a non list of things field of the thing7
+            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing].sub_editors[Thing.name].set_selected(True)
+            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_tree_editor.sub_editors) == 1
+            assert len(super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 2
+
 
         # create the application
         assert qt_api.QApplication.instance() is not None
 
         # **************************************************************
         # 1-adding new item to top editor with is_top_editor set to False
-
-        # list of super-things
-        super_things1 = thing_.ListOfThings(SuperThing)
-
-        # tree editor for list of super-things
-        super_things_tree_editor1 = general_editors.TreeOfThingsEditor(super_things1, None)
-
-        # check adding a new item to the list of super-things (nothing is selected yet)
-        super_things_tree_editor1.append_new_item(is_top_editor=False)
-        assert len(super_things_tree_editor1.sub_editors) == 0  # nothing will be added
+        add_to_top_editor(is_top_editor=False)
 
         # **************************************************************
         # 2-adding new item to top editor with is_top_editor set to True
-
-        # list of super-things
-        super_things2 = thing_.ListOfThings(SuperThing)
-
-        # tree editor for list of super-things
-        super_things_tree_editor2 = general_editors.TreeOfThingsEditor(super_things2, None)
-
-        # check adding a new item to the list of super-things (nothing is selected yet)
-        super_things_tree_editor2.append_new_item(is_top_editor=True)
-        assert len(super_things_tree_editor2.sub_editors) == 1
+        add_to_top_editor(is_top_editor=True)
 
         # **************************************************************
         # 3-adding new item to list of things editor which is not top editor with is_top_editor set to True
-
-        # list of super-things
-        super_things3 = thing_.ListOfThings(SuperThing)
-        # adding one element to the list
-        super_thing3 = SuperThing()
-        super_things3.append(super_thing3)
-
-        # tree editor for list of super-things
-        super_things_tree_editor3 = general_editors.TreeOfThingsEditor(super_things3, None)
-
-        # select the added super-thing to the list of super-things and call append_new_item again.
-        #  this time we expect that a new Thing be added to the super-thing[things] field.
-        super_things_tree_editor3.sub_editors[super_thing3].sub_editors[SuperThing.things].set_selected(True)
-        super_things_tree_editor3.append_new_item(is_top_editor=True)
-        assert len(super_things_tree_editor3.sub_editors) == 1
-        assert len(super_things_tree_editor3.sub_editors[super_thing3].sub_editors[SuperThing.things].sub_editors) == 1
+        add_to_top_editor(True)
 
         # **************************************************************
         # 4-adding new item to list of things editor which is not top editor with is_top_editor set to False
-
-        # list of super-things
-        super_things4 = thing_.ListOfThings(SuperThing)
-        # adding one element to the list
-        super_thing4 = SuperThing()
-        super_things4.append(super_thing4)
-
-        # tree editor for list of super-things
-        super_things_tree_editor4 = general_editors.TreeOfThingsEditor(super_things4, None)
-
-        # select the added super-thing to the list of super-things and call append_new_item again.
-        #  this time we expect that a new Thing be added to the super-thing[things] field.
-        super_things_tree_editor4.sub_editors[super_thing4].sub_editors[SuperThing.things].set_selected(True)
-        super_things_tree_editor4.append_new_item(is_top_editor=False)
-        assert len(super_things_tree_editor4.sub_editors) == 1
-        assert len(super_things_tree_editor4.sub_editors[super_thing4].sub_editors[SuperThing.things].sub_editors) == 1
+        add_to_non_top_editor(False)
 
         # **************************************************************
         # 5-adding new item while a non list of things field is selected with is_top_editor set to True
         #  select a non list of things field in super-thing and call append_new_item
         #  this time we expect that a new super-thing be added to the list of super-things
-
-        # list of super-things
-        super_things5 = thing_.ListOfThings(SuperThing)
-        # adding one element to the list
-        super_thing5 = SuperThing()
-        super_things5.append(super_thing5)
-
-        # tree editor for list of super-things
-        super_things_tree_editor5 = general_editors.TreeOfThingsEditor(super_things5, None)
-
-        # select a non list of things field of the added super-thing to the list of super-things and call
-        #  append_new_item. This time we expect that a new Thing be added to super_thing5
-        super_things_tree_editor5.sub_editors[super_thing5].sub_editors[SuperThing.name].set_selected(True)
-        super_things_tree_editor5.append_new_item(is_top_editor=True)
-        assert len(super_things_tree_editor5.sub_editors) == 2
+        add_while_non_list_field_is_selected(True)
 
         # **************************************************************
         # 6-adding new item while a non list of things field is selected with is_top_editor set to False
         #  select a non list of things field in super-thing and call append_new_item
         #  this time we expect that a new super-thing be added to the list of super-things
-
-        # list of super-things
-        super_things6 = thing_.ListOfThings(SuperThing)
-        # adding one element to the list
-        super_thing6 = SuperThing()
-        super_things6.append(super_thing6)
-
-        # tree editor for list of super-things
-        super_things_tree_editor6 = general_editors.TreeOfThingsEditor(super_things6, None)
-
-        # select a non list of things field of the added super-thing to the list of super-things and call
-        #  append_new_item. This time we expect that a new Thing be added to super_thing6
-        super_things_tree_editor6.sub_editors[super_thing6].sub_editors[SuperThing.name].set_selected(True)
-        super_things_tree_editor6.append_new_item(is_top_editor=False)
-        assert len(super_things_tree_editor6.sub_editors) == 2
+        add_while_non_list_field_is_selected(False)
 
         # **************************************************************
         # 7-adding new item while a non list of things field is selected in thing (not super-thing) with is_top_editor set to True
-
-        # list of super-things
-        super_things7 = thing_.ListOfThings(SuperThing)
-        # adding one element to the list
-        super_thing7 = SuperThing()
-        super_things7.append(super_thing7)
-        # create a thing
-        thing7 = Thing()
-        # add the thing to super-thing
-        super_thing7[SuperThing.things].append(thing7)
-
-        # tree editor for list of super-things
-        super_things_tree_editor7 = general_editors.TreeOfThingsEditor(super_things7, None)
-
-        # select a non list of things field of the thing7
-        super_things_tree_editor7.sub_editors[super_thing7].sub_editors[SuperThing.things].sub_editors[thing7].sub_editors[Thing.name].set_selected(True)
-        super_things_tree_editor7.append_new_item(is_top_editor=True)
-        assert len(super_things_tree_editor7.sub_editors) == 1
-        assert len(super_things_tree_editor7.sub_editors[super_thing7].sub_editors[SuperThing.things].sub_editors) == 2
+        add_while_non_list_field_in_sub_thing_is_selected(True)
 
         # **************************************************************
         # 8-adding new item while a non list of things field is selected in thing (not super-thing) with is_top_editor set to False
-
-        # list of super-things
-        super_things8 = thing_.ListOfThings(SuperThing)
-        # adding one element to the list
-        super_thing8 = SuperThing()
-        super_things8.append(super_thing8)
-        # create a thing
-        thing8 = Thing()
-        # add the thing to super-thing
-        super_thing8[SuperThing.things].append(thing8)
-
-        # tree editor for list of super-things
-        super_things_tree_editor8 = general_editors.TreeOfThingsEditor(super_things8, None)
-
-        # select a non list of things field of the thing8
-        super_things_tree_editor8.sub_editors[super_thing8].sub_editors[SuperThing.things].sub_editors[thing8].sub_editors[Thing.name].set_selected(True)
-        super_things_tree_editor8.append_new_item(is_top_editor=False)
-        assert len(super_things_tree_editor8.sub_editors) == 1
-        assert len(super_things_tree_editor8.sub_editors[super_thing8].sub_editors[SuperThing.things].sub_editors) == 2
+        add_while_non_list_field_in_sub_thing_is_selected(False)
 
     # ===========================================================================
     @staticmethod
