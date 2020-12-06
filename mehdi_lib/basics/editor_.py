@@ -64,10 +64,12 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
     # these two signals make the UI able to enable or disable the revive button (the button which revives the last
     #  removed item).
+    # TODO: add tests for these signals
     sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
     no_sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
 
     # when the sub editor is totally removed or when it is revived this signal will be emitted
+    # TODO: add test for this signal
     no_revival_possible_signal = QtCore.pyqtSignal()
 
     # ===========================================================================
@@ -86,6 +88,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         # thing editor will have sub editors for editing its fields
         self.sub_editors = tools.IndexEnabledDict()
 
+        # TODO: add more comments for these arrays
         self.keys_for_immediate_sub_editors_marked_for_removal_by_me = []
         self.keys_for_immediate_sub_editors_created_by_me = []
 
@@ -94,6 +97,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         return self._is_marked_for_removal
 
     # ===========================================================================
+    # TODO: write test function for this method
     def set_marked_for_removal(self, mark_for_removal) -> bool:
 
         if mark_for_removal:
@@ -135,6 +139,8 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         return False
 
     # ===========================================================================
+    # TODO: add comment for this method
+    # TODO: add test for this method
     def set_immediate_sub_editor_marked_for_removal(self, key, mark_for_removal):
         if mark_for_removal:
             if self.sub_editors[key].set_marked_for_removal(mark_for_removal=True):
@@ -162,14 +168,17 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
             self._is_new = False
 
     # ===== should be implemented in each editor
+    # TODO: could it be not implemented error?
     def insert_sub_editor_or_sub_dialog(self, index, item):
         pass
 
     # ===== should be implemented in each editor
+    # TODO: could it be not implemented error?
     def remove_sub_editor_widget(self, item):
         pass
 
     # ===========================================================================
+    # TODO: add comment for this method
     def remove_sub_editor(self, item):
         self.remove_sub_editor_widget(item)
         self.sub_editors[item].unregister()
@@ -177,11 +186,28 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         del self.sub_editors[item]
 
     # ===========================================================================
-    def append_new_item(self, is_top_editor):
+    # TODO: newly added item should become the center of focus in the UI
+    def append_new_item(self, is_top_editor: bool) -> bool:
+        """Appends a new item to the currently selected item.
+
+        First, sub-editors will be checked to see if they or their children or grand-children or ... are selected. If
+         so, the new item will be appended to the selected editor regardless of is_top_editor value.
+        If nothing is selected but is_top_editor is set to True, self.editor will be considered as the selected editor.
+        When the selected editor is found, it is time to check for list of things. As new item could only be added to
+         list of things, the selected editor or its parent or grand-parent or ... which is list of things will be the
+         final candidate for adding new item. If no list of things editor is found, adding new item will not be done!
+
+        :param is_top_editor: bool
+            When this parameter is True, self.editor will be considered as the selected editor. Although, its
+             sub-editors will still be checked to see if they are selected too. And if yes, they will be the candidate
+             for adding the new item.
+        :return: bool
+            If adding new item is done successfully True is returned, otherwise False will be returned.
+        """
 
         # check for possible selected sub editor
+        #  if found, new item should be added to that
         for sub_editor in self.sub_editors.values():
-            # if found, new item should be appended to the selected node
             if sub_editor.is_selected(go_deep=True):
                 return sub_editor.append_new_item(is_top_editor=False)
 
@@ -192,22 +218,49 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
             editor = self
             while editor.type is not EditorTypes.list_of_things and editor.parent_editor:
                 editor = editor.parent_editor
+
+            # only list of things can add new item!
             if editor.type is not EditorTypes.list_of_things:
                 editor = None
 
         # found the proper editor?
         if editor:
+
+            # create the new thing first
             new_thing = editor.create_new_thing_for_immediate_sub_editor()
             if new_thing:
+
+                # now create the sub-editor for the new thing
                 editor.append_new_immediate_sub_editor(new_thing)
+
+                # update the ui for showing the newly created item
                 editor.redraw_items()
+
+                # tell other editors of the same thing about the change
                 editor.value_changed_by_me_signal.emit()
+
                 return True
 
         return False
 
     # ===========================================================================
-    def mark_selected_sub_editor_for_removal(self, is_top_editor):
+    def mark_selected_sub_editor_for_removal(self, is_top_editor: bool) -> list:
+        """Marks the selected editor for removal
+
+        it searches all sub-editors and their children and grand children and ... to reach selected sub-editors.
+        searching level will not go beyond selected sub-editors. meaning: searches goes down level by level until at
+         least one selected sub-editor is found. then searching will be stopped.
+        for each found selected sub-editor, first it will be marked by removal by calling the proper method. then it
+         will be added to the marked_sub_editors array to be returned at the end of the method.
+
+        :param is_top_editor: bool
+            if is set to True:
+                connects signal for revivial button
+                emits signal for marking a sub-editor for removal
+                parent-editor will inform other editors about the marking for removal
+        :return: list
+            list of sub-editors marked for removal
+        """
 
         marked_sub_editors = []
 
@@ -221,7 +274,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
                 if self.set_immediate_sub_editor_marked_for_removal(key, mark_for_removal=True):
                     marked_sub_editors.append(self.sub_editors[key])
 
-            # seems you should go deeper
+            # seems you should go deeper!
             elif self.sub_editors[key].is_selected(go_deep=True):
                 for marked_sub_editor in self.sub_editors[key].mark_selected_sub_editor_for_removal(is_top_editor=False):
                     marked_sub_editors.append(marked_sub_editor)

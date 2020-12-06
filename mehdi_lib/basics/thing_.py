@@ -241,7 +241,7 @@ class Thing(field_.Field):
         if foreign_thing:
             foreign_keys = cls.sorted_foreign_key_fields_of_class(type(foreign_thing))
             if not foreign_keys:
-                tools.Tools.fatal_error('you may have forgotten to add foreign thing field into the sub-thing!')
+                tools.Tools.fatal_error('you may have forgotten to add foreign thing field of {} into the sub-thing: {}!'.format(type(foreign_thing), cls))
             foreign_key = foreign_keys[0]
         else:
             foreign_key = None
