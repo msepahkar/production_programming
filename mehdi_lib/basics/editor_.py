@@ -248,8 +248,9 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         """Marks the selected editor for removal
 
         it searches all sub-editors and their children and grand children and ... to reach selected sub-editors.
-        searching level will not go beyond selected sub-editors. meaning: searches goes down level by level until at
-         least one selected sub-editor is found. then searching will be stopped.
+        when selected sub-editor is found, searching will not go further in depth. it means that children of the
+         selected sub-editors will not be searched. the reason is that when selected sub-editor is marked for removal,
+         automatically the children will be removed. so there is no need for going further in depth.
         for each found selected sub-editor, first it will be marked by removal by calling the proper method. then it
          will be added to the marked_sub_editors array to be returned at the end of the method.
 

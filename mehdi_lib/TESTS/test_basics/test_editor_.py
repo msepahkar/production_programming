@@ -234,12 +234,13 @@ class Test__Editor__Removing_Reviving_AddingNew:
         # create the application
         assert qt_api.QApplication.instance() is not None
 
+        # **************************************************************
         # 1-simplest state. one thing with one selected sub-editor
         one_thing_with_one_sub_editor()
 
+        # **************************************************************
         # 2-select two sub-editors for removal
         one_thing_with_two_sub_editors()
-
 
 
 # ===========================================================================
