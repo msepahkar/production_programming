@@ -64,12 +64,10 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
     # these two signals make the UI able to enable or disable the revive button (the button which revives the last
     #  removed item).
-    # TODO: add tests for these signals
     sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
     no_sub_editor_marked_for_removal_exists_signal = QtCore.pyqtSignal()
 
     # when the sub editor is totally removed or when it is revived this signal will be emitted
-    # TODO: add test for this signal
     no_revival_possible_signal = QtCore.pyqtSignal()
 
     # ===========================================================================
@@ -319,6 +317,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
             index = self.sub_editors_marked_for_removal.index(sub_editor)
             del self.sub_editors_marked_for_removal[index]
 
+            # TODO: is this only for showing revived editor or also for hiding removed editor???
             # show it in case it has been revived.
             self.redraw_items()
 
@@ -1056,7 +1055,7 @@ class Editor(Editor__Dependency):
                 # revive all immediate sub editor removed by the rejecter
                 for sub_editor in rejecter.sub_editors_marked_for_removal:
                     if sub_editor.owner in self.sub_editors:
-                        if self.set_immediate_sub_editor_marked_for_removal(key, mark_for_removal=False):
+                        if self.set_immediate_sub_editor_marked_for_removal(sub_editor.owner, mark_for_removal=False):
                             value_changed_by_me = True
 
                 # no more need for the tracking information

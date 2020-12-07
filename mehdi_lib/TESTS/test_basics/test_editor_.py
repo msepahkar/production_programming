@@ -302,9 +302,60 @@ class Test__Editor__Removing_Reviving_AddingNew:
     # ===========================================================================
     @staticmethod
     def test_sub_editor_revived_or_removed(qtbot):
+        # ===========================================================================
+        def remove_marked_sub_editor():
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            sub_editor = super_things_tree_editor.sub_editors[super_thing]
+            sub_editor.set_selected(True)
+
+            # mark it for removal
+            super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+
+            # marked sub-editor should be in the sub_editors_marked_for_removal at first
+            assert sub_editor in super_things_tree_editor.sub_editors_marked_for_removal
+            # as this is the only marked sub-editor, the no revival possible signal should be emitted.
+            with qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal, raising=True):
+                super_things_tree_editor.remove_sub_editor(super_thing)
+            # marked sub-editor should not be in the sub-editors-marked-for-removal any more
+            assert sub_editor not in super_things_tree_editor.sub_editors_marked_for_removal
+
+        # ===========================================================================
+        def revive_marked_sub_editor():
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            sub_editor = super_things_tree_editor.sub_editors[super_thing]
+            sub_editor.set_selected(True)
+
+            # mark it for removal
+            super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+
+            # marked sub-editor should be in the sub_editors_marked_for_removal at first
+            assert sub_editor in super_things_tree_editor.sub_editors_marked_for_removal
+            # as this is the only marked sub-editor, the no revival possible signal should be emitted.
+            with qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal, raising=True):
+                super_things_tree_editor.set_immediate_sub_editor_marked_for_removal(super_thing, mark_for_removal=False)
+            # marked sub-editor should not be in the sub-editors-marked-for-removal any more
+            assert sub_editor not in super_things_tree_editor.sub_editors_marked_for_removal
 
         # create the application
         assert qt_api.QApplication.instance() is not None
+        remove_marked_sub_editor()
+        revive_marked_sub_editor()
 
 
 # ===========================================================================
