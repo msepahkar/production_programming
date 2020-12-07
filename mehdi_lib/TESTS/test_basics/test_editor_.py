@@ -71,6 +71,14 @@ class SubThing(thing_.Thing):
 class Test__Editor__Removing_Reviving_AddingNew:
     # ===========================================================================
     @staticmethod
+    def test_set_marked_for_removal(qtbot):
+        # create the application
+        assert qt_api.QApplication.instance() is not None
+
+
+
+    # ===========================================================================
+    @staticmethod
     def test_append_new_item(qtbot):
         # ===========================================================================
         def add_to_top_editor(is_top_editor: bool):
@@ -348,7 +356,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
             assert sub_editor in super_things_tree_editor.sub_editors_marked_for_removal
             # as this is the only marked sub-editor, the no revival possible signal should be emitted.
             with qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal, raising=True):
-                super_things_tree_editor.set_immediate_sub_editor_marked_for_removal(super_thing, mark_for_removal=False)
+                super_things_tree_editor.sub_editors[super_thing].set_marked_for_removal(mark_for_removal=False)
             # marked sub-editor should not be in the sub-editors-marked-for-removal any more
             assert sub_editor not in super_things_tree_editor.sub_editors_marked_for_removal
 

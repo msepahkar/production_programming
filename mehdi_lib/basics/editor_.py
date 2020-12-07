@@ -135,19 +135,6 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         return False
 
     # ===========================================================================
-    # TODO: add comment for this method
-    # TODO: add test for this method
-    def set_immediate_sub_editor_marked_for_removal(self, key, mark_for_removal):
-        if mark_for_removal:
-            if self.sub_editors[key].set_marked_for_removal(mark_for_removal=True):
-                return True
-        else:
-            success = self.sub_editors[key].set_marked_for_removal(mark_for_removal=False)
-            if success:
-                return True
-        return False
-
-    # ===========================================================================
     def is_new(self):
         return self._is_new
 
@@ -265,7 +252,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
             if self.sub_editors[key].is_selected(go_deep=False):
 
                 # try marking it for removal
-                if self.set_immediate_sub_editor_marked_for_removal(key, mark_for_removal=True):
+                if self.sub_editors[key].set_marked_for_removal(mark_for_removal=True):
                     marked_sub_editors.append(self.sub_editors[key])
 
             # seems you should go deeper!
@@ -1055,7 +1042,7 @@ class Editor(Editor__Dependency):
                 # revive all immediate sub editor removed by the rejecter
                 for sub_editor in rejecter.sub_editors_marked_for_removal:
                     if sub_editor.owner in self.sub_editors:
-                        if self.set_immediate_sub_editor_marked_for_removal(sub_editor.owner, mark_for_removal=False):
+                        if self.sub_editors[sub_editor.owner].set_marked_for_removal(mark_for_removal=False):
                             value_changed_by_me = True
 
                 # no more need for the tracking information
@@ -1226,7 +1213,7 @@ class Editor(Editor__Dependency):
                     # revive all immediate sub editor removed by the rejecter
                     for sub_editor in rejecter.sub_editors_marked_for_removal:
                         if sub_editor.owner in self.sub_editors:
-                            if self.set_immediate_sub_editor_marked_for_removal(sub_editor.owner, mark_for_removal=False):
+                            if self.sub_edtiors[sub_editor.owner].set_marked_for_removal(mark_for_removal=False):
                                 value_changed_by_me = True
 
                     # no more need for the tracking information

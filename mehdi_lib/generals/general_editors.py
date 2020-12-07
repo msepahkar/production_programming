@@ -165,7 +165,7 @@ class MultipleItemSelectorEditor(editor_.Editor):
             for existing_item in self.sub_editors.keys():
                 if item == existing_item[dependency_parameters.field_for_retrieving_dependent_on_list_item]:
                     if self.sub_editors[existing_item].is_marked_for_removal():
-                        if self.set_immediate_sub_editor_marked_for_removal(key=existing_item, mark_for_removal=False):
+                        if self.sub_editors[existing_item].set_marked_for_removal(mark_for_removal=False):
                             i_changed_the_value = True
                     found = True
                     break
@@ -177,7 +177,7 @@ class MultipleItemSelectorEditor(editor_.Editor):
         # remove items existing in sub editors but not in items list
         for key in self.sub_editors.keys():
             if self.sub_editors[key].representing_object[dependency_parameters.field_for_retrieving_dependent_on_list_item] not in items:
-                if self.set_immediate_sub_editor_marked_for_removal(key, mark_for_removal=True):
+                if self.sub_editors[key].set_marked_for_removal(mark_for_removal=True):
                     i_changed_the_value = True
 
         if i_changed_the_value:
