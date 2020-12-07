@@ -299,6 +299,13 @@ class Test__Editor__Removing_Reviving_AddingNew:
         # 3-select sub-sub-editor for removal
         one_thing_with_one_sub_editor_and_one_sub_sub_editor()
 
+    # ===========================================================================
+    @staticmethod
+    def test_sub_editor_revived_or_removed(qtbot):
+
+        # create the application
+        assert qt_api.QApplication.instance() is not None
+
 
 # ===========================================================================
 class TestEditorDialog:
