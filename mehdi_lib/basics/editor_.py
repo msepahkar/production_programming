@@ -303,9 +303,8 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
     def sub_editor_revived_or_removed(self):
         """Called when a sub-editor marked for removal is either revived or totally removed.
 
-        It removes the sub-editor from the immediate-sub-editors-marked-for-removal list.
         It removes the sub-editor from the sub-editors-marked-for-removal-by-me list.
-        It redraws items if the sub-editor has been removed by me (to be shown if it is revived now).
+        It redraws items if the sub-editor has been removed by itself (to be shown if it is revived now).
 
         :return:
         """
@@ -316,7 +315,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         # have we marked this sub editor for removal?
         if sub_editor in self.sub_editors_marked_for_removal:
 
-            # remove it from this list too
+            # remove it from this list
             index = self.sub_editors_marked_for_removal.index(sub_editor)
             del self.sub_editors_marked_for_removal[index]
 
