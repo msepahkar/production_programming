@@ -159,6 +159,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
     # ===========================================================================
     # TODO: add comment for this method
+    # TODO: add test for this method
     def remove_sub_editor(self, item):
         self.remove_sub_editor_widget(item)
         self.sub_editors[item].unregister()
@@ -314,6 +315,15 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
     # ===========================================================================
     def revive_the_latest_sub_editor_marked_for_removal(self):
+        """The name perfectly explains function job.
+
+        The revived sub-editor will be selected.
+        Parent editor will emit the value-changed-by-me-signal.
+        The length of sub-editors-marked-for-removal array will be checked for emitting the no-sub-editor-marked-for-
+         removal-exists-signal.
+
+        :return:
+        """
 
         # any sub editor available for revival?
         if len(self.sub_editors_marked_for_removal) > 0:
@@ -331,6 +341,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
             self.no_sub_editor_marked_for_removal_exists_signal.emit()
 
     # ===========================================================================
+    # TODO: add comment and test function
     def update_foreign_owners(self, previous_foreign_owner, new_foreign_owner):
         # ===========================================================================
         def foreign_owner_list_field_responsible_editor(owner, field, foreign_owner):
@@ -373,10 +384,12 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
                 responsible_editor.value_changed_by_me_signal.emit()
 
     # ===========================================================================
+    # TODO: we removed the function self.keys_for_immediate_sub_editors_marked_for_removal() check any possible malfunctionning
     def clear_tracking_information_regarding_sub_editors(self):
         self.keys_for_immediate_sub_editors_created_by_me.clear()
 
     # ===========================================================================
+    # TODO: add comment and test method
     def create_new_thing_for_immediate_sub_editor(self):
 
         # check if any allowed dependent item is available
@@ -423,6 +436,7 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         return new_thing
 
     # ===========================================================================
+    # TODO: add comment and test method
     def append_new_immediate_sub_editor(self, new_thing):
         self.insert_sub_editor_or_sub_dialog(len(self.sub_editors), new_thing)
         self.sub_editors[new_thing].set_is_new(True)
