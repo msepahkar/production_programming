@@ -88,8 +88,6 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
         # thing editor will have sub editors for editing its fields
         self.sub_editors = tools.IndexEnabledDict()
 
-        # TODO: add more comments for these arrays
-        self.keys_for_immediate_sub_editors_marked_for_removal_by_me = []
         self.keys_for_immediate_sub_editors_created_by_me = []
 
     # ===========================================================================
@@ -144,12 +142,9 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
     def set_immediate_sub_editor_marked_for_removal(self, key, mark_for_removal):
         if mark_for_removal:
             if self.sub_editors[key].set_marked_for_removal(mark_for_removal=True):
-                self.keys_for_immediate_sub_editors_marked_for_removal_by_me.append(key)
                 return True
         else:
             success = self.sub_editors[key].set_marked_for_removal(mark_for_removal=False)
-            if success or not self.sub_editors[key].is_marked_for_removal():
-                tools.Tools.remove_element_from_list_if_exists(self.keys_for_immediate_sub_editors_marked_for_removal_by_me, key)
             if success:
                 return True
         return False
@@ -306,9 +301,6 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
     # ===========================================================================
     def sub_editor_revived_or_removed(self):
-        # TODO: why these two arrays are not one???:
-        #  self.keys_for_immediate_sub_editors_marked_for_removal_by_me
-        #  self.sub_editors_marked_for_removal
         """Called when a sub-editor marked for removal is either revived or totally removed.
 
         It removes the sub-editor from the immediate-sub-editors-marked-for-removal list.
@@ -320,14 +312,6 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
         # find who called us
         sub_editor = self.sender()
-
-        # is this immediate sub editor?
-        if sub_editor in self.sub_editors.values():
-            index = self.sub_editors.values().index(sub_editor)
-            key = self.sub_editors.keys()[index]
-
-            # remove from the list of marked for removals
-            tools.Tools.remove_element_from_list_if_exists(self.keys_for_immediate_sub_editors_marked_for_removal_by_me, key)
 
         # have we marked this sub editor for removal?
         if sub_editor in self.sub_editors_marked_for_removal:
@@ -405,7 +389,6 @@ class Editor__Removing_Reviving_AddingNew(QtCore.QObject):
 
     # ===========================================================================
     def clear_tracking_information_regarding_sub_editors(self):
-        self.keys_for_immediate_sub_editors_marked_for_removal_by_me.clear()
         self.keys_for_immediate_sub_editors_created_by_me.clear()
 
     # ===========================================================================
@@ -1071,9 +1054,9 @@ class Editor(Editor__Dependency):
                         self.remove_sub_editor(key)
                         value_changed_by_me = True
 
-                # revive all sub editor removed by the rejecter
-                for key in rejecter.keys_for_immediate_sub_editors_marked_for_removal_by_me:
-                    if key in self.sub_editors:
+                # revive all immediate sub editor removed by the rejecter
+                for sub_editor in rejecter.sub_editors_marked_for_removal:
+                    if sub_editor.owner in self.sub_editors:
                         if self.set_immediate_sub_editor_marked_for_removal(key, mark_for_removal=False):
                             value_changed_by_me = True
 
@@ -1157,11 +1140,11 @@ class Editor(Editor__Dependency):
                 for editor in self.owner.editors:
                     if sub_editor.owner in editor.keys_for_immediate_sub_editors_created_by_me:
                         return True
-            if sub_editor.owner in self.keys_for_immediate_sub_editors_marked_for_removal_by_me:
+            if sub_editor in self.sub_editors_marked_for_removal:
                 return True
             if self.is_responsible():
                 for editor in self.owner.editors:
-                    if sub_editor.owner in editor.keys_for_immediate_sub_editors_marked_for_removal_by_me:
+                    if sub_editor in editor.sub_editors_marked_for_removal:
                         return True
             if sub_editor.is_modified():
                 return True
@@ -1242,10 +1225,10 @@ class Editor(Editor__Dependency):
                             self.remove_sub_editor(key)
                             value_changed_by_me = True
 
-                    # revive all sub editor removed by the rejecter
-                    for key in rejecter.keys_for_immediate_sub_editors_marked_for_removal_by_me:
-                        if key in self.sub_editors:
-                            if self.set_immediate_sub_editor_marked_for_removal(key, mark_for_removal=False):
+                    # revive all immediate sub editor removed by the rejecter
+                    for sub_editor in rejecter.sub_editors_marked_for_removal:
+                        if sub_editor.owner in self.sub_editors:
+                            if self.set_immediate_sub_editor_marked_for_removal(sub_editor.owner, mark_for_removal=False):
                                 value_changed_by_me = True
 
                     # no more need for the tracking information
