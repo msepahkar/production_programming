@@ -864,7 +864,7 @@ class TreeWidget_for_TreeOfThingsEditor(QtWidgets.QTreeWidget, Widget_for_Editor
     # ===========================================================================
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
         # for enabling and disabling multi-selection
         self._instances.add(weakref.ref(self))

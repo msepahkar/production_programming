@@ -420,12 +420,18 @@ class Test__Editor__Selection:
         editor = general_editors.TreeOfThingsEditor(thing_.ListOfThings(SuperThing), None)
         qtbot.add_widget(editor.widget)
         editor.widget.show()
+
+        # control key
         qtbot.keyPress(editor.widget, qt_api.Qt.Key.Key_Control)
         assert editor_.Editor__Selection.multiple_selection
-        assert editor.widget.selectionMode() == QtWidgets.QAbstractItemView.ExtendedSelection
         qtbot.keyRelease(editor.widget, qt_api.Qt.Key.Key_Control)
         assert not editor_.Editor__Selection.multiple_selection
-        assert editor.widget.selectionMode() == QtWidgets.QAbstractItemView.SingleSelection
+
+        # shift key
+        qtbot.keyPress(editor.widget, qt_api.Qt.Key.Key_Shift)
+        assert editor_.Editor__Selection.multiple_selection
+        qtbot.keyRelease(editor.widget, qt_api.Qt.Key.Key_Shift)
+        assert not editor_.Editor__Selection.multiple_selection
 
     # ===========================================================================
     @staticmethod

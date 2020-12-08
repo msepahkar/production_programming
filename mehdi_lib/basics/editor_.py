@@ -473,18 +473,10 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
         # enabling multi selection by pressing shift or control key
         if event.type() == QtCore.QEvent.KeyPress and (event.key() == QtCore.Qt.Key_Control or event.key() == QtCore.Qt.Key_Shift):
             Editor__Selection.multiple_selection = True
-            for tree_widget in widgets_for_editors.TreeWidget_for_TreeOfThingsEditor.get_instances():
-                tree_widget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
         # disabling multi selection by releasing shift or control key
         if event.type() == QtCore.QEvent.KeyRelease and (event.key() == QtCore.Qt.Key_Control or event.key() == QtCore.Qt.Key_Shift):
             Editor__Selection.multiple_selection = False
-            for tree_widget in widgets_for_editors.TreeWidget_for_TreeOfThingsEditor.get_instances():
-                # try:
-                    # wrapped C++ class may be destroyed
-                    tree_widget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-                # except:
-                #     pass
 
         return False
 
