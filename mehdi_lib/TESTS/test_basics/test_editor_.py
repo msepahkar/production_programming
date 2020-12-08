@@ -2,7 +2,7 @@ from mehdi_lib.generals import general_fields, general_ui_titles, general_editor
 from mehdi_lib.basics import editor_, thing_, constants_, basic_types, prototype_, widget_basics
 import pytest
 from pytestqt.qt_compat import qt_api
-
+from PyQt5 import QtWidgets, QtCore
 
 pytestmark = pytest.mark.basics
 
@@ -53,10 +53,13 @@ class SuperThing(thing_.Thing):
 class Thing(thing_.Thing):
     """A Thing which as a ListOfThings field for sub-things"""
     name = general_fields.NameField(initial_value=general_initial_values.name)
-    version_number = general_fields.IntField(1, general_ui_titles.version_number, 'version_number', 1, constants_.Constants.MAX_INT, 1)
-    amount_unit = general_fields.EnumField(2, general_ui_titles.amount_unit, 'amount_unit', general_enums.AmountUnit, general_enums.AmountUnit.number)
+    version_number = general_fields.IntField(1, general_ui_titles.version_number, 'version_number', 1,
+                                             constants_.Constants.MAX_INT, 1)
+    amount_unit = general_fields.EnumField(2, general_ui_titles.amount_unit, 'amount_unit', general_enums.AmountUnit,
+                                           general_enums.AmountUnit.number)
     sub_things = general_fields.ListField(11, sample_sub_things_ui_titles, 'sub_things', SubThingPrototype)
-    super_thing = general_fields.ForeignKeyField(12, general_ui_titles.dummy, 'thing_parent', ThingPrototype, SuperThingPrototype)
+    super_thing = general_fields.ForeignKeyField(12, general_ui_titles.dummy, 'thing_parent', ThingPrototype,
+                                                 SuperThingPrototype)
 
 
 # ===========================================================================
@@ -86,7 +89,6 @@ class Test__Editor__Removing_Reviving_AddingNew:
 
         # ===========================================================================
         def add_to_non_top_editor(is_top_editor: bool):
-
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
             # adding one element to the list
@@ -101,11 +103,11 @@ class Test__Editor__Removing_Reviving_AddingNew:
             super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].set_selected(True)
             super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
             assert len(super_things_tree_editor.sub_editors) == 1
-            assert len(super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 1
+            assert len(
+                super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 1
 
         # ===========================================================================
         def add_while_non_list_field_is_selected(is_top_editor: bool):
-
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
             # adding one element to the list
@@ -137,11 +139,12 @@ class Test__Editor__Removing_Reviving_AddingNew:
             super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
 
             # select a non list of things field of the thing7
-            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing].sub_editors[Thing.name].set_selected(True)
+            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[
+                thing].sub_editors[Thing.name].set_selected(True)
             super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
             assert len(super_things_tree_editor.sub_editors) == 1
-            assert len(super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 2
-
+            assert len(
+                super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 2
 
         # create the application
         assert qt_api.QApplication.instance() is not None
@@ -264,13 +267,14 @@ class Test__Editor__Removing_Reviving_AddingNew:
             super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
 
             # select an element inside the list
-            sub_editor = super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing]
+            sub_editor = super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[
+                thing]
             sub_editor.set_selected(True)
 
             # mark it for removal and check the signal emissions
             with qtbot.wait_signal(super_things_tree_editor.sub_editor_marked_for_removal_exists_signal, raising=True), \
                  qtbot.wait_signal(sub_editor.parent_editor.value_changed_by_me_signal, raising=True):
-                 super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+                super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
 
             # check marked for removal
             assert sub_editor.is_marked_for_removal()
@@ -282,7 +286,8 @@ class Test__Editor__Removing_Reviving_AddingNew:
             sub_editor.no_revival_possible_signal.disconnect(super_things_tree_editor.sub_editor_revived_or_removed)
 
             # check selection of the sibling or parent
-            assert super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].is_selected(go_deep=False)
+            assert super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].is_selected(
+                go_deep=False)
 
         # create the application
         assert qt_api.QApplication.instance() is not None
@@ -322,7 +327,8 @@ class Test__Editor__Removing_Reviving_AddingNew:
             # marked sub-editor should be in the sub_editors_marked_for_removal at first
             assert sub_editor in super_things_tree_editor.sub_editors_marked_for_removal
             # as this is the only marked sub-editor, the no revival possible signal should be emitted.
-            with qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal, raising=True):
+            with qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal,
+                                   raising=True):
                 super_things_tree_editor.remove_sub_editor(super_thing)
             # marked sub-editor should not be in the sub-editors-marked-for-removal any more
             assert sub_editor not in super_things_tree_editor.sub_editors_marked_for_removal
@@ -347,7 +353,8 @@ class Test__Editor__Removing_Reviving_AddingNew:
             # marked sub-editor should be in the sub_editors_marked_for_removal at first
             assert sub_editor in super_things_tree_editor.sub_editors_marked_for_removal
             # as this is the only marked sub-editor, the no revival possible signal should be emitted.
-            with qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal, raising=True):
+            with qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal,
+                                   raising=True):
                 super_things_tree_editor.sub_editors[super_thing].set_marked_for_removal(mark_for_removal=False)
             # marked sub-editor should not be in the sub-editors-marked-for-removal any more
             assert sub_editor not in super_things_tree_editor.sub_editors_marked_for_removal
@@ -392,12 +399,160 @@ class Test__Editor__Removing_Reviving_AddingNew:
         assert not sub_editor_2.is_marked_for_removal()
 
         # revive the last removed one again
-        with qtbot.wait_signal(super_things_tree_editor.value_changed_by_me_signal),\
-                qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal):
+        with qtbot.wait_signal(super_things_tree_editor.value_changed_by_me_signal), \
+             qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal):
             super_things_tree_editor.revive_the_latest_sub_editor_marked_for_removal()
 
         # check for the result
         assert not sub_editor_1.is_marked_for_removal()
+
+
+# ===========================================================================
+class Test__Editor__Selection:
+    # ===========================================================================
+    @staticmethod
+    def test_eventFilter(qtbot):
+
+        # create the application
+        assert qt_api.QApplication.instance() is not None
+
+        assert not editor_.Editor__Selection.multiple_selection
+        editor = general_editors.TreeOfThingsEditor(thing_.ListOfThings(SuperThing), None)
+        qtbot.add_widget(editor.widget)
+        editor.widget.show()
+        qtbot.keyPress(editor.widget, qt_api.Qt.Key.Key_Control)
+        assert editor_.Editor__Selection.multiple_selection
+        assert editor.widget.selectionMode() == QtWidgets.QAbstractItemView.ExtendedSelection
+        qtbot.keyRelease(editor.widget, qt_api.Qt.Key.Key_Control)
+        assert not editor_.Editor__Selection.multiple_selection
+        assert editor.widget.selectionMode() == QtWidgets.QAbstractItemView.SingleSelection
+
+    # ===========================================================================
+    @staticmethod
+    def test_is_selected(qtbot):
+
+        # ===========================================================================
+        def select_editor():
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            sub_editor = super_things_tree_editor.sub_editors[super_thing]
+            sub_editor.set_selected(True)
+
+            # check selections
+            assert super_things_tree_editor.is_selected(go_deep=True)
+            assert not super_things_tree_editor.is_selected(go_deep=False)
+            assert sub_editor.is_selected(go_deep=True)
+            assert sub_editor.is_selected(go_deep=False)
+
+        # ===========================================================================
+        def select_editor_widget():
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            sub_editor = super_things_tree_editor.sub_editors[super_thing]
+            sub_editor.widget.set_selected(True)
+
+            # check selections
+            assert super_things_tree_editor.is_selected(go_deep=True)
+            assert not super_things_tree_editor.is_selected(go_deep=False)
+            assert sub_editor.is_selected(go_deep=True)
+            assert sub_editor.is_selected(go_deep=False)
+
+        # ===========================================================================
+        def select_sub_editor():
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+            thing = Thing()
+            super_thing[SuperThing.things].append(thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select the sub-thing
+            sub_editor = super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing]
+            sub_editor.set_selected(True)
+
+            # check selections
+            assert super_things_tree_editor.is_selected(go_deep=True)
+            assert not super_things_tree_editor.is_selected(go_deep=False)
+
+        # ===========================================================================
+        def select_sub_editor_widget():
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+            thing = Thing()
+            super_thing[SuperThing.things].append(thing)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+
+            # select the sub-thing
+            sub_editor = super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing]
+            sub_editor.widget.set_selected(True)
+
+            # check selections
+            assert super_things_tree_editor.is_selected(go_deep=True)
+            assert not super_things_tree_editor.is_selected(go_deep=False)
+
+        # create the application
+        assert qt_api.QApplication.instance() is not None
+
+        select_editor()
+        select_editor_widget()
+        select_sub_editor()
+        select_sub_editor_widget()
+
+    # ===========================================================================
+    @staticmethod
+    @pytest.mark.current
+    def test_set_selected(qtbot):
+        def select_multiple_elements():
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing_1 = SuperThing()
+            super_things.append(super_thing_1)
+            super_thing_2 = SuperThing()
+            super_things.append(super_thing_2)
+            super_thing_3 = SuperThing()
+            super_things.append(super_thing_3)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TableOfThingsEditor(super_things, None)
+
+            # super_things_tree_editor.widget.show()
+            qtbot.wait_for_window_shown(super_things_tree_editor.widget)
+            qtbot.mouseClick(super_things_tree_editor.sub_editors[super_thing_1].widget, QtCore.Qt.LeftButton)
+            assert super_things_tree_editor.is_selected(go_deep=True)
+            # qtbot.keyPress(super_things_tree_editor.widget, qt_api.Qt.Key.Key_Shift)
+            # qtbot.mouseClick(super_things_tree_editor.sub_editors[super_thing_3].widget, QtCore.Qt.LeftButton)
+            #
+            # assert super_things_tree_editor.sub_editors[super_thing_3].is_selected(go_deep=False)
+
+        # create the application
+        assert qt_api.QApplication.instance() is not None
+
+        select_multiple_elements()
 
 
 # ===========================================================================
@@ -423,7 +578,8 @@ class TestEditorDialog:
         # check name for list editor
         editor = general_editors.TableOfThingsEditor(thing, Thing.sub_things)
         dialog = editor_.EditorDialog(editor, automatic_unregister=False)
-        assert dialog.windowTitle() == 'نام 1: ' + sample_sub_things_ui_titles[basic_types.Language.get_active_language()]
+        assert dialog.windowTitle() == 'نام 1: ' + sample_sub_things_ui_titles[
+            basic_types.Language.get_active_language()]
 
         # check edit button and revive button (should be present in the dialog and should be disabled)
         widgets = list(dialog.header_layout.itemAt(i).widget() for i in range(dialog.header_layout.count()))
@@ -433,9 +589,9 @@ class TestEditorDialog:
         assert not dialog.revive_button.isEnabled()
 
         # check new button and del button (should be present in the dialog)
-        names = list(widgets[i].text() if isinstance(widgets[i], widget_basics.Button) else None for i in range(len(widgets)))
+        names = list(
+            widgets[i].text() if isinstance(widgets[i], widget_basics.Button) else None for i in range(len(widgets)))
         assert general_ui_titles.new[basic_types.Language.get_active_language()] in names
         assert general_ui_titles.delete[basic_types.Language.get_active_language()] in names
 
     # TODO: create tests for accept, reject, and __del__ methods.
-
