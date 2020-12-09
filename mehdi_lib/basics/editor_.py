@@ -495,7 +495,7 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
         """Sets selection state of the editor
 
         If select parameter is True and multiple selection is not allowed, all other selected editors should be
-         deselected.
+         deselected. Operation starts from the top-most editor.
 
         :param select: bool
         :return: None
@@ -509,11 +509,16 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
                         sub_editor.set_selected(False)
                     deselect_all_sub_editors_except_the_exception_editor(sub_editor, exception_editor)
 
+            # start from the top parent editor
             parent_editor = selected_editor
             while parent_editor.parent_editor:
                 parent_editor = parent_editor.parent_editor
-                parent_editor.set_selected(False)
-                deselect_all_sub_editors_except_the_exception_editor(parent_editor, exception_editor=selected_editor)
+
+            # deselect the top parent editor
+            parent_editor.set_selected(False)
+
+            # now time for all sub-editors
+            deselect_all_sub_editors_except_the_exception_editor(parent_editor, exception_editor=selected_editor)
 
         # select
         if select:
@@ -544,18 +549,31 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
                     break
         return editor
 
-    # ===== when a selected node is removed, its sibling should be selected, or its parent if there is no sibling
+    # ===========================================================================
     def select_the_first_sibling_not_marked_for_removal_or_parent(self):
+        """
+        When a selected node is removed, its sibling should be selected, or its parent if there is no sibling.
+        That is what this function does for us.
+        :return: None
+        """
+
         index_of_me = self.parent_editor.sub_editors.values().index(self)
+
+        # first try the next siblings
         index = index_of_me + 1
         while index < len(self.parent_editor.sub_editors) and self.parent_editor.sub_editors.values()[index].is_marked_for_removal():
             index += 1
+
+        # if none found, try the previous siblings
         if index >= len(self.parent_editor.sub_editors):
             index = index_of_me - 1
             while index >= 0 and self.parent_editor.sub_editors.values()[index].is_marked_for_removal():
                 index -= 1
+
+        # if found, please select it.
         if 0 <= index <= len(self.parent_editor.sub_editors):
             self.parent_editor.sub_editors.values()[index].set_selected(True)
+        # otherwise select the parent
         else:
             self.parent_editor.set_selected(True)
 
