@@ -533,32 +533,76 @@ class Test__Editor__Selection:
     @staticmethod
     @pytest.mark.current
     def test_set_selected(qtbot):
-        def select_multiple_elements():
-            # create the things
-            super_things = thing_.ListOfThings(SuperThing)
-            super_thing_1 = SuperThing()
-            super_things.append(super_thing_1)
-            super_thing_2 = SuperThing()
-            super_things.append(super_thing_2)
-            super_thing_3 = SuperThing()
-            super_things.append(super_thing_3)
 
-            # create a list of things editor
-            super_things_tree_editor = general_editors.TableOfThingsEditor(super_things, None)
-
-            # super_things_tree_editor.widget.show()
-            qtbot.wait_for_window_shown(super_things_tree_editor.widget)
-            qtbot.mouseClick(super_things_tree_editor.sub_editors[super_thing_1].widget, QtCore.Qt.LeftButton)
-            assert super_things_tree_editor.is_selected(go_deep=True)
-            # qtbot.keyPress(super_things_tree_editor.widget, qt_api.Qt.Key.Key_Shift)
-            # qtbot.mouseClick(super_things_tree_editor.sub_editors[super_thing_3].widget, QtCore.Qt.LeftButton)
-            #
-            # assert super_things_tree_editor.sub_editors[super_thing_3].is_selected(go_deep=False)
+        # ===========================================================================
+        def find_the_right_place_to_click(tree_editor, thing_in_tree):
+            item = tree_editor.sub_editors[thing_in_tree].widget.tree_item
+            rect = tree_editor.widget.visualItemRect(item)
+            return rect.center()
 
         # create the application
         assert qt_api.QApplication.instance() is not None
 
-        select_multiple_elements()
+        # create the things
+        super_things = thing_.ListOfThings(SuperThing)
+        super_thing_1 = SuperThing()
+        super_things.append(super_thing_1)
+        super_thing_2 = SuperThing()
+        super_things.append(super_thing_2)
+        super_thing_3 = SuperThing()
+        super_things.append(super_thing_3)
+
+        # create a list of things editor
+        super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+        super_thing_1_editor = super_things_tree_editor.sub_editors[super_thing_1]
+        super_thing_2_editor = super_things_tree_editor.sub_editors[super_thing_2]
+        super_thing_3_editor = super_things_tree_editor.sub_editors[super_thing_3]
+        tree_widget = super_things_tree_editor.widget
+
+        super_thing_1_center = find_the_right_place_to_click(super_things_tree_editor, super_thing_1)
+        super_thing_2_center = find_the_right_place_to_click(super_things_tree_editor, super_thing_2)
+        super_thing_3_center = find_the_right_place_to_click(super_things_tree_editor, super_thing_3)
+
+        # select one item
+        assert not super_thing_1_editor.is_selected(go_deep=False)
+        assert not super_thing_2_editor.is_selected(go_deep=False)
+        assert not super_thing_3_editor.is_selected(go_deep=False)
+        qtbot.mouseClick(tree_widget.viewport(), QtCore.Qt.LeftButton, pos=super_thing_1_center)
+        assert super_thing_1_editor.is_selected(go_deep=False)
+        assert not super_thing_2_editor.is_selected(go_deep=False)
+        assert not super_thing_3_editor.is_selected(go_deep=False)
+
+        # select another item, the first selected item should be deselected
+        assert super_thing_1_editor.is_selected(go_deep=False)
+        assert not super_thing_2_editor.is_selected(go_deep=False)
+        assert not super_thing_3_editor.is_selected(go_deep=False)
+        qtbot.mouseClick(tree_widget.viewport(), QtCore.Qt.LeftButton, pos=super_thing_3_center)
+        assert not super_thing_1_editor.is_selected(go_deep=False)
+        assert not super_thing_2_editor.is_selected(go_deep=False)
+        assert super_thing_3_editor.is_selected(go_deep=False)
+
+        # select two items by pressing control
+        assert not super_thing_1_editor.is_selected(go_deep=False)
+        assert not super_thing_2_editor.is_selected(go_deep=False)
+        assert super_thing_3_editor.is_selected(go_deep=False)
+        qtbot.keyPress(tree_widget, QtCore.Qt.Key_Control)
+        qtbot.mouseClick(tree_widget.viewport(), QtCore.Qt.LeftButton, modifier=QtCore.Qt.ControlModifier, pos=super_thing_1_center)
+        assert super_thing_1_editor.is_selected(go_deep=False)
+        assert not super_thing_2_editor.is_selected(go_deep=False)
+        assert super_thing_3_editor.is_selected(go_deep=False)
+        qtbot.keyRelease(tree_widget, QtCore.Qt.Key_Control)
+
+        # select three items by pressing shift
+        qtbot.mouseClick(tree_widget.viewport(), QtCore.Qt.LeftButton, pos=super_thing_1_center)
+        assert super_thing_1_editor.is_selected(go_deep=False)
+        assert not super_thing_2_editor.is_selected(go_deep=False)
+        assert not super_thing_3_editor.is_selected(go_deep=False)
+        qtbot.keyPress(tree_widget, QtCore.Qt.Key_Shift)
+        qtbot.mouseClick(tree_widget.viewport(), QtCore.Qt.LeftButton, modifier=QtCore.Qt.ShiftModifier, pos=super_thing_3_center)
+        assert super_thing_1_editor.is_selected(go_deep=False)
+        assert super_thing_2_editor.is_selected(go_deep=False)
+        assert super_thing_3_editor.is_selected(go_deep=False)
+        qtbot.keyRelease(tree_widget, QtCore.Qt.Key_Shift)
 
 
 # ===========================================================================
