@@ -492,6 +492,13 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
 
     # ===========================================================================
     def set_selected(self, select):
+        """Sets selection state of the editor
+
+        If select is True and multiple selection is not allowed, all other selected editors should be deselected.
+
+        :param select:
+        :return:
+        """
         # ===========================================================================
         def deselect_all_other_editors(selected_editor):
             # ===========================================================================
