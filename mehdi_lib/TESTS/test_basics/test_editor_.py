@@ -331,7 +331,6 @@ class Test__Editor__Removing_Reviving_AddingNew:
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_sub_editor_revived_or_removed(qtbot):
         # ===========================================================================
         def remove_marked_sub_editor(list_of_things_editor: typing.Type[editor_.Editor]):
@@ -396,46 +395,62 @@ class Test__Editor__Removing_Reviving_AddingNew:
 
     # ===========================================================================
     @staticmethod
+    @pytest.mark.current
+    # ===========================================================================
     def test_revive_the_latest_sub_editor_marked_for_removal(qtbot):
-        # create the things
-        super_things = thing_.ListOfThings(SuperThing)
-        super_thing_1 = SuperThing()
-        super_thing_2 = SuperThing()
-        super_things.append(super_thing_1)
-        super_things.append(super_thing_2)
+        def remove_and_revive(list_of_things_editor: typing.Type[editor_.Editor]):
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing_1 = SuperThing()
+            super_thing_2 = SuperThing()
+            super_things.append(super_thing_1)
+            super_things.append(super_thing_2)
 
-        # create a list of things editor
-        super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+            # create a list of things editor
+            super_things_editor = list_of_things_editor(super_things, None)
 
-        # select an element inside the list and mark it for removal
-        sub_editor_1 = super_things_tree_editor.sub_editors[super_thing_1]
-        sub_editor_1.set_selected(True)
-        super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
-        # select an element inside the list and mark it for removal
-        sub_editor_2 = super_things_tree_editor.sub_editors[super_thing_2]
-        sub_editor_2.set_selected(True)
-        super_things_tree_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+            # select an element inside the list and mark it for removal
+            sub_editor_1 = super_things_editor.sub_editors[super_thing_1]
+            sub_editor_1.set_selected(True)
+            super_things_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
 
-        # check marked for removal
-        assert sub_editor_1.is_marked_for_removal()
-        assert sub_editor_2.is_marked_for_removal()
+            # select an element inside the list and mark it for removal
+            sub_editor_2 = super_things_editor.sub_editors[super_thing_2]
+            sub_editor_2.set_selected(True)
+            super_things_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
 
-        # revive the last removed one
-        with qtbot.wait_signal(super_things_tree_editor.value_changed_by_me_signal):
-            super_things_tree_editor.revive_the_latest_sub_editor_marked_for_removal()
+            # check marked for removal
+            assert sub_editor_1.is_marked_for_removal()
+            assert sub_editor_2.is_marked_for_removal()
 
-        # check for the result
-        assert sub_editor_1.is_marked_for_removal()
-        assert not sub_editor_2.is_marked_for_removal()
+            # revive the last removed one
+            with qtbot.wait_signal(super_things_editor.value_changed_by_me_signal):
+                super_things_editor.revive_the_latest_sub_editor_marked_for_removal()
 
-        # revive the last removed one again
-        with qtbot.wait_signal(super_things_tree_editor.value_changed_by_me_signal), \
-             qtbot.wait_signal(super_things_tree_editor.no_sub_editor_marked_for_removal_exists_signal):
-            super_things_tree_editor.revive_the_latest_sub_editor_marked_for_removal()
+            # check for the result
+            assert sub_editor_1.is_marked_for_removal()
+            assert not sub_editor_2.is_marked_for_removal()
 
-        # check for the result
-        assert not sub_editor_1.is_marked_for_removal()
+            # check for selection
+            assert sub_editor_2.is_selected(go_deep=False)
 
+            # revive the last removed one again
+            with qtbot.wait_signal(super_things_editor.value_changed_by_me_signal), \
+                 qtbot.wait_signal(super_things_editor.no_sub_editor_marked_for_removal_exists_signal):
+                super_things_editor.revive_the_latest_sub_editor_marked_for_removal()
+
+            # check for the result
+            assert not sub_editor_1.is_marked_for_removal()
+
+            # check for selection
+            assert sub_editor_1.is_selected(go_deep=False)
+            assert not sub_editor_2.is_selected(go_deep=False)
+
+        # create the application
+        assert qt_api.QApplication.instance() is not None
+
+        remove_and_revive(list_of_things_editor=general_editors.TreeOfThingsEditor)
+        remove_and_revive(list_of_things_editor=general_editors.TableOfThingsEditor)
 
 # ===========================================================================
 class Test__Editor__Selection:
