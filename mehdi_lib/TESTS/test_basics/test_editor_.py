@@ -395,9 +395,8 @@ class Test__Editor__Removing_Reviving_AddingNew:
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
-    # ===========================================================================
     def test_revive_the_latest_sub_editor_marked_for_removal(qtbot):
+        # ===========================================================================
         def remove_and_revive(list_of_things_editor: typing.Type[editor_.Editor]):
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
@@ -456,27 +455,31 @@ class Test__Editor__Removing_Reviving_AddingNew:
 class Test__Editor__Selection:
     # ===========================================================================
     @staticmethod
+    @pytest.mark.current
     def test_eventFilter(qtbot):
+        # ===========================================================================
+        def multiple_selection(list_of_things_editor: typing.Type[editor_.Editor]):
+            assert not editor_.Editor__Selection.multiple_selection
+            editor = list_of_things_editor(thing_.ListOfThings(SuperThing), None)
+            qtbot.add_widget(editor.widget)
+            editor.widget.show()
+
+            # control key
+            qtbot.keyPress(editor.widget, qt_api.Qt.Key.Key_Control)
+            assert editor_.Editor__Selection.multiple_selection
+            qtbot.keyRelease(editor.widget, qt_api.Qt.Key.Key_Control)
+            assert not editor_.Editor__Selection.multiple_selection
+
+            # shift key
+            qtbot.keyPress(editor.widget, qt_api.Qt.Key.Key_Shift)
+            assert editor_.Editor__Selection.multiple_selection
+            qtbot.keyRelease(editor.widget, qt_api.Qt.Key.Key_Shift)
+            assert not editor_.Editor__Selection.multiple_selection
 
         # create the application
         assert qt_api.QApplication.instance() is not None
-
-        assert not editor_.Editor__Selection.multiple_selection
-        editor = general_editors.TreeOfThingsEditor(thing_.ListOfThings(SuperThing), None)
-        qtbot.add_widget(editor.widget)
-        editor.widget.show()
-
-        # control key
-        qtbot.keyPress(editor.widget, qt_api.Qt.Key.Key_Control)
-        assert editor_.Editor__Selection.multiple_selection
-        qtbot.keyRelease(editor.widget, qt_api.Qt.Key.Key_Control)
-        assert not editor_.Editor__Selection.multiple_selection
-
-        # shift key
-        qtbot.keyPress(editor.widget, qt_api.Qt.Key.Key_Shift)
-        assert editor_.Editor__Selection.multiple_selection
-        qtbot.keyRelease(editor.widget, qt_api.Qt.Key.Key_Shift)
-        assert not editor_.Editor__Selection.multiple_selection
+        multiple_selection(list_of_things_editor=general_editors.TreeOfThingsEditor)
+        multiple_selection(list_of_things_editor=general_editors.TableOfThingsEditor)
 
     # ===========================================================================
     @staticmethod
