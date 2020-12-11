@@ -3,6 +3,7 @@ from mehdi_lib.basics import editor_, thing_, constants_, basic_types, prototype
 import pytest
 from pytestqt.qt_compat import qt_api
 from PyQt5 import QtWidgets, QtCore
+import typing
 
 pytestmark = pytest.mark.basics
 
@@ -72,23 +73,33 @@ class SubThing(thing_.Thing):
 
 # ===========================================================================
 class Test__Editor__Removing_Reviving_AddingNew:
+    """
+    For ListOfThing there are currently two types of editors:
+        1- tree editor
+        2- table editor
+    Tests are done for both types whenever applicable.
+    If any new editor is added later, tests for that editor should be added too.
+    """
+
     # ===========================================================================
     @staticmethod
+    @pytest.mark.current
     def test_append_new_item(qtbot):
         # ===========================================================================
-        def add_to_top_editor(is_top_editor: bool):
+        def add_to_top_editor(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
 
             # tree editor for list of super-things
-            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+            super_things_editor = list_of_things_editor(super_things, None)
 
             # check adding a new item to the list of super-things (nothing is selected yet)
-            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
-            assert len(super_things_tree_editor.sub_editors) == (1 if is_top_editor else 0)
+            super_things_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_editor.sub_editors) == (1 if is_top_editor else 0)
 
         # ===========================================================================
-        def add_to_non_top_editor(is_top_editor: bool):
+        def add_to_non_top_editor(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
+
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
             # adding one element to the list
@@ -96,18 +107,18 @@ class Test__Editor__Removing_Reviving_AddingNew:
             super_things.append(super_thing)
 
             # tree editor for list of super-things
-            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+            super_things_editor = list_of_things_editor(super_things, None)
 
             # select the added super-thing to the list of super-things and call append_new_item again.
             #  this time we expect that a new Thing be added to the super-thing[things] field.
-            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].set_selected(True)
-            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
-            assert len(super_things_tree_editor.sub_editors) == 1
+            super_things_editor.sub_editors[super_thing].sub_editors[SuperThing.things].set_selected(True)
+            super_things_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_editor.sub_editors) == 1
             assert len(
-                super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 1
+                super_things_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 1
 
         # ===========================================================================
-        def add_while_non_list_field_is_selected(is_top_editor: bool):
+        def add_while_non_list_field_is_selected(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
             # adding one element to the list
@@ -115,16 +126,16 @@ class Test__Editor__Removing_Reviving_AddingNew:
             super_things.append(super_thing)
 
             # tree editor for list of super-things
-            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+            super_things_editor = list_of_things_editor(super_things, None)
 
             # select a non list of things field of the added super-thing to the list of super-things and call
             #  append_new_item. This time we expect that a new Thing be added to super_thing5
-            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.name].set_selected(True)
-            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
-            assert len(super_things_tree_editor.sub_editors) == 2
+            super_things_editor.sub_editors[super_thing].sub_editors[SuperThing.name].set_selected(True)
+            super_things_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_editor.sub_editors) == 2
 
         # ===========================================================================
-        def add_while_non_list_field_in_sub_thing_is_selected(is_top_editor: bool):
+        def add_while_non_list_field_in_sub_thing_is_selected(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
             # adding one element to the list
@@ -136,60 +147,71 @@ class Test__Editor__Removing_Reviving_AddingNew:
             super_thing[SuperThing.things].append(thing)
 
             # tree editor for list of super-things
-            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+            super_things_editor = list_of_things_editor(super_things, None)
 
             # select a non list of things field of the thing7
-            super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[
+            super_things_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[
                 thing].sub_editors[Thing.name].set_selected(True)
-            super_things_tree_editor.append_new_item(is_top_editor=is_top_editor)
-            assert len(super_things_tree_editor.sub_editors) == 1
+            super_things_editor.append_new_item(is_top_editor=is_top_editor)
+            assert len(super_things_editor.sub_editors) == 1
             assert len(
-                super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 2
+                super_things_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 2
 
         # create the application
         assert qt_api.QApplication.instance() is not None
 
         # **************************************************************
         # 1-adding new item to top editor with is_top_editor set to False
-        add_to_top_editor(is_top_editor=False)
+        add_to_top_editor(is_top_editor=False, list_of_things_editor=general_editors.TreeOfThingsEditor)
+        add_to_top_editor(is_top_editor=False, list_of_things_editor=general_editors.TableOfThingsEditor)
 
         # **************************************************************
         # 2-adding new item to top editor with is_top_editor set to True
-        add_to_top_editor(is_top_editor=True)
+        add_to_top_editor(is_top_editor=True, list_of_things_editor=general_editors.TreeOfThingsEditor)
+        add_to_top_editor(is_top_editor=True, list_of_things_editor=general_editors.TableOfThingsEditor)
 
         # **************************************************************
         # 3-adding new item to list of things editor which is not top editor with is_top_editor set to True
-        add_to_top_editor(True)
+        # This scenario is not applicable to TableOfThingsEditor
+        add_to_non_top_editor(True, list_of_things_editor=general_editors.TreeOfThingsEditor)
 
         # **************************************************************
         # 4-adding new item to list of things editor which is not top editor with is_top_editor set to False
-        add_to_non_top_editor(False)
+        # This scenario is not applicable to TableOfThingsEditor
+        add_to_non_top_editor(False, list_of_things_editor=general_editors.TreeOfThingsEditor)
 
         # **************************************************************
         # 5-adding new item while a non list of things field is selected with is_top_editor set to True
         #  select a non list of things field in super-thing and call append_new_item
         #  this time we expect that a new super-thing be added to the list of super-things
-        add_while_non_list_field_is_selected(True)
+        # This scenario is not applicable to TableOfThingsEditor
+        add_while_non_list_field_is_selected(True, list_of_things_editor=general_editors.TreeOfThingsEditor)
 
         # **************************************************************
         # 6-adding new item while a non list of things field is selected with is_top_editor set to False
         #  select a non list of things field in super-thing and call append_new_item
         #  this time we expect that a new super-thing be added to the list of super-things
-        add_while_non_list_field_is_selected(False)
+        # This scenario is not applicable to TableOfThingsEditor
+        add_while_non_list_field_is_selected(False, list_of_things_editor=general_editors.TreeOfThingsEditor)
 
         # **************************************************************
-        # 7-adding new item while a non list of things field is selected in thing (not super-thing) with is_top_editor set to True
-        add_while_non_list_field_in_sub_thing_is_selected(True)
+        # 7-adding new item while a non list of things field is selected in thing (not super-thing) with is_top_editor
+        #  set to True
+        # This scenario is not applicable to TableOfThingsEditor
+        add_while_non_list_field_in_sub_thing_is_selected(True, list_of_things_editor=general_editors.TreeOfThingsEditor)
 
         # **************************************************************
-        # 8-adding new item while a non list of things field is selected in thing (not super-thing) with is_top_editor set to False
-        add_while_non_list_field_in_sub_thing_is_selected(False)
+        # 8-adding new item while a non list of things field is selected in thing (not super-thing) with is_top_editor
+        #  set to False
+        # This scenario is not applicable to TableOfThingsEditor
+        add_while_non_list_field_in_sub_thing_is_selected(False, list_of_things_editor=general_editors.TreeOfThingsEditor)
 
     # ===========================================================================
     @staticmethod
     def test_mark_selected_sub_editor_for_removal(qtbot):
         # ===========================================================================
-        def one_thing_with_one_sub_editor():
+        def one_thing_with_one_sub_editor_tree():
+
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing = SuperThing()
@@ -215,7 +237,34 @@ class Test__Editor__Removing_Reviving_AddingNew:
             sub_editor.no_revival_possible_signal.disconnect(super_things_tree_editor.sub_editor_revived_or_removed)
 
         # ===========================================================================
-        def one_thing_with_two_sub_editors():
+        def one_thing_with_one_sub_editor_table():
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+
+            # create a list of things editor
+            super_things_table_editor = general_editors.TableOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            sub_editor = super_things_table_editor.sub_editors[super_thing]
+            sub_editor.set_selected(True)
+
+            # mark it for removal and check the signal emissions
+            with qtbot.wait_signal(super_things_table_editor.sub_editor_marked_for_removal_exists_signal, raising=True), \
+                 qtbot.wait_signal(sub_editor.parent_editor.value_changed_by_me_signal, raising=True):
+                super_things_table_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+
+            # check marked for removal
+            assert sub_editor.is_marked_for_removal()
+            # check presence of sub-editor in marked-for-removal list
+            assert sub_editor in super_things_table_editor.sub_editors_marked_for_removal
+            # check connected signal
+            sub_editor.no_revival_possible_signal.disconnect(super_things_table_editor.sub_editor_revived_or_removed)
+
+        # ===========================================================================
+        def one_thing_with_two_sub_editors_tree():
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing_1 = SuperThing()
@@ -255,7 +304,48 @@ class Test__Editor__Removing_Reviving_AddingNew:
             editor_.Editor__Selection.multiple_selection = previous_state
 
         # ===========================================================================
-        def one_thing_with_one_sub_editor_and_one_sub_sub_editor():
+        def one_thing_with_two_sub_editors_table():
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing_1 = SuperThing()
+            super_thing_2 = SuperThing()
+            super_things.append(super_thing_1)
+            super_things.append(super_thing_2)
+
+            # create a list of things editor
+            super_things_table_editor = general_editors.TableOfThingsEditor(super_things, None)
+
+            # select an element inside the list
+            previous_state = editor_.Editor__Selection.multiple_selection
+            editor_.Editor__Selection.multiple_selection = True
+            sub_editor_1 = super_things_table_editor.sub_editors[super_thing_1]
+            sub_editor_2 = super_things_table_editor.sub_editors[super_thing_2]
+            sub_editor_1.set_selected(True)
+            sub_editor_2.set_selected(True)
+
+            # mark it for removal and check the signal emissions
+            with qtbot.wait_signal(super_things_table_editor.sub_editor_marked_for_removal_exists_signal, raising=True), \
+                 qtbot.wait_signal(sub_editor_1.parent_editor.value_changed_by_me_signal, raising=True), \
+                 qtbot.wait_signal(sub_editor_2.parent_editor.value_changed_by_me_signal, raising=True):
+                super_things_table_editor.mark_selected_sub_editor_for_removal(is_top_editor=True)
+
+            # check marked for removal
+            assert sub_editor_1.is_marked_for_removal()
+            assert sub_editor_2.is_marked_for_removal()
+
+            # check presence of sub-editor in marked-for-removal list
+            assert sub_editor_1 in super_things_table_editor.sub_editors_marked_for_removal
+            assert sub_editor_2 in super_things_table_editor.sub_editors_marked_for_removal
+
+            # check connected signal
+            sub_editor_1.no_revival_possible_signal.disconnect(super_things_table_editor.sub_editor_revived_or_removed)
+            sub_editor_2.no_revival_possible_signal.disconnect(super_things_table_editor.sub_editor_revived_or_removed)
+
+            editor_.Editor__Selection.multiple_selection = previous_state
+
+        # ===========================================================================
+        def one_thing_with_one_sub_editor_and_one_sub_sub_editor_tree():
+
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing = SuperThing()
@@ -294,15 +384,17 @@ class Test__Editor__Removing_Reviving_AddingNew:
 
         # **************************************************************
         # 1-simplest state. one thing with one selected sub-editor
-        one_thing_with_one_sub_editor()
+        one_thing_with_one_sub_editor_tree()
+        one_thing_with_one_sub_editor_table()
 
         # **************************************************************
         # 2-select two sub-editors for removal
-        one_thing_with_two_sub_editors()
+        one_thing_with_two_sub_editors_tree()
+        one_thing_with_two_sub_editors_table()
 
         # **************************************************************
         # 3-select sub-sub-editor for removal
-        one_thing_with_one_sub_editor_and_one_sub_sub_editor()
+        one_thing_with_one_sub_editor_and_one_sub_sub_editor_tree()
 
     # ===========================================================================
     @staticmethod
@@ -680,71 +772,71 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
-    def test_select_the_first_sibling_not_marked_for_removal_or_parent(qtbot):
-        # create the application
-        assert qt_api.QApplication.instance() is not None
-
-        # create the things
-        super_things = thing_.ListOfThings(SuperThing)
-        super_thing = SuperThing()
-        super_things.append(super_thing)
-        thing_1 = Thing()
-        super_thing[SuperThing.things].append(thing_1)
-        thing_2 = Thing()
-        super_thing[SuperThing.things].append(thing_2)
-        thing_3 = Thing()
-        super_thing[SuperThing.things].append(thing_3)
-
-
-        # create a list of things editor
-        super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
-        super_thing_editor = super_things_tree_editor.sub_editors[super_thing]
-        things_editor = super_thing_editor.sub_editors[SuperThing.things]
-        thing_1_editor = things_editor.sub_editors[thing_1]
-        thing_2_editor = things_editor.sub_editors[thing_2]
-        thing_3_editor = things_editor.sub_editors[thing_3]
-
-        # remove thing 2
-        thing_2_editor.set_marked_for_removal(True)
-        assert not things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-        assert not thing_3_editor.is_selected(go_deep=False)
-
-        # select sibling
-        thing_2_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
-        assert not things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-        assert not thing_2_editor.is_selected(go_deep=False)
-        assert thing_3_editor.is_selected(go_deep=False)
-
-        # remove thing 3
-        thing_3_editor.set_marked_for_removal(True)
-        assert not things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-
-        # select sibling
-        thing_3_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
-        assert not things_editor.is_selected(go_deep=False)
-        assert thing_1_editor.is_selected(go_deep=False)
-        assert not thing_2_editor.is_selected(go_deep=False)
-        assert not thing_3_editor.is_selected(go_deep=False)
-
-        # remove thing 1
-        thing_1_editor.set_marked_for_removal(True)
-        assert not things_editor.is_selected(go_deep=False)
-
-        # select sibling (parent will be selected this time
-        thing_1_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
-        assert things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-        assert not thing_2_editor.is_selected(go_deep=False)
-        assert not thing_3_editor.is_selected(go_deep=False)
+    # def test_select_the_first_sibling_not_marked_for_removal_or_parent(qtbot):
+    #     # create the application
+    #     assert qt_api.QApplication.instance() is not None
+    #
+    #     # create the things
+    #     super_things = thing_.ListOfThings(SuperThing)
+    #     super_thing = SuperThing()
+    #     super_things.append(super_thing)
+    #     thing_1 = Thing()
+    #     super_thing[SuperThing.things].append(thing_1)
+    #     thing_2 = Thing()
+    #     super_thing[SuperThing.things].append(thing_2)
+    #     thing_3 = Thing()
+    #     super_thing[SuperThing.things].append(thing_3)
+    #
+    #
+    #     # create a list of things editor
+    #     super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+    #     super_thing_editor = super_things_tree_editor.sub_editors[super_thing]
+    #     things_editor = super_thing_editor.sub_editors[SuperThing.things]
+    #     thing_1_editor = things_editor.sub_editors[thing_1]
+    #     thing_2_editor = things_editor.sub_editors[thing_2]
+    #     thing_3_editor = things_editor.sub_editors[thing_3]
+    #
+    #     # remove thing 2
+    #     thing_2_editor.set_marked_for_removal(True)
+    #     assert not things_editor.is_selected(go_deep=False)
+    #     assert not thing_1_editor.is_selected(go_deep=False)
+    #     assert not thing_3_editor.is_selected(go_deep=False)
+    #
+    #     # select sibling
+    #     thing_2_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
+    #     assert not things_editor.is_selected(go_deep=False)
+    #     assert not thing_1_editor.is_selected(go_deep=False)
+    #     assert not thing_2_editor.is_selected(go_deep=False)
+    #     assert thing_3_editor.is_selected(go_deep=False)
+    #
+    #     # remove thing 3
+    #     thing_3_editor.set_marked_for_removal(True)
+    #     assert not things_editor.is_selected(go_deep=False)
+    #     assert not thing_1_editor.is_selected(go_deep=False)
+    #
+    #     # select sibling
+    #     thing_3_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
+    #     assert not things_editor.is_selected(go_deep=False)
+    #     assert thing_1_editor.is_selected(go_deep=False)
+    #     assert not thing_2_editor.is_selected(go_deep=False)
+    #     assert not thing_3_editor.is_selected(go_deep=False)
+    #
+    #     # remove thing 1
+    #     thing_1_editor.set_marked_for_removal(True)
+    #     assert not things_editor.is_selected(go_deep=False)
+    #
+    #     # select sibling (parent will be selected this time
+    #     thing_1_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
+    #     assert things_editor.is_selected(go_deep=False)
+    #     assert not thing_1_editor.is_selected(go_deep=False)
+    #     assert not thing_2_editor.is_selected(go_deep=False)
+    #     assert not thing_3_editor.is_selected(go_deep=False)
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_sub_editor_selected():
         pass
+
 
 # ===========================================================================
 class TestEditorDialog:
