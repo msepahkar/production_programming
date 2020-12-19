@@ -103,7 +103,9 @@ class LineEdit_for_LineEditor(QtWidgets.QLineEdit, Widget_for_Editor):
             self.setValidator(validator)
 
     # ===========================================================================
-    def eventFilter(self, obj, event):
+    def eventFilter(self, object_, event):
+        if super().eventFilter(object_, event):
+            return True
         # filter Esc key if the value is not correct
         if event.type() == QtCore.QEvent.KeyPress:
             if event.key() == QtCore.Qt.Key_Escape and not self.is_valid():
@@ -111,7 +113,7 @@ class LineEdit_for_LineEditor(QtWidgets.QLineEdit, Widget_for_Editor):
                     self.set_value(self.last_valid_value)
                     return True
 
-        return QtCore.QObject.eventFilter(self, obj, event)
+        return QtCore.QObject.eventFilter(self, object_, event)
 
     # ===========================================================================
     def set_color(self, color: QtGui.QColor):
@@ -465,6 +467,8 @@ class LineEdit_for_DateEditor(LineEdit_for_LineEditor):
 
     # ===========================================================================
     def eventFilter(self, object_, event):
+        if super().eventFilter(object_, event):
+            return True
         if event.type() == QtCore.QEvent.MouseButtonRelease and event.button() == QtCore.Qt.LeftButton and \
                 not self.hasSelectedText():
             date_ = self.get_value()

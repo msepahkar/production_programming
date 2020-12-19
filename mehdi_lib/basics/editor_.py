@@ -1460,7 +1460,10 @@ class EditorDialog(widget_basics.DialogWithOkCancel):
 
         # first name of the main editor
         main_editor = editor
-        name = main_editor.owner.name
+        # TODO work on this part when the owner is only ListOfThings. it has no name!!!
+        name = ''
+        if hasattr(main_editor.owner, 'name'):
+            name = main_editor.owner.name
 
         # then name of all parents of the editor
         while editor.parent_editor:

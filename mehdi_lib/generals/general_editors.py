@@ -301,6 +301,8 @@ class TableOfThingsEditor(editor_.Editor):
 
         # ===========================================================================
         def eventFilter(self, object_, event):
+            if super().eventFilter(object_, event):
+                return True
             if event.type() == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:
                 for field in self.sub_editors.keys():
                     if self.sub_editors[field].widget == object_:
@@ -331,6 +333,7 @@ class TableOfThingsEditor(editor_.Editor):
                 if sub_editor.type == editor_.EditorTypes.field_of_thing:
 
                     sub_editor.widget.installEventFilter(self)
+
                     self.parent_editor.widget.setCellWidget(self.row, len(self.sub_editors) + self.n_sub_dialogs, sub_editor.widget)
 
                     # only simple field editors will be added to the sub_editor list
