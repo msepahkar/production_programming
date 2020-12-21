@@ -836,26 +836,35 @@ class Test__Editor__Selection:
     @staticmethod
     def test_selected_item_editor(qtbot):
 
+        # ===========================================================================
+        def select_item_editor(list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]):
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+            thing = Thing()
+            super_thing[SuperThing.things].append(thing)
+
+            # create a list of things editor
+            super_things_editor = list_of_things_editor_type(super_things, None)
+
+            super_things_editor.set_selected(True)
+            assert super_things_editor.selected_item_editor() == super_things_editor
+
+            super_things_editor.set_selected(False)
+            if list_of_things_editor_type == general_editors.TreeOfThingsEditor:
+                editor = super_things_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing]
+            else:
+                editor = super_things_editor.sub_editors[super_thing]
+            editor.set_selected(True)
+            assert super_things_editor.selected_item_editor() == editor
+
         # create the application
         assert qt_api.QApplication.instance() is not None
 
-        # create the things
-        super_things = thing_.ListOfThings(SuperThing)
-        super_thing = SuperThing()
-        super_things.append(super_thing)
-        thing = Thing()
-        super_thing[SuperThing.things].append(thing)
-
-        # create a list of things editor
-        super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
-
-        super_things_tree_editor.set_selected(True)
-        assert super_things_tree_editor.selected_item_editor() == super_things_tree_editor
-
-        super_things_tree_editor.set_selected(False)
-        editor = super_things_tree_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing]
-        editor.set_selected(True)
-        assert super_things_tree_editor.selected_item_editor() == editor
+        select_item_editor(general_editors.TreeOfThingsEditor)
+        select_item_editor(general_editors.TableOfThingsEditor)
 
     # ===========================================================================
     @staticmethod
@@ -873,7 +882,6 @@ class Test__Editor__Selection:
         super_thing[SuperThing.things].append(thing_2)
         thing_3 = Thing()
         super_thing[SuperThing.things].append(thing_3)
-
 
         # create a list of things editor
         super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
