@@ -451,6 +451,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
         remove_and_revive(list_of_things_editor=general_editors.TreeOfThingsEditor)
         remove_and_revive(list_of_things_editor=general_editors.TableOfThingsEditor)
 
+
 # ===========================================================================
 class Test__Editor__Selection:
     # ===========================================================================
@@ -581,7 +582,6 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_set_selected(qtbot):
 
         # ===========================================================================
@@ -830,6 +830,7 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
+    @pytest.mark.current
     def test_selected_item_editor(qtbot):
 
         # create the application

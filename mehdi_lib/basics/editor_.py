@@ -540,7 +540,16 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
                 self.parent_editor.sub_editor_deselected(self)
 
     # ===========================================================================
-    def selected_item_editor(self):
+    def selected_item_editor(self) -> 'Editor':
+        """returns the editor of the selected item.
+
+        if the selected item is this editor itself, then this editor itself will be returned!
+        the actual usefulness of this method is when it is called on a parent editor. it will go down through its
+         children until it reaches the selected editor.
+
+        :return: Editor
+        """
+
         editor = self
         if not self.is_selected(go_deep=False) and self.is_selected(go_deep=True):
             for sub_editor in self.sub_editors.values():
