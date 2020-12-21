@@ -242,7 +242,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
     @staticmethod
     def test_mark_selected_sub_editor_for_removal(qtbot):
         # ===========================================================================
-        def one_thing_with_one_sub_editor(list_of_things_editor: typing.Type[editor_.Editor]):
+        def one_thing_with_one_sub_editor(list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
 
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
@@ -269,7 +269,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
             sub_editor.no_revival_possible_signal.disconnect(super_things_editor.sub_editor_revived_or_removed)
 
         # ===========================================================================
-        def one_thing_with_two_sub_editors(list_of_things_editor: typing.Type[editor_.Editor]):
+        def one_thing_with_two_sub_editors(list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing_1 = SuperThing()
@@ -309,7 +309,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
             editor_.Editor__Selection.multiple_selection = previous_state
 
         # ===========================================================================
-        def one_thing_with_one_sub_editor_and_one_sub_sub_editor(list_of_things_editor: typing.Type[editor_.Editor]):
+        def one_thing_with_one_sub_editor_and_one_sub_sub_editor(list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
 
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
