@@ -586,8 +586,17 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
         else:
             self.parent_editor.set_selected(True)
 
-    # ===== keeping track of selected sub editors for enabling and disabling of the edit button
-    def sub_editor_selected(self, sub_editor):
+    # ===========================================================================
+    def sub_editor_selected(self, sub_editor: 'Editor'):
+        """for keeping track of selected sub editors for enabling and disabling of the edit button
+
+        when a sub-editor is selected, a signal which is connected to this method will be emitted.
+        this method will add the selected sub-editor to an array and will call the same method in its parent.
+
+        :param sub_editor: Editor
+            the selected sub-editor
+        :return:
+        """
 
         if sub_editor not in self.selected_sub_editors:
 

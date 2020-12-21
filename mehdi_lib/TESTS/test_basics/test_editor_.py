@@ -72,6 +72,37 @@ class SubThing(thing_.Thing):
 
 
 # ===========================================================================
+def create_super_things_and_editors(list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]) -> (typing.List[SuperThing], typing.List[editor_.Editor]):
+    """Creates required things and editors
+
+    three super things will be created and added to a list of things
+
+    :param list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]
+    :return: (typing.List[SuperThing], typing.List[editor_.Editor])
+        the first list contains things, and the second list contains editors
+        the first element of the first list is list of things
+        the first element of the second list is list of things editor
+    """
+
+    super_things = thing_.ListOfThings(SuperThing)
+    super_thing_1 = SuperThing()
+    super_things.append(super_thing_1)
+    super_thing_2 = SuperThing()
+    super_things.append(super_thing_2)
+    super_thing_3 = SuperThing()
+    super_things.append(super_thing_3)
+
+    # create a list of things editor
+    super_things_editor = list_of_things_editor_type(super_things, None)
+    super_thing_1_editor = super_things_editor.sub_editors[super_thing_1]
+    super_thing_2_editor = super_things_editor.sub_editors[super_thing_2]
+    super_thing_3_editor = super_things_editor.sub_editors[super_thing_3]
+
+    return ([super_things, super_thing_1, super_thing_2, super_thing_3],
+            [super_things_editor, super_thing_1_editor, super_thing_2_editor, super_thing_3_editor])
+
+
+# ===========================================================================
 class Test__Editor__Removing_Reviving_AddingNew:
     """
     For ListOfThing there are currently two types of editors:
@@ -85,7 +116,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
     @staticmethod
     def test_append_new_item(qtbot):
         # ===========================================================================
-        def add_to_top_editor(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
+        def add_to_top_editor(is_top_editor: bool, list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
 
@@ -97,7 +128,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
             assert len(super_things_editor.sub_editors) == (1 if is_top_editor else 0)
 
         # ===========================================================================
-        def add_to_non_top_editor(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
+        def add_to_non_top_editor(is_top_editor: bool, list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
 
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
@@ -117,7 +148,8 @@ class Test__Editor__Removing_Reviving_AddingNew:
                 super_things_editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors) == 1
 
         # ===========================================================================
-        def add_while_non_list_field_is_selected(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
+        def add_while_non_list_field_is_selected(is_top_editor: bool, list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
+
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
             # adding one element to the list
@@ -134,7 +166,8 @@ class Test__Editor__Removing_Reviving_AddingNew:
             assert len(super_things_editor.sub_editors) == 2
 
         # ===========================================================================
-        def add_while_non_list_field_in_sub_thing_is_selected(is_top_editor: bool, list_of_things_editor: typing.Type[editor_.Editor]):
+        def add_while_non_list_field_in_sub_thing_is_selected(is_top_editor: bool, list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
+
             # list of super-things
             super_things = thing_.ListOfThings(SuperThing)
             # adding one element to the list
@@ -585,35 +618,6 @@ class Test__Editor__Selection:
     def test_set_selected(qtbot):
 
         # ===========================================================================
-        def create_super_things_and_editors(list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]) -> (typing.List[SuperThing], typing.List[editor_.Editor]):
-            """Creates required things and editors
-
-            three super things will be created and added to a list of things
-
-            :param list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]
-            :return: (typing.List[SuperThing], typing.List[editor_.Editor])
-                the first list contains things, and the second list contains editors
-                the first element of the first list is list of things
-                the first element of the second list is list of things editor
-            """
-
-            super_things = thing_.ListOfThings(SuperThing)
-            super_thing_1 = SuperThing()
-            super_things.append(super_thing_1)
-            super_thing_2 = SuperThing()
-            super_things.append(super_thing_2)
-            super_thing_3 = SuperThing()
-            super_things.append(super_thing_3)
-
-            # create a list of things editor
-            super_things_editor = list_of_things_editor_type(super_things, None)
-            super_thing_1_editor = super_things_editor.sub_editors[super_thing_1]
-            super_thing_2_editor = super_things_editor.sub_editors[super_thing_2]
-            super_thing_3_editor = super_things_editor.sub_editors[super_thing_3]
-
-            return ([super_things, super_thing_1, super_thing_2, super_thing_3], [super_things_editor, super_thing_1_editor, super_thing_2_editor, super_thing_3_editor])
-
-        # ===========================================================================
         def center(editor: typing.Type[editor_.Editor], super_thing: SuperThing, thing: Thing = None) -> QtCore.QPoint:
             """returns center position of the widget for clicking.
 
@@ -855,7 +859,6 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_select_the_first_sibling_not_marked_for_removal_or_parent(qtbot):
         # create the application
         assert qt_api.QApplication.instance() is not None
@@ -918,6 +921,7 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
+    @pytest.mark.current
     def test_sub_editor_selected():
         pass
 
