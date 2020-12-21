@@ -585,7 +585,18 @@ class Test__Editor__Selection:
     def test_set_selected(qtbot):
 
         # ===========================================================================
-        def create_super_things_and_editors(list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]) -> (typing.List[SuperThing], typing.List[editor_.Editor]):
+        def create_super_things_and_editors(list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]) -> (typing.List[SuperThing], typing.List[editor_.Editor]):
+            """Creates required things and editors
+
+            three super things will be created and added to a list of things
+
+            :param list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]
+            :return: (typing.List[SuperThing], typing.List[editor_.Editor])
+                the first list contains things, and the second list contains editors
+                the first element of the first list is list of things
+                the first element of the second list is list of things editor
+            """
+
             super_things = thing_.ListOfThings(SuperThing)
             super_thing_1 = SuperThing()
             super_things.append(super_thing_1)
@@ -595,7 +606,7 @@ class Test__Editor__Selection:
             super_things.append(super_thing_3)
 
             # create a list of things editor
-            super_things_editor = list_of_things_editor(super_things, None)
+            super_things_editor = list_of_things_editor_type(super_things, None)
             super_thing_1_editor = super_things_editor.sub_editors[super_thing_1]
             super_thing_2_editor = super_things_editor.sub_editors[super_thing_2]
             super_thing_3_editor = super_things_editor.sub_editors[super_thing_3]
@@ -604,8 +615,25 @@ class Test__Editor__Selection:
 
         # ===========================================================================
         def center(editor: typing.Type[editor_.Editor], super_thing: SuperThing, thing: Thing = None) -> QtCore.QPoint:
+            """returns center position of the widget for clicking.
+
+            this method is used only for tree editor.
+            in table editor clicking is done in another way.
+
+            :param editor: typing.Type[editor_.Editor]
+                the main editor
+            :param super_thing: SuperThing
+                level one element of the editor
+            :param thing: Thing
+                level two element of the editor
+            :return: QtCore.QPoint
+                center point of the widget
+            """
+
+            # level one widget
             if thing is None:
                 item = editor.sub_editors[super_thing].widget.tree_item
+            # level two widget
             else:
                 editor.widget.expandAll()
                 item = editor.sub_editors[super_thing].sub_editors[SuperThing.things].sub_editors[thing].widget.tree_item
@@ -613,16 +641,36 @@ class Test__Editor__Selection:
             return rect.center()
 
         # ===========================================================================
-        def click(editor, super_thing, modifier=None):
+        def click(editor: [general_editors.TreeOfThingsEditor, general_editors.TableOfThingsEditor], super_thing: SuperThing, modifier=None):
+            """clicks inside editor on the specified thing
+
+            :param editor: [general_editors.TreeOfThingsEditor, general_editors.TableOfThingsEditor]
+                the editor inside which click should be performed.
+            :param super_thing: SuperThing
+                the super-thing on which click should be done.
+            :param modifier: int
+                specified the modifier key of the keyboard during click
+            :return: None
+            """
+
+            # with modifier
             if modifier is not None:
+
+                # tree editor
                 if type(editor) is general_editors.TreeOfThingsEditor:
                     qtbot.mouseClick(editor.widget.viewport(), QtCore.Qt.LeftButton, modifier=modifier, pos=center(editor, super_thing))
+
                 # table editor
                 else:
                     qtbot.mouseClick(editor.sub_editors[super_thing].sub_editors[SuperThing.name].widget, QtCore.Qt.LeftButton, modifier=modifier)
+
+            # no modifier
             else:
+
+                # tree editor
                 if type(editor) is general_editors.TreeOfThingsEditor:
                     qtbot.mouseClick(editor.widget.viewport(), QtCore.Qt.LeftButton, pos=center(editor, super_thing))
+
                 # table editor
                 else:
                     qtbot.mouseClick(editor.sub_editors[super_thing].sub_editors[SuperThing.name].widget, QtCore.Qt.LeftButton)
@@ -633,10 +681,12 @@ class Test__Editor__Selection:
             # create
             super_things, editors = create_super_things_and_editors(list_of_things_editor)
 
-            # select one item
+            # initial check
             assert not editors[1].is_selected(go_deep=False)
             assert not editors[2].is_selected(go_deep=False)
             assert not editors[3].is_selected(go_deep=False)
+
+            # select one item
             click(editors[0], super_things[1])
             assert editors[1].is_selected(go_deep=False)
             assert not editors[2].is_selected(go_deep=False)
@@ -654,17 +704,26 @@ class Test__Editor__Selection:
             # create
             super_things, editors = create_super_things_and_editors(list_of_things_editor)
 
+            # initial check
+            assert not editors[1].is_selected(go_deep=False)
+            assert not editors[2].is_selected(go_deep=False)
+            assert not editors[3].is_selected(go_deep=False)
+
+            # first item
             click(editors[0], super_things[1])
 
+            # press control
             qtbot.keyPress(editors[0].widget, QtCore.Qt.Key_Control)
 
+            # second item
             click(editors[0], super_things[3], QtCore.Qt.ControlModifier)
+
+            # release control
+            qtbot.keyRelease(editors[0].widget, QtCore.Qt.Key_Control)
 
             assert editors[1].is_selected(go_deep=False)
             assert not editors[2].is_selected(go_deep=False)
             assert editors[3].is_selected(go_deep=False)
-
-            qtbot.keyRelease(editors[0].widget, QtCore.Qt.Key_Control)
 
         # ===========================================================================
         def multiple_selection_shift(list_of_things_editor: typing.Type[editor_.Editor]):
@@ -672,31 +731,48 @@ class Test__Editor__Selection:
             # create
             super_things, editors = create_super_things_and_editors(list_of_things_editor)
 
+            # initial check
             assert not editors[1].is_selected(go_deep=False)
             assert not editors[2].is_selected(go_deep=False)
             assert not editors[3].is_selected(go_deep=False)
 
+            # first item
             click(editors[0], super_things[1])
 
+            # press shift
             qtbot.keyPress(editors[0].widget, QtCore.Qt.Key_Shift)
 
+            # next item
             click(editors[0], super_things[3], QtCore.Qt.ShiftModifier)
+
+            # release shift
+            qtbot.keyRelease(editors[0].widget, QtCore.Qt.Key_Shift)
 
             # tree editor
             if list_of_things_editor is general_editors.TreeOfThingsEditor:
+
+                # all three items should be selected
                 assert editors[1].is_selected(go_deep=False)
                 assert editors[2].is_selected(go_deep=False)
                 assert editors[3].is_selected(go_deep=False)
+
             # table editor
             else:
+
+                # currently, for table editor, list selection is not working!
                 assert editors[1].is_selected(go_deep=False)
                 # assert editors[2].is_selected(go_deep=False)
                 assert editors[3].is_selected(go_deep=False)
 
-            qtbot.keyRelease(editors[0].widget, QtCore.Qt.Key_Shift)
-
         # ===========================================================================
         def selecting_child_while_parent_is_selected():
+            """
+            this method works only for tree editor.
+            in table editor parent and child are not simultaneously visible.
+            :return:
+            """
+
+            # prepare things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing = SuperThing()
             super_things.append(super_thing)
@@ -708,6 +784,7 @@ class Test__Editor__Selection:
             super_thing_editor = super_things_tree_editor.sub_editors[super_thing]
             thing_editor = super_thing_editor.sub_editors[SuperThing.things].sub_editors[thing]
 
+            # calculate centers
             super_thing_center = center(super_things_tree_editor, super_thing)
             thing_center = center(super_things_tree_editor, super_thing, thing)
 
@@ -729,18 +806,26 @@ class Test__Editor__Selection:
             assert not thing_editor.is_selected(go_deep=False)
             qtbot.keyPress(tree_widget, QtCore.Qt.Key_Control)
             qtbot.mouseClick(tree_widget.viewport(), QtCore.Qt.LeftButton, modifier=QtCore.Qt.ControlModifier, pos=thing_center)
+            qtbot.keyRelease(tree_widget, QtCore.Qt.Key_Control)
             assert super_thing_editor.is_selected(go_deep=False)
             assert thing_editor.is_selected(go_deep=False)
 
         # create the application
         assert qt_api.QApplication.instance() is not None
 
+        # single
         single_selection(list_of_things_editor=general_editors.TreeOfThingsEditor)
         single_selection(list_of_things_editor=general_editors.TableOfThingsEditor)
+
+        # control
         multiple_selection_ctl(list_of_things_editor=general_editors.TreeOfThingsEditor)
         multiple_selection_ctl(list_of_things_editor=general_editors.TableOfThingsEditor)
+
+        # shift
         multiple_selection_shift(list_of_things_editor=general_editors.TreeOfThingsEditor)
         multiple_selection_shift(list_of_things_editor=general_editors.TableOfThingsEditor)
+
+        # parent, child
         selecting_child_while_parent_is_selected()
 
     # ===========================================================================
