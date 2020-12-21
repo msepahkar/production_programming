@@ -868,68 +868,75 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
+    @pytest.mark.current
     def test_select_the_first_sibling_not_marked_for_removal_or_parent(qtbot):
+
+        # ===========================================================================
+        def create_remove_test_selection(list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]):
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+            thing_1 = Thing()
+            super_thing[SuperThing.things].append(thing_1)
+            thing_2 = Thing()
+            super_thing[SuperThing.things].append(thing_2)
+            thing_3 = Thing()
+            super_thing[SuperThing.things].append(thing_3)
+
+            # create a list of things editor
+            super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
+            super_thing_editor = super_things_tree_editor.sub_editors[super_thing]
+            things_editor = super_thing_editor.sub_editors[SuperThing.things]
+            thing_1_editor = things_editor.sub_editors[thing_1]
+            thing_2_editor = things_editor.sub_editors[thing_2]
+            thing_3_editor = things_editor.sub_editors[thing_3]
+
+            # remove thing 2
+            thing_2_editor.set_marked_for_removal(True)
+            assert not things_editor.is_selected(go_deep=False)
+            assert not thing_1_editor.is_selected(go_deep=False)
+            assert not thing_3_editor.is_selected(go_deep=False)
+
+            # select sibling
+            thing_2_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
+            assert not things_editor.is_selected(go_deep=False)
+            assert not thing_1_editor.is_selected(go_deep=False)
+            assert not thing_2_editor.is_selected(go_deep=False)
+            assert thing_3_editor.is_selected(go_deep=False)
+
+            # remove thing 3
+            thing_3_editor.set_marked_for_removal(True)
+            assert not things_editor.is_selected(go_deep=False)
+            assert not thing_1_editor.is_selected(go_deep=False)
+
+            # select sibling
+            thing_3_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
+            assert not things_editor.is_selected(go_deep=False)
+            assert thing_1_editor.is_selected(go_deep=False)
+            assert not thing_2_editor.is_selected(go_deep=False)
+            assert not thing_3_editor.is_selected(go_deep=False)
+
+            # remove thing 1
+            thing_1_editor.set_marked_for_removal(True)
+            assert not things_editor.is_selected(go_deep=False)
+
+            # select sibling (parent will be selected this time
+            thing_1_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
+            assert things_editor.is_selected(go_deep=False)
+            assert not thing_1_editor.is_selected(go_deep=False)
+            assert not thing_2_editor.is_selected(go_deep=False)
+            assert not thing_3_editor.is_selected(go_deep=False)
+
         # create the application
         assert qt_api.QApplication.instance() is not None
 
-        # create the things
-        super_things = thing_.ListOfThings(SuperThing)
-        super_thing = SuperThing()
-        super_things.append(super_thing)
-        thing_1 = Thing()
-        super_thing[SuperThing.things].append(thing_1)
-        thing_2 = Thing()
-        super_thing[SuperThing.things].append(thing_2)
-        thing_3 = Thing()
-        super_thing[SuperThing.things].append(thing_3)
-
-        # create a list of things editor
-        super_things_tree_editor = general_editors.TreeOfThingsEditor(super_things, None)
-        super_thing_editor = super_things_tree_editor.sub_editors[super_thing]
-        things_editor = super_thing_editor.sub_editors[SuperThing.things]
-        thing_1_editor = things_editor.sub_editors[thing_1]
-        thing_2_editor = things_editor.sub_editors[thing_2]
-        thing_3_editor = things_editor.sub_editors[thing_3]
-
-        # remove thing 2
-        thing_2_editor.set_marked_for_removal(True)
-        assert not things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-        assert not thing_3_editor.is_selected(go_deep=False)
-
-        # select sibling
-        thing_2_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
-        assert not things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-        assert not thing_2_editor.is_selected(go_deep=False)
-        assert thing_3_editor.is_selected(go_deep=False)
-
-        # remove thing 3
-        thing_3_editor.set_marked_for_removal(True)
-        assert not things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-
-        # select sibling
-        thing_3_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
-        assert not things_editor.is_selected(go_deep=False)
-        assert thing_1_editor.is_selected(go_deep=False)
-        assert not thing_2_editor.is_selected(go_deep=False)
-        assert not thing_3_editor.is_selected(go_deep=False)
-
-        # remove thing 1
-        thing_1_editor.set_marked_for_removal(True)
-        assert not things_editor.is_selected(go_deep=False)
-
-        # select sibling (parent will be selected this time
-        thing_1_editor.select_the_first_sibling_not_marked_for_removal_or_parent()
-        assert things_editor.is_selected(go_deep=False)
-        assert not thing_1_editor.is_selected(go_deep=False)
-        assert not thing_2_editor.is_selected(go_deep=False)
-        assert not thing_3_editor.is_selected(go_deep=False)
+        create_remove_test_selection(general_editors.TreeOfThingsEditor)
+        create_remove_test_selection(general_editors.TableOfThingsEditor)
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_sub_editor_selected():
         pass
 
