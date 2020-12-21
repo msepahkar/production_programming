@@ -366,7 +366,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
     @staticmethod
     def test_sub_editor_revived_or_removed(qtbot):
         # ===========================================================================
-        def remove_marked_sub_editor(list_of_things_editor: typing.Type[editor_.Editor]):
+        def remove_marked_sub_editor(list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing = SuperThing()
@@ -392,7 +392,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
             assert sub_editor not in super_things_editor.sub_editors_marked_for_removal
 
         # ===========================================================================
-        def revive_marked_sub_editor(list_of_things_editor: typing.Type[editor_.Editor]):
+        def revive_marked_sub_editor(list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing = SuperThing()
@@ -430,7 +430,7 @@ class Test__Editor__Removing_Reviving_AddingNew:
     @staticmethod
     def test_revive_the_latest_sub_editor_marked_for_removal(qtbot):
         # ===========================================================================
-        def remove_and_revive(list_of_things_editor: typing.Type[editor_.Editor]):
+        def remove_and_revive(list_of_things_editor: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TreeOfThingsEditor]]):
             # create the things
             super_things = thing_.ListOfThings(SuperThing)
             super_thing_1 = SuperThing()
