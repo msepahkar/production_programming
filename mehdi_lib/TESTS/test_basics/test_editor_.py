@@ -979,7 +979,6 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_sub_editor_deselected(qtbot):
 
         # ===========================================================================
@@ -1015,6 +1014,37 @@ class Test__Editor__Selection:
 
         perform_the_test(general_editors.TreeOfThingsEditor)
         perform_the_test(general_editors.TableOfThingsEditor)
+
+
+# ===========================================================================
+class Test__Editor__Basics:
+
+    # ===========================================================================
+    @staticmethod
+    @pytest.mark.current
+    def test_init(qtbot):
+        super_thing = SuperThing()
+        super_things = thing_.ListOfThings(SuperThing)
+
+        # thing editor
+        editor_1 = general_editors.ThingEditor(super_thing, None)
+        assert editor_1.representing_object == super_thing
+        assert editor_1.type == editor_.EditorTypes.thing
+
+        # field editor (non-list-field)
+        editor_2 = general_editors.NameEditor(super_thing, SuperThing.name)
+        assert editor_2.representing_object == super_thing
+        assert editor_2.type == editor_.EditorTypes.field_of_thing
+
+        # field editor (list-field)
+        editor_3 = general_editors.TreeOfThingsEditor(super_thing, SuperThing.things)
+        assert editor_3.representing_object == super_thing[SuperThing.things]
+        assert editor_3.type == editor_.EditorTypes.list_of_things
+
+        # independent list-field editor
+        editor_4 = general_editors.TableOfThingsEditor(super_things, None)
+        assert editor_4.representing_object == super_things
+        assert editor_4.type == editor_.EditorTypes.list_of_things
 
 
 # ===========================================================================

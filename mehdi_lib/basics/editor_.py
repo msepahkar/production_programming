@@ -674,6 +674,7 @@ class Editor__Basics(Editor__Selection):
             self.type = EditorTypes.thing
 
         if field is not None:
+            # TODO: reconsider editor version of the field (is it really necessary???)
             self.editor_version_of_the_field = field.create_copy()
             self.class_version_of_the_field = self.owner.get_correspondent_class_field(field)
         else:
