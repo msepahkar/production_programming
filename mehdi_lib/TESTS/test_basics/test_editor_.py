@@ -942,7 +942,6 @@ class Test__Editor__Selection:
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_sub_editor_selected(qtbot):
 
         # ===========================================================================
@@ -974,6 +973,45 @@ class Test__Editor__Selection:
                 with qtbot.wait_signal(super_things_editor.sub_editor_selected_signal, raising=True):
                     sub_editor_1.set_selected(True)
                     assert sub_editor_1 in super_things_editor.selected_sub_editors
+
+        perform_the_test(general_editors.TreeOfThingsEditor)
+        perform_the_test(general_editors.TableOfThingsEditor)
+
+    # ===========================================================================
+    @staticmethod
+    @pytest.mark.current
+    def test_sub_editor_deselected(qtbot):
+
+        # ===========================================================================
+        def perform_the_test(list_of_things_editor_type: [typing.Type[general_editors.TreeOfThingsEditor], typing.Type[general_editors.TableOfThingsEditor]]):
+
+            # create the things
+            super_things = thing_.ListOfThings(SuperThing)
+            super_thing = SuperThing()
+            super_things.append(super_thing)
+            thing = Thing()
+            super_thing[SuperThing.things].append(thing)
+
+            # create a list of things editor
+            super_things_editor = list_of_things_editor_type(super_things, None)
+            sub_editor_1 = super_things_editor.sub_editors[super_thing]
+
+            # sub_editor_2 is used only for tree editor
+            sub_editor_2 = None
+            if list_of_things_editor_type == general_editors.TreeOfThingsEditor:
+                sub_editor_2 = sub_editor_1.sub_editors[SuperThing.things].sub_editors[thing]
+
+            if sub_editor_2 is not None:
+                sub_editor_2.set_selected(True)
+                with qtbot.wait_signal(sub_editor_1.no_sub_editor_selected_signal, raising=True), \
+                     qtbot.wait_signal(super_things_editor.no_sub_editor_selected_signal, raising=True):
+                    sub_editor_2.set_selected(False)
+                    assert sub_editor_2 not in sub_editor_1.selected_sub_editors and sub_editor_2 not in super_things_editor.selected_sub_editors
+            else:
+                sub_editor_1.set_selected(True)
+                with qtbot.wait_signal(super_things_editor.no_sub_editor_selected_signal, raising=True):
+                    sub_editor_1.set_selected(False)
+                    assert sub_editor_1 not in super_things_editor.selected_sub_editors
 
         perform_the_test(general_editors.TreeOfThingsEditor)
         perform_the_test(general_editors.TableOfThingsEditor)

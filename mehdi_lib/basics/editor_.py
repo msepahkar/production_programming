@@ -609,8 +609,17 @@ class Editor__Selection(Editor__Removing_Reviving_AddingNew):
         if self.parent_editor:
             self.parent_editor.sub_editor_selected(sub_editor)
 
-    # ===== keeping track of selected sub editors for enabling and disabling of the edit button
+    # ===========================================================================
     def sub_editor_deselected(self, sub_editor):
+        """for keeping track of selected sub editors for enabling and disabling of the edit button
+
+        when a sub-editor is deselected, a signal which is connected to this method will be emitted.
+        this method will remove the selected sub-editor from the array and will call the same method in its parent.
+
+        :param sub_editor: Editor
+            the deselected sub-editor
+        :return:
+        """
 
         if sub_editor in self.selected_sub_editors:
             index = self.selected_sub_editors.index(sub_editor)
