@@ -758,6 +758,7 @@ class Editor__Basics(Editor__Selection):
             EditorDialog(editor, automatic_unregister=True).exec()
 
     # ===========================================================================
+    # TODO: add test for this method
     @staticmethod
     def create_responsible_editor(owner, field):
 

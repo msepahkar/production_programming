@@ -1067,6 +1067,10 @@ class Test__Editor__Basics:
         editor_4 = general_editors.TableOfThingsEditor(super_things, None)
         assert editor_4 in editor_4.representing_object_editors()
 
+
+# ===========================================================================
+class Test__Editor__Dependency:
+
     # ===========================================================================
     @staticmethod
     @pytest.mark.current
