@@ -447,8 +447,7 @@ class TreeOfThingsEditor(editor_.Editor):
                     self.parent_editor.append_new_item(is_top_editor=True)
 
                 if action == edit_item_action:
-                    editor_.Editor__Basics.open_editor_dialog_with_unregister(
-                        editor_.Editor__Basics.proper_editor(self.owner, self.field))
+                    editor_.EditorDialog(editor_.Editor__Basics.proper_editor(self.owner, self.field), automatic_unregister=True).exec()
             else:
                 for editor in self.sub_editors.values():
                     if editor.is_selected(go_deep=True):

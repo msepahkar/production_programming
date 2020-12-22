@@ -1047,7 +1047,6 @@ class Test__Editor__Basics:
 
     # ===========================================================================
     @staticmethod
-    @pytest.mark.current
     def test_representing_object_editors(qtbot):
         super_thing = SuperThing()
         super_things = thing_.ListOfThings(SuperThing)
@@ -1067,6 +1066,13 @@ class Test__Editor__Basics:
         # independent list-field editor
         editor_4 = general_editors.TableOfThingsEditor(super_things, None)
         assert editor_4 in editor_4.representing_object_editors()
+
+    # ===========================================================================
+    @staticmethod
+    @pytest.mark.current
+    def test_(qtbot):
+        super_thing = SuperThing()
+        super_things = thing_.ListOfThings(SuperThing)
 
 
 # ===========================================================================

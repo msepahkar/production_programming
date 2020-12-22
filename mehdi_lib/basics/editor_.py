@@ -706,7 +706,7 @@ class Editor__Basics(Editor__Selection):
 
         # this node is selected
         if self.is_selected(go_deep=False):
-            Editor__Basics.open_editor_dialog_with_unregister(Editor__Basics.proper_editor(self.owner, self.field))
+            EditorDialog(Editor__Basics.proper_editor(self.owner, self.field), automatic_unregister=True).exec()
 
         # check for sub editors
         elif self.is_selected(go_deep=True):
@@ -754,18 +754,6 @@ class Editor__Basics(Editor__Selection):
     @staticmethod
     def create_editor_and_open_dialog(owner, field, responsible, parent_editor=None):
         editor = Editor__Basics.proper_editor(owner, field, responsible, parent_editor)
-        if editor:
-            EditorDialog(editor, automatic_unregister=True).exec()
-
-    # ===========================================================================
-    @staticmethod
-    def open_editor_dialog_without_unregister(editor):
-        if editor:
-            EditorDialog(editor, automatic_unregister=False).exec()
-
-    # ===========================================================================
-    @staticmethod
-    def open_editor_dialog_with_unregister(editor):
         if editor:
             EditorDialog(editor, automatic_unregister=True).exec()
 
