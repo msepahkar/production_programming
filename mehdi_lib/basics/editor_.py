@@ -682,7 +682,15 @@ class Editor__Basics(Editor__Selection):
             self.class_version_of_the_field = None
 
     # ===========================================================================
-    def representing_object_editors(self):
+    def representing_object_editors(self) -> typing.List['Editor']:
+        """
+
+        depending on representing object, editors are stored in field_editors property of the owner or in editors
+         property of the owner
+
+        :return: List[Editor]
+            list of editors created for the representing object
+        """
         if self.type == EditorTypes.field_of_thing:
             editors = self.owner.field_editors[self.field]
         else:
