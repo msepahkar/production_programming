@@ -1,0 +1,3 @@
+for morphing things only change ui_titles to a dict
+ keys of the dict are instances of the class
+ values of the dict are multilingual strings for the ui_title
